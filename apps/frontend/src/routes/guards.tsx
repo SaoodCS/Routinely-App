@@ -16,7 +16,7 @@ export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: T_User
 }
 
 // TODO: set the default fallbackRoute for if a user's logged in and tried to visit a public only route
-export function PublicOnlyRoute({ fallbackRoute = ROUTE_PATHS.main_home }: { fallbackRoute?: T_Route_Path }): JSX.Element {
+export function PublicOnlyRoute({ fallbackRoute = ROUTE_PATHS.main }: { fallbackRoute?: T_Route_Path }): JSX.Element {
    const location = useLocation() as Location<{ from?: Location } | null>;
    const { isLoading, isAuthenticated } = useAuth();
    if (isLoading) return <SpinnerLoader fullPage />;
