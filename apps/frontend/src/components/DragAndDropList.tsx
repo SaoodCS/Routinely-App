@@ -1,23 +1,5 @@
-import type { CSSProperties, JSX, PointerEvent, PointerEventHandler, ReactNode } from 'react';
-const dragStates = new WeakMap<
-   HTMLDivElement,
-   {
-      contentEl: HTMLDivElement;
-      currentIndex: number;
-      itemHeight: number;
-      latestClientX: number;
-      latestClientY: number;
-      measures: { height: number; midpointY: number; top: number }[];
-      pointerId: number;
-      pointerOffsetY: number;
-      rafId: number | null;
-      startClientX: number;
-      startClientY: number;
-      startIndex: number;
-      wrapperEl: HTMLDivElement;
-      wrapperEls: HTMLDivElement[];
-   }
->();
+import type { CSSProperties, JSX, PointerEvent, ReactNode } from 'react';
+import { useRef } from 'react';
 
 interface T_DragAndDropListProps<TItem extends { id: number | string }> {
    items: TItem[];
@@ -25,39 +7,62 @@ interface T_DragAndDropListProps<TItem extends { id: number | string }> {
    renderItem: (
       item: TItem,
       dragElProps: {
-         onPointerCancel: PointerEventHandler<HTMLElement>;
-         onPointerDown: PointerEventHandler<HTMLElement>;
-         onPointerMove: PointerEventHandler<HTMLElement>;
-         onPointerUp: PointerEventHandler<HTMLElement>;
+         'data-drag-handle': string;
+         'data-drag-index': number;
          style: CSSProperties;
       },
    ) => ReactNode;
 }
 
+type T_DragState = {
+   contentEl: HTMLDivElement;
+   currentIndex: number;
+   itemHeight: number;
+   latestClientX: number;
+   latestClientY: number;
+   measures: { midpointY: number }[];
+   pointerId: number;
+   pointerOffsetY: number;
+   rafId: number | null;
+   startClientX: number;
+   startClientY: number;
+   startIndex: number;
+   wrapperEl: HTMLDivElement;
+   wrapperEls: HTMLDivElement[];
+};
+
+const dragHandleStyle: CSSProperties = { cursor: 'grab', touchAction: 'none', userSelect: 'none' };
+
 export default function DragAndDropList<TItem extends { id: number | string }>(props: T_DragAndDropListProps<TItem>): JSX.Element {
    const { items, onDrop, renderItem } = props;
-
-   function getListEl(handleEl: HTMLElement): HTMLDivElement | null {
-      const listEl = handleEl.closest('[data-drag-and-drop-list]');
-      return listEl instanceof HTMLDivElement ? listEl : null;
-   }
+   const dragStateRef = useRef<T_DragState | null>(null);
 
    function getListElements(listEl: HTMLDivElement): { contentEls: HTMLDivElement[]; wrapperEls: HTMLDivElement[] } | null {
       const wrapperEls = Array.from(listEl.children).filter((element): element is HTMLDivElement => element instanceof HTMLDivElement);
       const contentEls = wrapperEls
          .map((wrapperEl) => wrapperEl.firstElementChild)
          .filter((element): element is HTMLDivElement => element instanceof HTMLDivElement);
+
       return wrapperEls.length === items.length && contentEls.length === items.length ? { contentEls, wrapperEls } : null;
    }
 
-   function handlePointerDown(event: PointerEvent<HTMLElement>, startIndex: number): void {
-      const listEl = getListEl(event.currentTarget);
-      if (event.button !== 0 || !listEl || dragStates.has(listEl)) return;
+   function getHandleEl(event: PointerEvent<HTMLDivElement>): HTMLElement | null {
+      const target = event.target;
+      if (!(target instanceof Element)) return null;
+
+      const handleEl = target.closest('[data-drag-handle]');
+      return handleEl instanceof HTMLElement && event.currentTarget.contains(handleEl) ? handleEl : null;
+   }
+
+   function handlePointerDown(event: PointerEvent<HTMLDivElement>): void {
+      const handleEl = getHandleEl(event);
+      const startIndex = Number(handleEl?.dataset.dragIndex);
+      if (event.button !== 0 || !handleEl || !Number.isInteger(startIndex) || dragStateRef.current) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      const listElements = getListElements(listEl);
+      const listElements = getListElements(event.currentTarget);
       if (!items[startIndex] || !listElements) return;
 
       const { contentEls, wrapperEls } = listElements;
@@ -65,34 +70,33 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       const contentEl = contentEls[startIndex];
       if (!wrapperEl || !contentEl) return;
 
-      const measures = wrapperEls.map((wrapperEl) => {
-         const rect = wrapperEl.getBoundingClientRect();
-         return { height: rect.height, midpointY: rect.top + rect.height / 2, top: rect.top };
-      });
-
       const itemRect = contentEl.getBoundingClientRect();
       try {
-         event.currentTarget.setPointerCapture(event.pointerId);
+         handleEl.setPointerCapture(event.pointerId);
       } catch {
          // Synthetic pointer events used by browser checks may not register as active pointers.
       }
+
       wrapperEl.style.height = `${itemRect.height}px`;
+      contentEl.style.cursor = 'grabbing';
       contentEl.style.height = `${itemRect.height}px`;
       contentEl.style.left = `${itemRect.left}px`;
       contentEl.style.position = 'fixed';
       contentEl.style.top = `${itemRect.top}px`;
       contentEl.style.width = `${itemRect.width}px`;
-      contentEl.style.zIndex = '1000';
       contentEl.style.willChange = 'transform';
-      contentEl.style.cursor = 'grabbing';
+      contentEl.style.zIndex = '1000';
 
-      dragStates.set(listEl, {
+      dragStateRef.current = {
          contentEl,
          currentIndex: startIndex,
          itemHeight: itemRect.height,
          latestClientX: event.clientX,
          latestClientY: event.clientY,
-         measures,
+         measures: wrapperEls.map((wrapperEl) => {
+            const rect = wrapperEl.getBoundingClientRect();
+            return { midpointY: rect.top + rect.height / 2 };
+         }),
          pointerId: event.pointerId,
          pointerOffsetY: event.clientY - itemRect.top,
          rafId: null,
@@ -101,13 +105,12 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
          startIndex,
          wrapperEl,
          wrapperEls,
-      });
+      };
    }
 
-   function handlePointerMove(event: PointerEvent<HTMLElement>): void {
-      const listEl = getListEl(event.currentTarget);
-      const dragState = listEl ? dragStates.get(listEl) : undefined;
-      if (!listEl || !dragState || dragState.pointerId !== event.pointerId) return;
+   function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
+      const dragState = dragStateRef.current;
+      if (!dragState || dragState.pointerId !== event.pointerId) return;
 
       event.preventDefault();
       event.stopPropagation();
@@ -116,9 +119,6 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       if (dragState.rafId !== null) return;
 
       dragState.rafId = window.requestAnimationFrame(() => {
-         const dragState = dragStates.get(listEl);
-         if (!dragState) return;
-
          dragState.rafId = null;
          dragState.contentEl.style.transform = `translate3d(${dragState.latestClientX - dragState.startClientX}px, ${dragState.latestClientY - dragState.startClientY}px, 0)`;
 
@@ -131,9 +131,8 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
          }
 
          for (let index = dragState.startIndex - 1; index >= 0; index -= 1) {
-            if (draggedMidpointY < dragState.measures[index].midpointY) {
-               nextIndex = index;
-            } else break;
+            if (draggedMidpointY < dragState.measures[index].midpointY) nextIndex = index;
+            else break;
          }
 
          if (nextIndex === dragState.currentIndex) return;
@@ -154,33 +153,22 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       });
    }
 
-   function handlePointerEnd(event: PointerEvent<HTMLElement>): void {
-      const listEl = getListEl(event.currentTarget);
-      const dragState = listEl ? dragStates.get(listEl) : undefined;
-      if (!listEl || !dragState || dragState.pointerId !== event.pointerId) return;
+   function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
+      const dragState = dragStateRef.current;
+      if (!dragState || dragState.pointerId !== event.pointerId) return;
 
       event.preventDefault();
       event.stopPropagation();
       if (dragState.rafId !== null) window.cancelAnimationFrame(dragState.rafId);
+      if (event.target instanceof HTMLElement && event.target.hasPointerCapture(event.pointerId)) event.target.releasePointerCapture(event.pointerId);
 
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-      dragState.contentEl.style.cursor = '';
-      dragState.contentEl.style.height = '';
-      dragState.contentEl.style.left = '';
-      dragState.contentEl.style.position = '';
-      dragState.contentEl.style.top = '';
-      dragState.contentEl.style.transform = '';
-      dragState.contentEl.style.width = '';
-      dragState.contentEl.style.willChange = '';
-      dragState.contentEl.style.zIndex = '';
+      dragState.contentEl.removeAttribute('style');
       dragState.wrapperEl.style.height = '';
-
       dragState.wrapperEls.forEach((wrapperEl) => {
          wrapperEl.style.transform = '';
          wrapperEl.style.transition = '';
       });
-
-      dragStates.delete(listEl);
+      dragStateRef.current = null;
 
       if (dragState.currentIndex === dragState.startIndex) return;
 
@@ -193,16 +181,16 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    }
 
    return (
-      <div data-drag-and-drop-list="">
+      <div onPointerCancel={handlePointerEnd} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerEnd}>
          {items.map((item, index) => (
             <div key={item.id}>
-               {renderItem(item, {
-                  onPointerCancel: handlePointerEnd,
-                  onPointerDown: (event) => handlePointerDown(event, index),
-                  onPointerMove: handlePointerMove,
-                  onPointerUp: handlePointerEnd,
-                  style: { cursor: 'grab', touchAction: 'none', userSelect: 'none' },
-               })}
+               <div>
+                  {renderItem(item, {
+                     'data-drag-handle': '',
+                     'data-drag-index': index,
+                     style: dragHandleStyle,
+                  })}
+               </div>
             </div>
          ))}
       </div>
