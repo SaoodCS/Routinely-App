@@ -1,7 +1,7 @@
 import Box, { type BoxProps } from '@mui/material/Box';
 import { useLayoutEffect, useRef, type UIEvent } from 'react';
 
-export default function ScrollRestoreBox(props: BoxProps & { storeKey: string }): React.JSX.Element {
+export default function ScrollRestoreWrapper(props: BoxProps & { storeKey: string }): React.JSX.Element {
    const { storeKey, onScroll, ...boxProps } = props;
    const boxRef = useRef<HTMLDivElement | null>(null);
 
