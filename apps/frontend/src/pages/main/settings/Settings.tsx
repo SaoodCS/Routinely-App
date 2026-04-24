@@ -46,7 +46,7 @@ export default function Settings(): React.JSX.Element {
    }
 
    return (
-      <ScrollRestoreWrapper storeKey="settings lol" sx={{ border: '1px solid red', height: '100%', overflow: 'auto' }}>
+      <ScrollRestoreWrapper storeKey="settings lol" sx={{ height: '100%', overflow: 'auto' }}>
          <DragDropWrapper
             items={items}
             getKey={(item) => item.id}
