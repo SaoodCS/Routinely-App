@@ -1,0 +1,13 @@
+{
+   "extends": "../../tsconfig.base.json", //path to the monorepo's base tsconfig
+   "compilerOptions": {
+      "composite": true,
+      "tsBuildInfoFile": "../../node_modules/.cache/tsbuildinfo/backend.tsbuildinfo",
+      "lib": ["ES2023"],
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
+      "types": ["node"],
+      "noEmit": true
+   },
+   "include": ["src/**/*.ts", "../../packages/types/src/**/*.ts", "../../packages/utils/src/**/*.ts"]
+}

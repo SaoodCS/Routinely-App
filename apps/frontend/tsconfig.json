@@ -1,0 +1,7 @@
+{
+   "files": [],
+   "references": [
+      { "path": "./tsconfig.app.json" }, //path to the main frontend's tsconfig
+      { "path": "./tsconfig.node.json" } //path to the node frontend tsconfig (e.g. used by vite.config.ts)
+   ]
+}

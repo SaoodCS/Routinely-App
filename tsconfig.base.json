@@ -1,0 +1,17 @@
+{
+   "compilerOptions": {
+      "target": "ES2023",
+      "strict": true,
+      "skipLibCheck": true,
+      "useDefineForClassFields": true,
+      "verbatimModuleSyntax": true,
+      "allowImportingTsExtensions": true,
+      "moduleDetection": "force",
+      "resolveJsonModule": true,
+      "paths": {
+         //paths of workspaces that's code can be shared/used/imported into other workspaces
+         "@repo/utils/*": ["./packages/utils/src/*"],
+         "@repo/types/*": ["./packages/types/src/*"]
+      }
+   }
+}

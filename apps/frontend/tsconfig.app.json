@@ -1,0 +1,12 @@
+{
+   "extends": "../../tsconfig.base.json", //path to the monorepo's base tsconfig
+   "compilerOptions": {
+      "lib": ["ES2023", "DOM", "DOM.Iterable"],
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+      "types": ["vite/client", "vite-plugin-pwa/client"],
+      "noEmit": true,
+      "jsx": "react-jsx"
+   },
+   "include": ["src", "../../packages/types/src/**/*.ts", "../../packages/utils/src/**/*.ts"]
+}

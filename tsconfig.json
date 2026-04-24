@@ -1,0 +1,28 @@
+{
+   "files": [],
+   "references": [
+      //paths to the workspaces in the monorepo
+      { "path": "./apps/frontend" },
+      { "path": "./apps/backend" },
+      { "path": "./packages/utils" },
+      { "path": "./packages/types" }
+   ]
+}
+
+//TODO: to create a new workspace in this monorepo:
+// create a new folder that's not inside any other workspace folder (e.g. apps/new-workspace)
+// add the path to the new workspace's folder in the references array in root/tsconfig.json
+// add the workspace parent folder to root/package.json
+// add the workspace to root/eslint.config.js
+// if I plan to share the new workspace's code w/ other workspaces, add it's alias (e.g. "@repo/new-workspace") & path to root/tsconfig.base.json
+// if I plan to share the new workspace's code w/ other workspaces, add its path to the include arr in the other workspaces tsconfig.json files
+// Create a package.json file in the new workspace folder -> copy the structure of a shared/unshared workspace's package.json file into the new workspace's package.json
+// Create a new tsconfig.json file in the new workspace folder -> copy the structure of a shared/unshared workspace's tsconfig.json file into the new workspace's tsconfig.json
+
+//---------------------------------------------------------------------------------------------------------
+
+// monorepo/workspaces use cases:
+// can run "npm install" from the root folder to install all npm packages for the root and all workspaces
+// can create scripts in the monorepo's package.json that can target the workspace by using the tag --workspace
+// can list config/linting/formatting packages only in the root's package.json instead of each workspace's package.json -> and then install and configure each globally so they apply to all workspaces
+// if multiple workspaces contain the same dependency package and version listed in their package.json (e.g. lodash v), the monorepo can pick it up and only install it once

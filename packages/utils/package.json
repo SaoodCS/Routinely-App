@@ -1,0 +1,26 @@
+{
+   "name": "@repo/utils",
+   "private": true,
+   "version": "0.0.0",
+   "type": "module",
+   "engines": {
+      "node": "25.9.0"
+   },
+   "exports": {
+      "./*": {
+         "types": "./src/*.ts",
+         "default": "./src/*.ts"
+      }
+   },
+   "typesVersions": {
+      "*": {
+         "*": [
+            "src/*"
+         ]
+      }
+   },
+   "scripts": {
+      "typecheck": "tsc -p tsconfig.json --pretty --noEmit",
+      "format": "prettier --config ../../.prettierrc.json --write \"src/**/*.{ts,tsx}\""
+   }
+}
