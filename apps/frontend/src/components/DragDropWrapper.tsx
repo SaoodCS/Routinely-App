@@ -3,7 +3,7 @@ import type { CSSProperties, Key, PointerEvent, ReactNode } from 'react';
 const disabledList: CSSProperties = { display: 'flex', flexDirection: 'column', gap: 8 };
 const listStyle: CSSProperties = { ...disabledList, touchAction: 'none' };
 const rowStyle: CSSProperties = { cursor: 'grab', position: 'relative', transition: 'transform 120ms ease, opacity 120ms ease', userSelect: 'none' };
-const dragStyle: CSSProperties = { ...row, cursor: 'grabbing', opacity: 0.9, transition: 'none', willChange: 'transform', zIndex: 1 };
+const dragStyle: CSSProperties = { ...rowStyle, cursor: 'grabbing', opacity: 0.9, transition: 'none', willChange: 'transform', zIndex: 1 };
 
 interface T_DragDropWrapperProps<T> {
    items: readonly T[];
