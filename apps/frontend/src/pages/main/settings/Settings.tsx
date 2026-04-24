@@ -1,4 +1,6 @@
 import { Box } from '@mui/material';
+import { useState } from 'react';
+import DragDropWrapper from '../../../components/DragDropWrapper';
 
 const itemDummyData: { id: number; name: string; description: string }[] = [
    { id: 11, name: 'Item 1', description: 'Description of item 1' },
@@ -20,27 +22,27 @@ const subItemDummyData: { [key: number]: typeof itemDummyData } = {
 };
 
 export default function Settings(): React.JSX.Element {
-   const [items, setItems] = useState(itemDummyData);
-   const [subItems, setSubItems] = useState(subItemDummyData);
+   const [items, setItems] = useState<typeof itemDummyData>(itemDummyData);
+   const [subItems, setSubItems] = useState<typeof subItemDummyData>(subItemDummyData);
 
-   function handleParentDrop(newOrderedArr: typeof itemDummyData) {
+   function handleParentDrop(newOrderedArr: typeof itemDummyData): void {
       // function that also updates the order in the database
       setItems(newOrderedArr);
    }
 
-   function handleChildDrop(newOrderedArr: (typeof subItemDummyData)[number], parentId: number) {
+   function handleChildDrop(newOrderedArr: (typeof subItemDummyData)[number], parentId: number): void {
       // function that also updates the order in the database
       setSubItems({ ...subItems, [parentId]: newOrderedArr });
    }
 
    return (
-      <DragDropWrapper onDrop={(newOrderedArr) => handleParentDrop(newOrderedArr)}>
-         {itemDummyData.map((item) => (
+      <DragDropWrapper items={items} onDrop={(newOrderedArr) => handleParentDrop(newOrderedArr)}>
+         {items.map((item) => (
             <Box key={item.id}>
                <Box>{item.name}</Box>
                <Box>{item.description}</Box>
-               <DragDropWrapper onDrop={(newOrderedArr) => handleChildDrop(newOrderedArr, item.id)}>
-                  {subItemDummyData[item.id].map((subItem) => (
+               <DragDropWrapper items={subItems[item.id]} onDrop={(newOrderedArr) => handleChildDrop(newOrderedArr, item.id)}>
+                  {subItems[item.id].map((subItem) => (
                      <Box key={subItem.id}>
                         <Box>{subItem.name}</Box>
                         <Box>{subItem.description}</Box>
