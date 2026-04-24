@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// TODO set to the same bg color defined in theme.ts
 const BG_COLOR = '#121212';
 
 export default defineConfig({
@@ -13,11 +12,10 @@ export default defineConfig({
          registerType: 'autoUpdate',
          devOptions: { enabled: true },
          manifest: {
-            // TODO: Update the following fields (guide: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest)
-            name: '[app name]',
-            short_name: '[app short name]', // this is the name seen when the app is installed as a PWA on iOS
-            description: '[app description]',
-            categories: ['[app category 1]', '[app category 2]'],
+            name: 'Routinely',
+            short_name: 'Routinely', // this is the name seen when the app is installed as a PWA on iOS
+            description: 'manage your routine',
+            categories: ['Productivity'],
             background_color: BG_COLOR,
             theme_color: BG_COLOR,
             orientation: 'natural',
@@ -25,7 +23,6 @@ export default defineConfig({
             start_url: '/?application=true',
             scope: '/',
             id: '/',
-            // TODO: create following .png images in the public directory
             icons: [
                { src: 'logo-64x64.png', sizes: '64x64', type: 'image/png' },
                { src: 'logo-192x192.png', sizes: '192x192', type: 'image/png' },

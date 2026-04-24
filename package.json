@@ -1,5 +1,5 @@
 {
-   "name": "//TODO:[app-name]-monorepo",
+   "name": "routinely-monorepo",
    "private": true,
    "type": "module",
    "workspaces": [

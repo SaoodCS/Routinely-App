@@ -1,20 +1,16 @@
 import type { ThemeOptions } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 
-// TODO: customize palette styles here
-const palette: ThemeOptions['palette'] = { mode: 'dark', background: { default: '#121212' } };
+const palette: ThemeOptions['palette'] = { mode: 'dark', background: { default: '#121212' }, primary: { dark: '#42a5f5', main: '#90caf9' } };
 
-//TODO: customize text styles here
 const typography: ThemeOptions['typography'] = {
    fontFamily: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'].join(','),
 };
 
-//TODO: customize transition styles here (applies to transition components e.g. Fade, Grow, Zoom etc)
 const transitions: ThemeOptions['transitions'] = {
    duration: { enteringScreen: 600, leavingScreen: 600 },
 };
 
-// TODO: customize layout components here
 const hHeight = '55px';
 const fHeight = '70px';
 const components_layout: ThemeOptions['components'] = {
@@ -39,7 +35,6 @@ const components_layout: ThemeOptions['components'] = {
    MuiBottomNavigationAction: { styleOverrides: { label: { display: 'none' }, root: { padding: 'unset' } } },
 };
 
-//TODO: customize components here which are re-used multiple times w/ the same style. Otherwise, just inline-style
 const components: ThemeOptions['components'] = {};
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });
