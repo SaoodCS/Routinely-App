@@ -1,48 +1,40 @@
 import type { CSSProperties, JSX, PointerEvent, PointerEventHandler, ReactNode } from 'react';
+const dragStates = new WeakMap<
+   HTMLDivElement,
+   {
+      contentEl: HTMLDivElement;
+      currentIndex: number;
+      itemHeight: number;
+      latestClientX: number;
+      latestClientY: number;
+      measures: { height: number; midpointY: number; top: number }[];
+      pointerId: number;
+      pointerOffsetY: number;
+      rafId: number | null;
+      startClientX: number;
+      startClientY: number;
+      startIndex: number;
+      wrapperEl: HTMLDivElement;
+      wrapperEls: HTMLDivElement[];
+   }
+>();
 
-type T_DragItem = { id: number | string };
-
-export type T_DragElProps = {
-   onPointerCancel: PointerEventHandler<HTMLElement>;
-   onPointerDown: PointerEventHandler<HTMLElement>;
-   onPointerMove: PointerEventHandler<HTMLElement>;
-   onPointerUp: PointerEventHandler<HTMLElement>;
-   style: CSSProperties;
-};
-
-interface T_DragAndDropListProps<TItem extends T_DragItem> {
+interface T_DragAndDropListProps<TItem extends { id: number | string }> {
    items: TItem[];
    onDrop: (newOrderedItems: TItem[]) => void;
-   renderItem: (item: TItem, dragElProps: T_DragElProps) => ReactNode;
+   renderItem: (
+      item: TItem,
+      dragElProps: {
+         onPointerCancel: PointerEventHandler<HTMLElement>;
+         onPointerDown: PointerEventHandler<HTMLElement>;
+         onPointerMove: PointerEventHandler<HTMLElement>;
+         onPointerUp: PointerEventHandler<HTMLElement>;
+         style: CSSProperties;
+      },
+   ) => ReactNode;
 }
 
-interface T_ItemMeasure {
-   height: number;
-   midpointY: number;
-   top: number;
-}
-
-interface T_DragState {
-   contentEl: HTMLDivElement;
-   currentIndex: number;
-   itemHeight: number;
-   latestClientX: number;
-   latestClientY: number;
-   measures: T_ItemMeasure[];
-   pointerId: number;
-   pointerOffsetY: number;
-   rafId: number | null;
-   startClientX: number;
-   startClientY: number;
-   startIndex: number;
-   wrapperEl: HTMLDivElement;
-   wrapperEls: HTMLDivElement[];
-}
-
-const dragHandleStyle: CSSProperties = { cursor: 'grab', touchAction: 'none', userSelect: 'none' };
-const dragStates = new WeakMap<HTMLDivElement, T_DragState>();
-
-export default function DragAndDropList<TItem extends T_DragItem>(props: T_DragAndDropListProps<TItem>): JSX.Element {
+export default function DragAndDropList<TItem extends { id: number | string }>(props: T_DragAndDropListProps<TItem>): JSX.Element {
    const { items, onDrop, renderItem } = props;
 
    function getListEl(handleEl: HTMLElement): HTMLDivElement | null {
@@ -209,7 +201,7 @@ export default function DragAndDropList<TItem extends T_DragItem>(props: T_DragA
                   onPointerDown: (event) => handlePointerDown(event, index),
                   onPointerMove: handlePointerMove,
                   onPointerUp: handlePointerEnd,
-                  style: dragHandleStyle,
+                  style: { cursor: 'grab', touchAction: 'none', userSelect: 'none' },
                })}
             </div>
          ))}

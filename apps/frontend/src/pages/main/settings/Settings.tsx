@@ -49,14 +49,11 @@ export default function Settings(): React.JSX.Element {
                   <DragAndDropList
                      items={subItems[item.id]}
                      onDrop={(newOrderedSubItems) => {
-                        setSubItems({
-                           ...subItems,
-                           [item.id]: newOrderedSubItems,
-                        });
+                        setSubItems({ ...subItems, [item.id]: newOrderedSubItems });
                         // Can add functionality to update backend here
                      }}
                      renderItem={(subItem, dragElProps) => (
-                        <div>
+                        <div style={{ paddingLeft: '1rem' }}>
                            <div {...dragElProps}>::</div>
                            <div>{subItem.name}</div>
                            <div>{subItem.description}</div>
