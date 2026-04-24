@@ -21,6 +21,24 @@ export function getDragTranslateY(props: { itemTop: number; pointerOffsetY: numb
    return props.pointerY - props.pointerOffsetY - props.itemTop;
 }
 
+export function getReorderIndexByPointer(props: { activeIndex: number; itemCenterYs: readonly number[]; pointerY: number }): number {
+   const { activeIndex, itemCenterYs, pointerY } = props;
+   if (activeIndex < 0 || activeIndex >= itemCenterYs.length) return -1;
+   let nextIndex = activeIndex;
+   if (pointerY > itemCenterYs[activeIndex]) {
+      for (let index = activeIndex + 1; index < itemCenterYs.length; index += 1) {
+         if (pointerY <= itemCenterYs[index]) break;
+         nextIndex = index;
+      }
+   } else {
+      for (let index = activeIndex - 1; index >= 0; index -= 1) {
+         if (pointerY >= itemCenterYs[index]) break;
+         nextIndex = index;
+      }
+   }
+   return nextIndex;
+}
+
 function getInitialOrder(itemCount: number): number[] {
    return Array.from({ length: itemCount }, (_, index) => index);
 }
@@ -34,19 +52,27 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
    const renderOrder = order.length === childArray.length ? order : initialOrder;
    const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+   const itemCenterYsRef = useRef<number[]>([]);
    const orderRef = useRef(order);
    const activeElementRef = useRef<HTMLDivElement | null>(null);
    const pointerIdRef = useRef<number | null>(null);
    const activeIndexRef = useRef<number | null>(null);
    const dragFrameRef = useRef<number | null>(null);
+   const measureFrameRef = useRef<number | null>(null);
    const dragTranslateYRef = useRef(0);
    const pendingPointerYRef = useRef<number | null>(null);
    const pointerOffsetYRef = useRef(0);
    const didReorderRef = useRef(false);
 
    useEffect(() => {
+      itemRefs.current.length = childArray.length;
+      itemCenterYsRef.current.length = childArray.length;
+   }, [childArray.length]);
+
+   useEffect(() => {
       return () => {
          if (dragFrameRef.current !== null) cancelAnimationFrame(dragFrameRef.current);
+         if (measureFrameRef.current !== null) cancelAnimationFrame(measureFrameRef.current);
       };
    }, []);
 
@@ -59,6 +85,7 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
       dragTranslateYRef.current = 0;
       pendingPointerYRef.current = event.clientY;
       orderRef.current = renderOrder;
+      measureItemCenterYs();
       pointerIdRef.current = event.pointerId;
       activeIndexRef.current = index;
       didReorderRef.current = false;
@@ -82,6 +109,7 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
       didReorderRef.current = true;
       setDraggingIndex(nextIndex);
       setOrder(nextOrder);
+      queueMeasureItemCenterYs();
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>, shouldCommit = true): void {
@@ -92,10 +120,12 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
       const droppedOrder = orderRef.current;
       if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
       clearDragFrame();
+      clearMeasureFrame();
       resetActiveElementStyles();
       pointerIdRef.current = null;
       activeIndexRef.current = null;
       didReorderRef.current = false;
+      itemCenterYsRef.current.length = 0;
       if (didReorder) {
          orderRef.current = initialOrder;
          setOrder(initialOrder);
@@ -107,21 +137,8 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
    function getClosestItemIndex(clientY: number): number {
       const activeIndex = activeIndexRef.current;
       if (activeIndex === null) return -1;
-      let closestIndex = activeIndex;
-      for (let index = 0; index < orderRef.current.length; index += 1) {
-         if (index === activeIndex) continue;
-         const item = itemRefs.current[index];
-         if (!item) continue;
-         const rect = item.getBoundingClientRect();
-         const itemCenterY = rect.top + rect.height / 2;
-         if (index > activeIndex && clientY > itemCenterY) {
-            closestIndex = index;
-         } else if (index < activeIndex && clientY < itemCenterY) {
-            closestIndex = index;
-            break;
-         }
-      }
-      return closestIndex;
+      if (itemCenterYsRef.current.length !== orderRef.current.length) measureItemCenterYs();
+      return getReorderIndexByPointer({ activeIndex, itemCenterYs: itemCenterYsRef.current, pointerY: clientY });
    }
 
    function queueDragTransform(pointerY: number): void {
@@ -144,6 +161,30 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
       if (dragFrameRef.current === null) return;
       cancelAnimationFrame(dragFrameRef.current);
       dragFrameRef.current = null;
+   }
+
+   function clearMeasureFrame(): void {
+      if (measureFrameRef.current === null) return;
+      cancelAnimationFrame(measureFrameRef.current);
+      measureFrameRef.current = null;
+   }
+
+   function queueMeasureItemCenterYs(): void {
+      if (measureFrameRef.current !== null) return;
+      measureFrameRef.current = requestAnimationFrame(() => {
+         measureFrameRef.current = null;
+         measureItemCenterYs();
+      });
+   }
+
+   function measureItemCenterYs(): void {
+      itemCenterYsRef.current.length = orderRef.current.length;
+      for (let index = 0; index < orderRef.current.length; index += 1) {
+         const item = itemRefs.current[index];
+         if (!item) continue;
+         const rect = item.getBoundingClientRect();
+         itemCenterYsRef.current[index] = rect.top + rect.height / 2;
+      }
    }
 
    function resetActiveElementStyles(): void {
