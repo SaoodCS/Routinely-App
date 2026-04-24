@@ -35,7 +35,7 @@ export default function Settings(): React.JSX.Element {
    const [subItems, setSubItems] = useState<typeof subItemDummyData>(subItemDummyData);
 
    return (
-      <ScrollRestoreWrapper storeKey="settings" sx = {{height: '100%', overflow: 'auto'}}>
+      <ScrollRestoreWrapper storeKey="settings" sx={{ height: '100%', overflow: 'auto' }}>
          <DragAndDropList
             items={items}
             onDrop={(newOrderedItems) => {
