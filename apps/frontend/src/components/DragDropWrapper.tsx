@@ -72,10 +72,11 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
    }
 
    function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
-      if (pointerIdRef.current !== event.pointerId || activeIndexRef.current === null) return;
+      const { pointerId, clientY } = event;
+      if (pointerIdRef.current !== pointerId || activeIndexRef.current === null) return;
       event.stopPropagation();
       const activeIndex = activeIndexRef.current;
-      pendingPointerYRef.current = event.clientY;
+      pendingPointerYRef.current = clientY;
       if (dragFrameRef.current === null) {
          dragFrameRef.current = requestAnimationFrame(() => {
             dragFrameRef.current = null;
@@ -92,16 +93,11 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       if (itemCenterYsRef.current.length !== orderRef.current.length) measureItemCenterYs();
       if (activeIndex < 0 || activeIndex >= itemCenterYsRef.current.length) return;
       let nextIndex = activeIndex;
-      if (event.clientY > itemCenterYsRef.current[activeIndex]) {
-         for (let index = activeIndex + 1; index < itemCenterYsRef.current.length; index += 1) {
-            if (event.clientY <= itemCenterYsRef.current[index]) break;
-            nextIndex = index;
-         }
-      } else {
-         for (let index = activeIndex - 1; index >= 0; index -= 1) {
-            if (event.clientY >= itemCenterYsRef.current[index]) break;
-            nextIndex = index;
-         }
+      const direction = clientY > itemCenterYsRef.current[activeIndex] ? 1 : -1;
+      for (let index = activeIndex + direction; index >= 0 && index < itemCenterYsRef.current.length; index += direction) {
+         const hasNotCrossedItem = direction === 1 ? clientY <= itemCenterYsRef.current[index] : clientY >= itemCenterYsRef.current[index];
+         if (hasNotCrossedItem) break;
+         nextIndex = index;
       }
       if (nextIndex === activeIndex) return;
       const nextOrder = [...orderRef.current];
