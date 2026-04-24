@@ -36,21 +36,27 @@ export default function Settings(): React.JSX.Element {
    }
 
    return (
-      <DragDropWrapper items={items} onDrop={(newOrderedArr) => handleParentDrop(newOrderedArr)}>
-         {items.map((item) => (
-            <Box key={item.id}>
+      <DragDropWrapper
+         items={items}
+         getKey={(item) => item.id}
+         onDrop={(newOrderedArr) => handleParentDrop(newOrderedArr)}
+         renderItem={(item) => (
+            <Box>
                <Box>{item.name}</Box>
                <Box>{item.description}</Box>
-               <DragDropWrapper items={subItems[item.id]} onDrop={(newOrderedArr) => handleChildDrop(newOrderedArr, item.id)}>
-                  {subItems[item.id].map((subItem) => (
-                     <Box key={subItem.id}>
+               <DragDropWrapper
+                  items={subItems[item.id]}
+                  getKey={(subItem) => subItem.id}
+                  onDrop={(newOrderedArr) => handleChildDrop(newOrderedArr, item.id)}
+                  renderItem={(subItem) => (
+                     <Box>
                         <Box>{subItem.name}</Box>
                         <Box>{subItem.description}</Box>
                      </Box>
-                  ))}
-               </DragDropWrapper>
+                  )}
+               />
             </Box>
-         ))}
-      </DragDropWrapper>
+         )}
+      />
    );
 }

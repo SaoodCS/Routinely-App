@@ -1,11 +1,12 @@
 import { Box } from '@mui/material';
-import { Children, isValidElement, useEffect, useMemo, useRef, useState } from 'react';
-import type { PointerEvent, ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { Key, PointerEvent, ReactNode } from 'react';
 
-interface T_DragDropWrapperProps<T = ReactNode> {
-   children: ReactNode;
+interface T_DragDropWrapperProps<T> {
+   items: readonly T[];
+   getKey: (item: T) => Key;
+   renderItem: (item: T, index: number) => ReactNode;
    onDrop: (newOrder: T[]) => void;
-   items?: readonly T[];
    disabled?: boolean;
 }
 
@@ -39,17 +40,19 @@ export function getReorderIndexByPointer(props: { activeIndex: number; itemCente
    return nextIndex;
 }
 
+export function getOrderedItems<T>(items: readonly T[], order: readonly number[]): T[] {
+   return order.map((itemIndex) => items[itemIndex]);
+}
+
 function getInitialOrder(itemCount: number): number[] {
    return Array.from({ length: itemCount }, (_, index) => index);
 }
 
-export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperProps<T>): React.JSX.Element {
-   const { children, disabled = false, items, onDrop } = props;
-   const childArray = useMemo(() => Children.toArray(children), [children]);
-   const orderedValues = (items ?? childArray) as readonly T[];
-   const initialOrder = useMemo(() => getInitialOrder(childArray.length), [childArray.length]);
+export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): React.JSX.Element {
+   const { disabled = false, getKey, items, onDrop, renderItem } = props;
+   const initialOrder = useMemo(() => getInitialOrder(items.length), [items.length]);
    const [order, setOrder] = useState(() => initialOrder);
-   const renderOrder = order.length === childArray.length ? order : initialOrder;
+   const renderOrder = order.length === items.length ? order : initialOrder;
    const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
    const itemCenterYsRef = useRef<number[]>([]);
@@ -65,9 +68,9 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
    const didReorderRef = useRef(false);
 
    useEffect(() => {
-      itemRefs.current.length = childArray.length;
-      itemCenterYsRef.current.length = childArray.length;
-   }, [childArray.length]);
+      itemRefs.current.length = items.length;
+      itemCenterYsRef.current.length = items.length;
+   }, [items.length]);
 
    useEffect(() => {
       return () => {
@@ -131,7 +134,7 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
          setOrder(initialOrder);
       }
       setDraggingIndex(null);
-      if (shouldDrop) onDrop(droppedOrder.map((itemIndex) => orderedValues[itemIndex]));
+      if (shouldDrop) onDrop(getOrderedItems(items, droppedOrder));
    }
 
    function getClosestItemIndex(clientY: number): number {
@@ -202,10 +205,10 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
    return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, touchAction: disabled ? undefined : 'none' }}>
          {renderOrder.map((childIndex, index) => {
-            const child = childArray[childIndex];
+            const item = items[childIndex];
             return (
                <Box
-                  key={isValidElement(child) && child.key !== null ? child.key : childIndex}
+                  key={getKey(item)}
                   ref={(element: HTMLDivElement | null) => {
                      itemRefs.current[index] = element;
                   }}
@@ -222,7 +225,7 @@ export default function DragDropWrapper<T = ReactNode>(props: T_DragDropWrapperP
                      zIndex: draggingIndex === index ? 1 : undefined,
                   }}
                >
-                  {child}
+                  {renderItem(item, index)}
                </Box>
             );
          })}
