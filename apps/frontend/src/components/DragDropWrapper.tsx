@@ -1,22 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Key, PointerEvent, ReactNode } from 'react';
-
 const disabledListStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: 8 };
 const listStyle: CSSProperties = { ...disabledListStyle, touchAction: 'none' };
-const itemStyle: CSSProperties = {
-   cursor: 'grab',
-   position: 'relative',
-   transition: 'transform 120ms ease, opacity 120ms ease',
-   userSelect: 'none',
-};
-const draggingItemStyle: CSSProperties = {
-   ...itemStyle,
-   cursor: 'grabbing',
-   opacity: 0.9,
-   transition: 'none',
-   willChange: 'transform',
-   zIndex: 1,
-};
+const itemStyle: CSSProperties = { cursor: 'grab', position: 'relative', transition: 'transform 120ms ease, opacity 120ms ease', userSelect: 'none' };
+const draggingItemStyle: CSSProperties = { ...itemStyle, cursor: 'grabbing', opacity: 0.9, transition: 'none', willChange: 'transform', zIndex: 1 };
 
 interface T_DragDropWrapperProps<T> {
    items: readonly T[];
