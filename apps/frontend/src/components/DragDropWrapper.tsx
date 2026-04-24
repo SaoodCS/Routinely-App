@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, Key, PointerEvent, ReactNode } from 'react';
-const disabledListStyle: CSSProperties = { display: 'flex', flexDirection: 'column', gap: 8 };
-const listStyle: CSSProperties = { ...disabledListStyle, touchAction: 'none' };
-const itemStyle: CSSProperties = { cursor: 'grab', position: 'relative', transition: 'transform 120ms ease, opacity 120ms ease', userSelect: 'none' };
-const draggingItemStyle: CSSProperties = { ...itemStyle, cursor: 'grabbing', opacity: 0.9, transition: 'none', willChange: 'transform', zIndex: 1 };
+const disabledList: CSSProperties = { display: 'flex', flexDirection: 'column', gap: 8 };
+const listStyle: CSSProperties = { ...disabledList, touchAction: 'none' };
+const rowStyle: CSSProperties = { cursor: 'grab', position: 'relative', transition: 'transform 120ms ease, opacity 120ms ease', userSelect: 'none' };
+const dragStyle: CSSProperties = { ...row, cursor: 'grabbing', opacity: 0.9, transition: 'none', willChange: 'transform', zIndex: 1 };
 
 interface T_DragDropWrapperProps<T> {
    items: readonly T[];
@@ -42,8 +42,8 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       for (let index = 0; index < orderRef.current.length; index += 1) {
          const item = itemElements.item(index);
          if (!(item instanceof HTMLElement)) continue;
-         const rect = item.getBoundingClientRect();
-         itemCenterYsRef.current[index] = rect.top + rect.height / 2;
+         const { height, top } = item.getBoundingClientRect();
+         itemCenterYsRef.current[index] = top + height / 2;
       }
    }
 
@@ -66,16 +66,14 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       const index = Number(itemElement.dataset.dragIndex);
       if (!Number.isInteger(index)) return;
       event.stopPropagation();
-      const rect = itemElement.getBoundingClientRect();
       let scrollTarget = itemElement.parentElement;
       while (scrollTarget) {
          const overflowY = getComputedStyle(scrollTarget).overflowY;
-         const isScrollable = scrollTarget.scrollHeight > scrollTarget.clientHeight && (overflowY === 'auto' || overflowY === 'scroll');
-         if (isScrollable) break;
+         if (scrollTarget.scrollHeight > scrollTarget.clientHeight && (overflowY === 'auto' || overflowY === 'scroll')) break;
          scrollTarget = scrollTarget.parentElement;
       }
       activeElementRef.current = itemElement;
-      pointerOffsetYRef.current = event.clientY - rect.top;
+      pointerOffsetYRef.current = event.clientY - itemElement.getBoundingClientRect().top;
       dragTranslateYRef.current = 0;
       pendingPointerYRef.current = event.clientY;
       scrollTargetRef.current = scrollTarget ?? (document.scrollingElement as HTMLElement | null) ?? document.documentElement;
@@ -91,16 +89,15 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
 
    function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
       const { pointerId, clientY } = event;
-      if (pointerIdRef.current !== pointerId || activeIndexRef.current === null) return;
-      event.stopPropagation();
       const activeIndex = activeIndexRef.current;
+      if (pointerIdRef.current !== pointerId || activeIndex === null) return;
+      event.stopPropagation();
       pendingPointerYRef.current = clientY;
       if (scrollFrameRef.current === null) scrollFrameRef.current = requestAnimationFrame(scrollWhileDragging);
       if (dragFrameRef.current === null) {
          dragFrameRef.current = requestAnimationFrame(() => {
             dragFrameRef.current = null;
-            const pendingPointerY = pendingPointerYRef.current;
-            if (pendingPointerY !== null) moveActiveElementToPointer(pendingPointerY);
+            if (pendingPointerYRef.current !== null) moveActiveElementToPointer(pendingPointerYRef.current);
          });
       }
       if (itemCenterYsRef.current.length !== orderRef.current.length) measureItemCenterYs();
@@ -111,9 +108,7 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
    function moveActiveElementToPointer(clientY: number): void {
       const element = activeElementRef.current;
       if (!element) return;
-      const rect = element.getBoundingClientRect();
-      const itemTop = rect.top - dragTranslateYRef.current;
-      const translateY = clientY - pointerOffsetYRef.current - itemTop;
+      const translateY = clientY - pointerOffsetYRef.current - element.getBoundingClientRect().top + dragTranslateYRef.current;
       dragTranslateYRef.current = translateY;
       element.style.transform = `translate3d(0, ${translateY}px, 0)`;
    }
@@ -131,7 +126,6 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       if (nextIndex === activeIndex) return;
       const nextOrder = [...orderRef.current];
       const [movedItem] = nextOrder.splice(activeIndex, 1);
-      if (movedItem === undefined) return;
       nextOrder.splice(nextIndex, 0, movedItem);
       orderRef.current = nextOrder;
       activeIndexRef.current = nextIndex;
@@ -147,12 +141,10 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       if (!scrollTarget || pointerY === null) return;
       const isPageScroll = scrollTarget === document.scrollingElement || scrollTarget === document.documentElement || scrollTarget === document.body;
       const { bottom, top } = isPageScroll ? { bottom: window.innerHeight, top: 0 } : scrollTarget.getBoundingClientRect();
-      const edgeSize = 64;
-      const edgeDistance = pointerY < top + edgeSize ? pointerY - top - edgeSize : pointerY > bottom - edgeSize ? pointerY - bottom + edgeSize : 0;
+      const edgeDistance = pointerY < top + 64 ? pointerY - top - 64 : pointerY > bottom - 64 ? pointerY - bottom + 64 : 0;
       if (edgeDistance === 0) return;
-
       const previousScrollTop = scrollTarget.scrollTop;
-      scrollTarget.scrollTop += Math.sign(edgeDistance) * Math.ceil(Math.min(1, Math.abs(edgeDistance) / edgeSize) * 18);
+      scrollTarget.scrollTop += Math.sign(edgeDistance) * Math.ceil(Math.min(1, Math.abs(edgeDistance) / 64) * 18);
       const scrollDelta = scrollTarget.scrollTop - previousScrollTop;
       if (scrollDelta === 0) return;
       moveActiveElementToPointer(pointerY);
@@ -165,23 +157,16 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       if (pointerIdRef.current !== event.pointerId) return;
       event.stopPropagation();
       const didReorder = didReorderRef.current;
-      const shouldDrop = shouldCommit && didReorder;
       const droppedOrder = orderRef.current;
       const activeElement = activeElementRef.current;
       if (activeElement?.hasPointerCapture(event.pointerId)) activeElement.releasePointerCapture(event.pointerId);
       if (dragFrameRef.current !== null) cancelAnimationFrame(dragFrameRef.current);
       if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
-      dragFrameRef.current = null;
-      scrollFrameRef.current = null;
+      dragFrameRef.current = scrollFrameRef.current = null;
       if (activeElement) activeElement.style.transform = '';
-      activeElementRef.current = null;
-      dragTranslateYRef.current = 0;
-      pendingPointerYRef.current = null;
-      pointerOffsetYRef.current = 0;
-      scrollOffsetYRef.current = 0;
-      scrollTargetRef.current = null;
-      pointerIdRef.current = null;
-      activeIndexRef.current = null;
+      activeElementRef.current = scrollTargetRef.current = null;
+      dragTranslateYRef.current = pointerOffsetYRef.current = scrollOffsetYRef.current = 0;
+      pointerIdRef.current = activeIndexRef.current = pendingPointerYRef.current = null;
       didReorderRef.current = false;
       itemCenterYsRef.current.length = 0;
       if (didReorder) {
@@ -189,7 +174,7 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
          setOrder(initialOrder);
       }
       setDraggingIndex(null);
-      if (shouldDrop) onDrop(droppedOrder.map((itemIndex) => items[itemIndex]));
+      if (shouldCommit && didReorder) onDrop(droppedOrder.map((itemIndex) => items[itemIndex]));
    }
 
    return (
@@ -199,16 +184,17 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
          onPointerDown={handlePointerDown}
          onPointerMove={handlePointerMove}
          onPointerUp={handlePointerEnd}
-         style={disabled ? disabledListStyle : listStyle}
+         style={disabled ? disabledList : listStyle}
       >
-         {renderOrder.map((childIndex, index) => {
-            const item = items[childIndex];
-            return (
-               <div key={getKey(item)} data-drag-index={index} style={disabled ? undefined : draggingIndex === index ? draggingItemStyle : itemStyle}>
-                  {renderItem(item, index)}
-               </div>
-            );
-         })}
+         {renderOrder.map((childIndex, index) => (
+            <div
+               key={getKey(items[childIndex])}
+               data-drag-index={index}
+               style={disabled ? undefined : draggingIndex === index ? dragStyle : rowStyle}
+            >
+               {renderItem(items[childIndex], index)}
+            </div>
+         ))}
       </div>
    );
 }
