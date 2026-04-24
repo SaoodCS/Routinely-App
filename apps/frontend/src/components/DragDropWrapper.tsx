@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Key, PointerEvent, ReactNode } from 'react';
 
 interface T_DragDropWrapperProps<T> {
@@ -16,10 +16,6 @@ export function reorderArray<T>(items: readonly T[], fromIndex: number, toIndex:
    const [movedItem] = nextItems.splice(fromIndex, 1);
    nextItems.splice(toIndex, 0, movedItem);
    return nextItems;
-}
-
-export function getDragTranslateY(props: { itemTop: number; pointerOffsetY: number; pointerY: number }): number {
-   return props.pointerY - props.pointerOffsetY - props.itemTop;
 }
 
 export function getReorderIndexByPointer(props: { activeIndex: number; itemCenterYs: readonly number[]; pointerY: number }): number {
@@ -40,17 +36,9 @@ export function getReorderIndexByPointer(props: { activeIndex: number; itemCente
    return nextIndex;
 }
 
-export function getOrderedItems<T>(items: readonly T[], order: readonly number[]): T[] {
-   return order.map((itemIndex) => items[itemIndex]);
-}
-
-function getInitialOrder(itemCount: number): number[] {
-   return Array.from({ length: itemCount }, (_, index) => index);
-}
-
 export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): React.JSX.Element {
    const { disabled = false, getKey, items, onDrop, renderItem } = props;
-   const initialOrder = useMemo(() => getInitialOrder(items.length), [items.length]);
+   const initialOrder = useMemo(() => Array.from({ length: items.length }, (_, index) => index), [items.length]);
    const [order, setOrder] = useState(() => initialOrder);
    const renderOrder = order.length === items.length ? order : initialOrder;
    const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -61,11 +49,20 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
    const pointerIdRef = useRef<number | null>(null);
    const activeIndexRef = useRef<number | null>(null);
    const dragFrameRef = useRef<number | null>(null);
-   const measureFrameRef = useRef<number | null>(null);
    const dragTranslateYRef = useRef(0);
    const pendingPointerYRef = useRef<number | null>(null);
    const pointerOffsetYRef = useRef(0);
    const didReorderRef = useRef(false);
+
+   function measureItemCenterYs(): void {
+      itemCenterYsRef.current.length = orderRef.current.length;
+      for (let index = 0; index < orderRef.current.length; index += 1) {
+         const item = itemRefs.current[index];
+         if (!item) continue;
+         const rect = item.getBoundingClientRect();
+         itemCenterYsRef.current[index] = rect.top + rect.height / 2;
+      }
+   }
 
    useEffect(() => {
       itemRefs.current.length = items.length;
@@ -75,9 +72,12 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
    useEffect(() => {
       return () => {
          if (dragFrameRef.current !== null) cancelAnimationFrame(dragFrameRef.current);
-         if (measureFrameRef.current !== null) cancelAnimationFrame(measureFrameRef.current);
       };
    }, []);
+
+   useLayoutEffect(() => {
+      if (activeIndexRef.current !== null) measureItemCenterYs();
+   }, [order]);
 
    function handlePointerDown(event: PointerEvent<HTMLDivElement>, index: number): void {
       if (disabled || event.button !== 0) return;
@@ -92,9 +92,7 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       pointerIdRef.current = event.pointerId;
       activeIndexRef.current = index;
       didReorderRef.current = false;
-      event.currentTarget.style.transition = 'none';
       event.currentTarget.style.transform = 'translate3d(0, 0, 0) scale(1.01)';
-      event.currentTarget.style.willChange = 'transform';
       setDraggingIndex(index);
       event.currentTarget.setPointerCapture(event.pointerId);
    }
@@ -112,7 +110,6 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       didReorderRef.current = true;
       setDraggingIndex(nextIndex);
       setOrder(nextOrder);
-      queueMeasureItemCenterYs();
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>, shouldCommit = true): void {
@@ -123,7 +120,6 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       const droppedOrder = orderRef.current;
       if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
       clearDragFrame();
-      clearMeasureFrame();
       resetActiveElementStyles();
       pointerIdRef.current = null;
       activeIndexRef.current = null;
@@ -134,7 +130,7 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
          setOrder(initialOrder);
       }
       setDraggingIndex(null);
-      if (shouldDrop) onDrop(getOrderedItems(items, droppedOrder));
+      if (shouldDrop) onDrop(droppedOrder.map((itemIndex) => items[itemIndex]));
    }
 
    function getClosestItemIndex(clientY: number): number {
@@ -154,7 +150,7 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
          if (!element || pendingPointerY === null) return;
          const rect = element.getBoundingClientRect();
          const itemTop = rect.top - dragTranslateYRef.current;
-         const translateY = getDragTranslateY({ itemTop, pointerOffsetY: pointerOffsetYRef.current, pointerY: pendingPointerY });
+         const translateY = pendingPointerY - pointerOffsetYRef.current - itemTop;
          dragTranslateYRef.current = translateY;
          element.style.transform = `translate3d(0, ${translateY}px, 0) scale(1.01)`;
       });
@@ -166,36 +162,10 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       dragFrameRef.current = null;
    }
 
-   function clearMeasureFrame(): void {
-      if (measureFrameRef.current === null) return;
-      cancelAnimationFrame(measureFrameRef.current);
-      measureFrameRef.current = null;
-   }
-
-   function queueMeasureItemCenterYs(): void {
-      if (measureFrameRef.current !== null) return;
-      measureFrameRef.current = requestAnimationFrame(() => {
-         measureFrameRef.current = null;
-         measureItemCenterYs();
-      });
-   }
-
-   function measureItemCenterYs(): void {
-      itemCenterYsRef.current.length = orderRef.current.length;
-      for (let index = 0; index < orderRef.current.length; index += 1) {
-         const item = itemRefs.current[index];
-         if (!item) continue;
-         const rect = item.getBoundingClientRect();
-         itemCenterYsRef.current[index] = rect.top + rect.height / 2;
-      }
-   }
-
    function resetActiveElementStyles(): void {
       const element = activeElementRef.current;
       if (!element) return;
       element.style.transform = '';
-      element.style.transition = '';
-      element.style.willChange = '';
       activeElementRef.current = null;
       dragTranslateYRef.current = 0;
       pendingPointerYRef.current = null;
@@ -220,8 +190,9 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
                      cursor: disabled ? undefined : draggingIndex === index ? 'grabbing' : 'grab',
                      opacity: draggingIndex === index ? 0.9 : 1,
                      position: 'relative',
-                     transition: 'transform 120ms ease, opacity 120ms ease',
+                     transition: draggingIndex === index ? 'none' : 'transform 120ms ease, opacity 120ms ease',
                      userSelect: disabled ? undefined : 'none',
+                     willChange: draggingIndex === index ? 'transform' : undefined,
                      zIndex: draggingIndex === index ? 1 : undefined,
                   }}
                >
