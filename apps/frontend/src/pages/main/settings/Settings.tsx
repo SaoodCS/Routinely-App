@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { useState } from 'react';
 import DragDropWrapper from '../../../components/DragDropWrapper';
 import ScrollRestoreWrapper from '../../../components/ScrollRestoreWrapper';
+import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 
 const itemDummyData: { id: number; name: string; description: string }[] = [
    { id: 11, name: 'Item 1', description: 'Description of item 1' },
@@ -53,8 +54,10 @@ export default function Settings(): React.JSX.Element {
             onDrop={(newOrderedArr) => handleParentDrop(newOrderedArr)}
             renderItem={(item) => (
                <Box>
-                  <Box>{item.name}</Box>
-                  <Box>{item.description}</Box>
+                  <SwipeActionWrapper>
+                     <Box>{item.name}</Box>
+                     <Box>{item.description}</Box>
+                  </SwipeActionWrapper>
                   {subItems[item.id] && (
                      <DragDropWrapper
                         items={subItems[item.id]}
