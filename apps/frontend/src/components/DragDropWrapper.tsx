@@ -10,32 +10,6 @@ interface T_DragDropWrapperProps<T> {
    disabled?: boolean;
 }
 
-export function reorderArray<T>(items: readonly T[], fromIndex: number, toIndex: number): T[] {
-   if (fromIndex < 0 || toIndex < 0 || fromIndex >= items.length || toIndex >= items.length) return [...items];
-   const nextItems = [...items];
-   const [movedItem] = nextItems.splice(fromIndex, 1);
-   nextItems.splice(toIndex, 0, movedItem);
-   return nextItems;
-}
-
-export function getReorderIndexByPointer(props: { activeIndex: number; itemCenterYs: readonly number[]; pointerY: number }): number {
-   const { activeIndex, itemCenterYs, pointerY } = props;
-   if (activeIndex < 0 || activeIndex >= itemCenterYs.length) return -1;
-   let nextIndex = activeIndex;
-   if (pointerY > itemCenterYs[activeIndex]) {
-      for (let index = activeIndex + 1; index < itemCenterYs.length; index += 1) {
-         if (pointerY <= itemCenterYs[index]) break;
-         nextIndex = index;
-      }
-   } else {
-      for (let index = activeIndex - 1; index >= 0; index -= 1) {
-         if (pointerY >= itemCenterYs[index]) break;
-         nextIndex = index;
-      }
-   }
-   return nextIndex;
-}
-
 export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): React.JSX.Element {
    const { disabled = false, getKey, items, onDrop, renderItem } = props;
    const initialOrder = useMemo(() => Array.from({ length: items.length }, (_, index) => index), [items.length]);
@@ -100,11 +74,40 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
    function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
       if (pointerIdRef.current !== event.pointerId || activeIndexRef.current === null) return;
       event.stopPropagation();
-      queueDragTransform(event.clientY);
-      const nextIndex = getClosestItemIndex(event.clientY);
       const activeIndex = activeIndexRef.current;
-      if (nextIndex === -1 || nextIndex === activeIndex) return;
-      const nextOrder = reorderArray(orderRef.current, activeIndex, nextIndex);
+      pendingPointerYRef.current = event.clientY;
+      if (dragFrameRef.current === null) {
+         dragFrameRef.current = requestAnimationFrame(() => {
+            dragFrameRef.current = null;
+            const element = activeElementRef.current;
+            const pendingPointerY = pendingPointerYRef.current;
+            if (!element || pendingPointerY === null) return;
+            const rect = element.getBoundingClientRect();
+            const itemTop = rect.top - dragTranslateYRef.current;
+            const translateY = pendingPointerY - pointerOffsetYRef.current - itemTop;
+            dragTranslateYRef.current = translateY;
+            element.style.transform = `translate3d(0, ${translateY}px, 0) scale(1.01)`;
+         });
+      }
+      if (itemCenterYsRef.current.length !== orderRef.current.length) measureItemCenterYs();
+      if (activeIndex < 0 || activeIndex >= itemCenterYsRef.current.length) return;
+      let nextIndex = activeIndex;
+      if (event.clientY > itemCenterYsRef.current[activeIndex]) {
+         for (let index = activeIndex + 1; index < itemCenterYsRef.current.length; index += 1) {
+            if (event.clientY <= itemCenterYsRef.current[index]) break;
+            nextIndex = index;
+         }
+      } else {
+         for (let index = activeIndex - 1; index >= 0; index -= 1) {
+            if (event.clientY >= itemCenterYsRef.current[index]) break;
+            nextIndex = index;
+         }
+      }
+      if (nextIndex === activeIndex) return;
+      const nextOrder = [...orderRef.current];
+      const [movedItem] = nextOrder.splice(activeIndex, 1);
+      if (movedItem === undefined) return;
+      nextOrder.splice(nextIndex, 0, movedItem);
       orderRef.current = nextOrder;
       activeIndexRef.current = nextIndex;
       didReorderRef.current = true;
@@ -119,8 +122,15 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       const shouldDrop = shouldCommit && didReorder;
       const droppedOrder = orderRef.current;
       if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-      clearDragFrame();
-      resetActiveElementStyles();
+      if (dragFrameRef.current !== null) {
+         cancelAnimationFrame(dragFrameRef.current);
+         dragFrameRef.current = null;
+      }
+      if (activeElementRef.current) activeElementRef.current.style.transform = '';
+      activeElementRef.current = null;
+      dragTranslateYRef.current = 0;
+      pendingPointerYRef.current = null;
+      pointerOffsetYRef.current = 0;
       pointerIdRef.current = null;
       activeIndexRef.current = null;
       didReorderRef.current = false;
@@ -131,45 +141,6 @@ export default function DragDropWrapper<T>(props: T_DragDropWrapperProps<T>): Re
       }
       setDraggingIndex(null);
       if (shouldDrop) onDrop(droppedOrder.map((itemIndex) => items[itemIndex]));
-   }
-
-   function getClosestItemIndex(clientY: number): number {
-      const activeIndex = activeIndexRef.current;
-      if (activeIndex === null) return -1;
-      if (itemCenterYsRef.current.length !== orderRef.current.length) measureItemCenterYs();
-      return getReorderIndexByPointer({ activeIndex, itemCenterYs: itemCenterYsRef.current, pointerY: clientY });
-   }
-
-   function queueDragTransform(pointerY: number): void {
-      pendingPointerYRef.current = pointerY;
-      if (dragFrameRef.current !== null) return;
-      dragFrameRef.current = requestAnimationFrame(() => {
-         dragFrameRef.current = null;
-         const element = activeElementRef.current;
-         const pendingPointerY = pendingPointerYRef.current;
-         if (!element || pendingPointerY === null) return;
-         const rect = element.getBoundingClientRect();
-         const itemTop = rect.top - dragTranslateYRef.current;
-         const translateY = pendingPointerY - pointerOffsetYRef.current - itemTop;
-         dragTranslateYRef.current = translateY;
-         element.style.transform = `translate3d(0, ${translateY}px, 0) scale(1.01)`;
-      });
-   }
-
-   function clearDragFrame(): void {
-      if (dragFrameRef.current === null) return;
-      cancelAnimationFrame(dragFrameRef.current);
-      dragFrameRef.current = null;
-   }
-
-   function resetActiveElementStyles(): void {
-      const element = activeElementRef.current;
-      if (!element) return;
-      element.style.transform = '';
-      activeElementRef.current = null;
-      dragTranslateYRef.current = 0;
-      pendingPointerYRef.current = null;
-      pointerOffsetYRef.current = 0;
    }
 
    return (
