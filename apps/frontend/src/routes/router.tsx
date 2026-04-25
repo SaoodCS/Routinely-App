@@ -11,8 +11,8 @@ import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
 import SearchQuery from '../pages/main/SearchQuery';
 import Settings from '../pages/main/settings/Settings';
-import CreateTag from '../pages/main/tags/CreateTag';
-import SortTags from '../pages/main/tags/SortTags';
+import CreateTagButton from '../pages/main/tags/CreateTagButtonButton';
+import SortTagsButton from '../pages/main/tags/SortTagsButtonButton';
 import Tags from '../pages/main/tags/Tags';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
@@ -115,8 +115,8 @@ export const router = createBrowserRouter(
                            title: 'Tags',
                            RightElement: () => (
                               <>
-                                 <CreateTag />
-                                 <SortTags />
+                                 <CreateTagButton />
+                                 <SortTagsButton />
                                  <SearchQuery />
                               </>
                            ),
