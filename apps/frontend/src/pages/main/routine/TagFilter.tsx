@@ -29,17 +29,13 @@ export default function TagFilter(): React.JSX.Element {
                <MenuItem disabled>No tags</MenuItem>
             ) : (
                tags.map((tag, i) => (
-                  <>
+                  <span key={tag.id}>
                      {i > 0 && <Divider />}
-                     <MenuItem
-                        key={tag.id}
-                        onClick={() => handleToggleTag(i)}
-                        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                     >
+                     <MenuItem onClick={() => handleToggleTag(i)} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <ListItemText>{tag.label}</ListItemText>
                         <Switch checked={tag.isEnabled} size="small" />
                      </MenuItem>
-                  </>
+                  </span>
                ))
             )}
          </Menu>
