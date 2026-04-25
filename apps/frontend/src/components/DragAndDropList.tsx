@@ -1,3 +1,4 @@
+// NOTE: SET OVERFLOW: AUTO IN THE PARENT ELEMENT THAT WRAPS AROUND THIS COMPONENT TO ENABLE SCROLLING
 import type { CSSProperties, JSX, PointerEvent, ReactNode } from 'react';
 import { useRef } from 'react';
 
