@@ -1,48 +1,53 @@
-import { useCallback, useEffect, useRef } from 'react';
-import type { CSSProperties, RefObject } from 'react';
+import { useCallback, useRef } from 'react';
+import type { RefCallback } from 'react';
 
 interface IUseScrollSaverReturned {
-   ref: RefObject<HTMLDivElement | null>;
-   handleOnScroll: () => void;
+   ref: RefCallback<HTMLDivElement>;
    scrollToTop: (smooth?: boolean) => void;
-   scrollSaverStyle: CSSProperties;
 }
 
-const scrollSaverStyle: CSSProperties = { overflow: 'scroll' };
-const disabledScrollSaverStyle: CSSProperties = {};
-const disabledRef: RefObject<HTMLDivElement | null> = { current: null };
-
 export default function useScrollSaver(storageId: string, enabled: boolean = true): IUseScrollSaverReturned {
-   const ref = useRef<HTMLDivElement>(null);
+   const elementRef = useRef<HTMLDivElement | null>(null);
+   const previousOverflowRef = useRef<string>('');
+   const storageKey = `${storageId}.scrollPos`;
 
-   useEffect(() => {
-      if (!enabled) return;
-      const scrollPos = sessionStorage.getItem(`${storageId}.scrollPos`);
-      const savedScrollTop = scrollPos ? Number.parseInt(scrollPos, 10) : 0;
-      if (!Number.isNaN(savedScrollTop) && ref.current) ref.current.scrollTop = savedScrollTop;
-   }, [enabled, storageId]);
+   const saveScrollPosition = useCallback((): void => {
+      if (!elementRef.current) return;
+      sessionStorage.setItem(storageKey, elementRef.current.scrollTop.toString());
+   }, [storageKey]);
 
-   const handleOnScroll = useCallback((): void => {
-      if (!enabled || !ref.current) return;
-      sessionStorage.setItem(`${storageId}.scrollPos`, ref.current.scrollTop.toString());
-   }, [enabled, storageId]);
+   const detachElement = useCallback((): void => {
+      if (!elementRef.current) return;
+      elementRef.current.removeEventListener('scroll', saveScrollPosition);
+      elementRef.current.style.overflow = previousOverflowRef.current;
+      elementRef.current = null;
+   }, [saveScrollPosition]);
+
+   const ref = useCallback<RefCallback<HTMLDivElement>>(
+      (element) => {
+         detachElement();
+         if (!enabled || !element) return;
+         const scrollPos = sessionStorage.getItem(storageKey);
+         const savedScrollTop = scrollPos ? Number.parseInt(scrollPos, 10) : 0;
+         previousOverflowRef.current = element.style.overflow;
+         elementRef.current = element;
+         element.style.overflow = 'scroll';
+         if (!Number.isNaN(savedScrollTop)) element.scrollTop = savedScrollTop;
+         element.addEventListener('scroll', saveScrollPosition);
+      },
+      [detachElement, enabled, saveScrollPosition, storageKey],
+   );
 
    const scrollToTop = useCallback(
       (smooth?: boolean): void => {
          if (!enabled) return;
-         sessionStorage.setItem(`${storageId}.scrollPos`, '0');
-         if (ref.current) {
-            if (smooth) ref.current.scrollTo({ top: 0, behavior: 'smooth' });
-            else ref.current.scrollTop = 0;
-         }
+         sessionStorage.setItem(storageKey, '0');
+         if (!elementRef.current) return;
+         if (smooth) elementRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+         else elementRef.current.scrollTop = 0;
       },
-      [enabled, storageId],
+      [enabled, storageKey],
    );
 
-   return {
-      ref: enabled ? ref : disabledRef,
-      handleOnScroll: enabled ? handleOnScroll : (): void => {},
-      scrollToTop: enabled ? scrollToTop : (): void => {},
-      scrollSaverStyle: enabled ? scrollSaverStyle : disabledScrollSaverStyle,
-   };
+   return { ref, scrollToTop };
 }
