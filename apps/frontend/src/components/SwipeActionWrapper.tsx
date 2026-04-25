@@ -66,44 +66,10 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
       event.stopPropagation();
    }
 
-   function revealDistance(side: 'left' | 'right'): number {
-      if (side === 'left') return Math.max(offsetX, 0);
-      return Math.max(-offsetX, 0);
-   }
-
    return (
       <div style={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y', userSelect: isDragging ? 'none' : undefined }}>
-         {[leftAction, rightAction].map(
-            (action, i) =>
-               action && (
-                  <div
-                     key={i}
-                     style={{
-                        position: 'absolute',
-                        insetBlock: 0,
-                        [i === 0 ? 'left' : 'right']: 0,
-                        alignItems: 'center',
-                        backgroundColor: action.backgroundColor ?? '#1b5e20',
-                        boxSizing: 'border-box',
-                        color: action.color ?? '#fff',
-                        display: 'flex',
-                        gap: '8px',
-                        justifyContent: 'center',
-                        opacity: revealDistance(i === 0 ? 'left' : 'right') > 0 ? 1 : 0,
-                        overflow: 'hidden',
-                        paddingInline: '16px',
-                        transform: `translateX(${i === 0 ? revealDistance('left') - 112 : 112 - revealDistance('right')}px)`,
-                        transition: isDragging ? 'none' : 'opacity 120ms ease, transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-                        width: `${112}px`,
-                     }}
-                  >
-                     {action.icon}
-                     <span style={{ flexShrink: 0, fontSize: '0.875rem', fontWeight: 700, lineHeight: 1.43, whiteSpace: 'nowrap' }}>
-                        {action.label}
-                     </span>
-                  </div>
-               ),
-         )}
+         {leftAction && <ActionBackground action={leftAction} isDragging={isDragging} revealDistance={Math.max(offsetX, 0)} side="left" />}
+         {rightAction && <ActionBackground action={rightAction} isDragging={isDragging} revealDistance={Math.max(-offsetX, 0)} side="right" />}
          <div
             onClickCapture={handleClickCapture}
             onPointerCancel={handlePointerEnd}
@@ -120,6 +86,44 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
          >
             {children}
          </div>
+      </div>
+   );
+}
+//
+//
+//
+function ActionBackground(props: {
+   action: Exclude<T_SwipeActionWrapperProps['leftAction'], undefined>;
+   isDragging: boolean;
+   revealDistance: number;
+   side: 'left' | 'right';
+}): React.JSX.Element {
+   const { action, isDragging, revealDistance, side } = props;
+   const translateX = side === 'left' ? revealDistance - 112 : 112 - revealDistance;
+
+   return (
+      <div
+         style={{
+            position: 'absolute',
+            insetBlock: 0,
+            [side]: 0,
+            alignItems: 'center',
+            backgroundColor: action.backgroundColor ?? '#1b5e20',
+            boxSizing: 'border-box',
+            color: action.color ?? '#fff',
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'center',
+            opacity: revealDistance > 0 ? 1 : 0,
+            overflow: 'hidden',
+            paddingInline: '16px',
+            transform: `translateX(${translateX}px)`,
+            transition: isDragging ? 'none' : 'opacity 120ms ease, transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+            width: `${112}px`,
+         }}
+      >
+         {action.icon}
+         <span style={{ flexShrink: 0, fontSize: '0.875rem', fontWeight: 700, lineHeight: 1.43, whiteSpace: 'nowrap' }}>{action.label}</span>
       </div>
    );
 }
