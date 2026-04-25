@@ -12,6 +12,7 @@ import Tags from '../pages/main/tags/Tags';
 import CreateTask from '../pages/main/routine/CreateTask';
 import TagFilter from '../pages/main/routine/TagFilter';
 import CreateTag from '../pages/main/tags/CreateTag';
+import SortTags from '../pages/main/tags/SortTags';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -93,7 +94,7 @@ export const router = createBrowserRouter(
                                  title: 'Evening',
                                  RightElement: () => (
                                     <>
-                                       <CreateTask section="morning" />
+                                       <CreateTask section="evening" />
                                        <TagFilter />
                                     </>
                                  ),
@@ -109,7 +110,12 @@ export const router = createBrowserRouter(
                      handle={{
                         header: {
                            title: 'Tags',
-                           RightElement: () => <CreateTag />,
+                           RightElement: () => (
+                              <>
+                                 <CreateTag />
+                                 <SortTags />
+                              </>
+                           ),
                         },
                         nav: { inBottomNav: true },
                      }}
