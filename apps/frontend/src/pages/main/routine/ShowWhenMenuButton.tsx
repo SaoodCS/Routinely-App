@@ -1,16 +1,16 @@
-import { useState, type JSX } from 'react';
-import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app';
-import { Divider, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
 import { Check, ExpandCircleDownOutlined } from '@mui/icons-material';
+import { Divider, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
+import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app';
+import { useState, type JSX } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
-interface T_ShowWhenMenuProps {
+interface T_ShowWhenMenuButtonProps {
    section: T_Routine_Section;
    indexes: [number] | [number, number] | [number, number, number];
    task: T_Task;
 }
 
-export default function ShowWhenMenu({ indexes, section, task }: T_ShowWhenMenuProps): JSX.Element {
+export default function ShowWhenMenuButton({ indexes, section, task }: T_ShowWhenMenuButtonProps): JSX.Element {
    const [tags] = useLocalStorage<T_Tag[]>('tags', []);
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);

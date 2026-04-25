@@ -1,10 +1,10 @@
 import { FilterListOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
-import { useState } from 'react';
 import type { T_Tag } from '@repo/types/app';
+import { useState } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
-export default function TagFilter(): React.JSX.Element {
+export default function TagToggleMenuButton(): React.JSX.Element {
    const [tags, setTags] = useLocalStorage<T_Tag[]>('tags', []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 

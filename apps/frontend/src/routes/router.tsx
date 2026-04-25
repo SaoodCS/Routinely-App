@@ -4,16 +4,16 @@ import { Logout } from '../pages/auth/Logout';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import Settings from '../pages/main/settings/Settings';
-import RoutineLayout from '../pages/main/routine/RoutineLayout';
-import MorningRoutine from '../pages/main/routine/MorningRoutine';
+import CreateTaskButton from '../pages/main/routine/CreateTaskButtonButton';
 import EveningRoutine from '../pages/main/routine/EveningRoutine';
-import Tags from '../pages/main/tags/Tags';
-import CreateTask from '../pages/main/routine/CreateTask';
-import TagFilter from '../pages/main/routine/TagFilter';
+import MorningRoutine from '../pages/main/routine/MorningRoutine';
+import RoutineLayout from '../pages/main/routine/RoutineLayout';
+import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
+import SearchQuery from '../pages/main/SearchQuery';
+import Settings from '../pages/main/settings/Settings';
 import CreateTag from '../pages/main/tags/CreateTag';
 import SortTags from '../pages/main/tags/SortTags';
-import SearchQuery from '../pages/main/SearchQuery';
+import Tags from '../pages/main/tags/Tags';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -79,8 +79,8 @@ export const router = createBrowserRouter(
                                  title: 'Morning',
                                  RightElement: () => (
                                     <>
-                                       <CreateTask section="morning" />
-                                       <TagFilter />
+                                       <CreateTaskButton section="morning" />
+                                       <TagToggleMenuButton />
                                        <SearchQuery />
                                     </>
                                  ),
@@ -96,8 +96,8 @@ export const router = createBrowserRouter(
                                  title: 'Evening',
                                  RightElement: () => (
                                     <>
-                                       <CreateTask section="evening" />
-                                       <TagFilter />
+                                       <CreateTaskButton section="evening" />
+                                       <TagToggleMenuButton />
                                        <SearchQuery />
                                     </>
                                  ),

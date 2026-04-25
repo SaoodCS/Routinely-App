@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/purity */
-import type { T_Task } from '@repo/types/app';
-import { Box, Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
-import { useSearchParams } from 'react-router';
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
-import useLocalStorage from '../../../hooks/useLocalStorage';
-import useScrollSaver from '../../../hooks/useScrollSaver';
+import { Box, Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import type { T_Task } from '@repo/types/app';
+import { useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import ShowWhenMenu from './ShowWhenMenu';
-import HideWhenMenu from './HideWhenMenu';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import useScrollSaver from '../../../hooks/useScrollSaver';
+import HideWhenMenuButton from './HideWhenMenuButtonButton';
+import ShowWhenMenuButton from './ShowWhenMenuButtonButton';
 
 export default function MorningRoutine(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -88,8 +88,8 @@ export default function MorningRoutine(): React.JSX.Element {
                            <IconButton onClick={() => addSubTask([i])} size="small">
                               <KeyboardDoubleArrowRight fontSize="small" />
                            </IconButton>
-                           <ShowWhenMenu section="morning" indexes={[i]} task={task} />
-                           <HideWhenMenu section="morning" indexes={[i]} task={task} />
+                           <ShowWhenMenuButton section="morning" indexes={[i]} task={task} />
+                           <HideWhenMenuButton section="morning" indexes={[i]} task={task} />
                         </Stack>
                         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                            <Stack direction={'row'} alignItems={'center'}>
