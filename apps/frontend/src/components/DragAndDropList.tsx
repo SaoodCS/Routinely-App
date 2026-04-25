@@ -152,11 +152,11 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
 
    return (
       <div
+         ref={ref}
          onPointerCancel={handlePointerEnd}
          onPointerDown={handlePointerDown}
          onPointerMove={handlePointerMove}
          onPointerUp={handlePointerEnd}
-         ref={ref}
          style={style}
       >
          {items.map((item, index) => (
