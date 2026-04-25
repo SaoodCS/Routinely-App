@@ -1,5 +1,5 @@
 import type { T_Task } from '@repo/types/app';
-import { Box, Divider, ListItem, ListItemIcon, Typography } from '@mui/material';
+import { Box, Divider, IconButton, ListItem, ListItemIcon, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router';
 import { DragIndicatorOutlined } from '@mui/icons-material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
@@ -64,6 +64,9 @@ export default function MorningRoutine(): React.JSX.Element {
                         >
                            {task.label}
                         </Typography>
+                        <IconButton>
+                           
+                        </IconButton>
                      </SwipeActionWrapper>
                   </ListItem>
                </Box>
@@ -73,3 +76,8 @@ export default function MorningRoutine(): React.JSX.Element {
       />
    );
 }
+
+// add new task below icon
+// add new subtask icon
+// select tags dropdown icon
+// tags 
