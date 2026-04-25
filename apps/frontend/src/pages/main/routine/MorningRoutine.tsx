@@ -3,7 +3,7 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import DragAndDropList from '../../../components/DragAndDropList';
 export default function MorningRoutine(): React.JSX.Element {
-   const { ref } = useScrollSaver('morningRoutine');
+   const { ref } = useScrollSaver('morning-routine-scroll');
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`morning-routine-tasks`, []);
    return (
       <DragAndDropList
