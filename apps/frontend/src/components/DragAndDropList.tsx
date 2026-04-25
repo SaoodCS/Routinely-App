@@ -11,8 +11,10 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    const { items, onDrop, renderItem } = props;
    const dragStateRef = useRef<{
       contentEl: HTMLDivElement;
+      contentElStyle: string;
       scrollEl: HTMLElement;
       wrapperEl: HTMLDivElement;
+      wrapperElStyle: string;
       wrapperEls: HTMLDivElement[];
       start: { x: number; y: number; index: number; scrollTop: number };
       latest: { x: number; y: number };
@@ -48,11 +50,16 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       handleEl.setPointerCapture(pointerId);
       const { height, left, top, width } = contentEl.getBoundingClientRect();
       const contentElPos = { height: `${height}px`, left: `${left}px`, top: `${top}px`, width: `${width}px` };
-      const contentElNewStyle = { ...contentEl.style, ...contentElPos, position: 'fixed', cursor: 'grabbing', willChange: 'transform', zIndex: '2' };
+      const contentElStyle = contentEl.style.cssText;
+      const wrapperElStyle = wrapperEl.style.cssText;
+      Object.assign(contentEl.style, { ...contentElPos, position: 'fixed', cursor: 'grabbing', willChange: 'transform', zIndex: '2' });
+      wrapperEl.style.height = contentElPos.height;
       dragStateRef.current = {
          scrollEl,
-         contentEl: { ...contentEl, style: contentElNewStyle },
-         wrapperEl: { ...wrapperEl, style: { ...wrapperEl.style, height: contentElPos.height } },
+         contentEl,
+         contentElStyle,
+         wrapperEl,
+         wrapperElStyle,
          wrapperEls,
          start: { x: clientX, y: clientY, index: startIndex, scrollTop: scrollEl.scrollTop },
          latest: { x: clientX, y: clientY },
@@ -120,8 +127,8 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       event.stopPropagation();
       if (rafId !== null) window.cancelAnimationFrame(rafId);
       if (event.target instanceof HTMLElement && event.target.hasPointerCapture(event.pointerId)) event.target.releasePointerCapture(event.pointerId);
-      dragState.contentEl.removeAttribute('style');
-      dragState.wrapperEl.style.height = '';
+      dragState.contentEl.style.cssText = dragState.contentElStyle;
+      dragState.wrapperEl.style.cssText = dragState.wrapperElStyle;
       dragState.wrapperEls.forEach((wrapperEl) => {
          wrapperEl.style.transform = '';
          wrapperEl.style.transition = '';
