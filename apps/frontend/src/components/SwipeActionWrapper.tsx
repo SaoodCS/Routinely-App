@@ -8,16 +8,17 @@ interface T_SwipeActionWrapperProps {
       label: string;
       onAction: () => void | Promise<void>;
       icon?: ReactNode;
-      backgroundColor?: string;
+      bgColor?: string;
       color?: string;
       disabled?: boolean;
    };
    rightAction?: T_SwipeActionWrapperProps['leftAction'];
    disabled?: boolean;
+   style?: React.CSSProperties;
 }
 
 export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): React.JSX.Element {
-   const { children, leftAction, rightAction, disabled = false } = props;
+   const { children, leftAction, rightAction, disabled = false, style } = props;
    const pointerStartXRef = useRef<number | null>(null);
    const pointerIdRef = useRef<number | null>(null);
    const offsetXRef = useRef(0);
@@ -69,7 +70,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
    }
 
    return (
-      <div style={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y', userSelect: isDragging ? 'none' : undefined }}>
+      <div style={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y', userSelect: isDragging ? 'none' : undefined, width: 'inherit' }}>
          {leftAction && <ActionBackground action={leftAction} isDragging={isDragging} revealDistance={Math.max(offsetX, 0)} side="left" />}
          {rightAction && <ActionBackground action={rightAction} isDragging={isDragging} revealDistance={Math.max(-offsetX, 0)} side="right" />}
          <div
@@ -84,6 +85,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
                transform: `translateX(${offsetX}px)`,
                transition: isDragging ? 'none' : 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
                willChange: isInteractive ? 'transform' : undefined,
+               ...style,
             }}
          >
             {children}
@@ -108,7 +110,7 @@ function ActionBackground(props: {
             insetBlock: 0,
             [side]: 0,
             alignItems: 'center',
-            backgroundColor: action.backgroundColor ?? '#1b5e20',
+            backgroundColor: action.bgColor ?? '#1b5e20',
             boxSizing: 'border-box',
             color: action.color ?? '#fff',
             display: 'flex',

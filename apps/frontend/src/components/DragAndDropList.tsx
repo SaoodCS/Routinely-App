@@ -5,7 +5,11 @@ import { useRef } from 'react';
 interface T_DragAndDropListProps<TItem extends { id: number | string }> {
    items: TItem[];
    onDrop: (newOrderedItems: TItem[]) => void;
-   renderItem: (item: TItem, dragElProps: { 'data-drag-handle': string; 'data-drag-index': number; style: CSSProperties }) => ReactNode;
+   renderItem: (
+      item: TItem,
+      dragElProps: { 'data-drag-handle': string; 'data-drag-index': number; style: CSSProperties },
+      index: number,
+   ) => ReactNode;
    ref?: Ref<HTMLDivElement>;
    style?: CSSProperties;
 }
@@ -160,11 +164,15 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       >
          {items.map((item, index) => (
             <div key={item.id}>
-               {renderItem(item, {
-                  'data-drag-handle': '',
-                  'data-drag-index': index,
-                  style: { cursor: 'grab', touchAction: 'none', userSelect: 'none', width: 'fit-content' },
-               })}
+               {renderItem(
+                  item,
+                  {
+                     'data-drag-handle': '',
+                     'data-drag-index': index,
+                     style: { cursor: 'grab', touchAction: 'none', userSelect: 'none', width: 'fit-content' },
+                  },
+                  index,
+               )}
             </div>
          ))}
       </div>
