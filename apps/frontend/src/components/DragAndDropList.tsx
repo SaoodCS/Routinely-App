@@ -11,21 +11,16 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    const { items, onDrop, renderItem } = props;
    const dragStateRef = useRef<{
       contentEl: HTMLDivElement;
-      currentIndex: number;
-      itemHeight: number;
-      latestX: number;
-      latestY: number;
-      measures: { midpointY: number }[];
-      pointerId: number;
-      pointerOffsetY: number;
-      rafId: number | null;
       scrollEl: HTMLElement;
-      startScrollTop: number;
-      startX: number;
-      startY: number;
-      startIndex: number;
       wrapperEl: HTMLDivElement;
       wrapperEls: HTMLDivElement[];
+      start: { x: number; y: number; index: number; scrollTop: number };
+      latest: { x: number; y: number };
+      measures: { midpointY: number }[];
+      pointer: { id: number; offsetY: number };
+      currentIndex: number;
+      itemHeight: number;
+      rafId: number | null;
    } | null>(null);
 
    function handlePointerDown(event: PointerEvent<HTMLDivElement>): void {
@@ -52,48 +47,29 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       scrollEl ??= document.scrollingElement instanceof HTMLElement ? document.scrollingElement : document.documentElement;
       handleEl.setPointerCapture(pointerId);
       const { height, left, top, width } = contentEl.getBoundingClientRect();
+      const contentElPos = { height: `${height}px`, left: `${left}px`, top: `${top}px`, width: `${width}px` };
+      const contentElNewStyle = { ...contentEl.style, ...contentElPos, position: 'fixed', cursor: 'grabbing', willChange: 'transform', zIndex: '2' };
       dragStateRef.current = {
-         contentEl: {
-            ...contentEl,
-            style: {
-               ...contentEl.style,
-               position: 'fixed',
-               cursor: 'grabbing',
-               height: `${height}px`,
-               left: `${left}px`,
-               top: `${top}px`,
-               width: `${width}px`,
-               willChange: 'transform',
-               zIndex: '2',
-            },
-         },
+         scrollEl,
+         contentEl: { ...contentEl, style: contentElNewStyle },
+         wrapperEl: { ...wrapperEl, style: { ...wrapperEl.style, height: contentElPos.height } },
+         wrapperEls,
+         start: { x: clientX, y: clientY, index: startIndex, scrollTop: scrollEl.scrollTop },
+         latest: { x: clientX, y: clientY },
          currentIndex: startIndex,
          itemHeight: height,
-         latestX: clientX,
-         latestY: clientY,
-         measures: wrapperEls.map((el) => {
-            return { midpointY: el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2 };
-         }),
-         pointerId: pointerId,
-         pointerOffsetY: clientY - top,
+         measures: wrapperEls.map((el) => ({ midpointY: el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2 })),
+         pointer: { id: pointerId, offsetY: clientY - top },
          rafId: null,
-         scrollEl,
-         startScrollTop: scrollEl.scrollTop,
-         startX: clientX,
-         startY: clientY,
-         startIndex,
-         wrapperEl: { ...wrapperEl, style: { ...wrapperEl.style, height: `${height}px` } },
-         wrapperEls,
       };
    }
 
    function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
       const dragState = dragStateRef.current;
-      if (!dragState || dragState.pointerId !== event.pointerId) return;
+      if (!dragState || dragState.pointer.id !== event.pointerId) return;
       event.preventDefault();
       event.stopPropagation();
-      dragState.latestX = event.clientX;
-      dragState.latestY = event.clientY;
+      dragState.latest = { x: event.clientX, y: event.clientY };
       if (dragState.rafId !== null) return;
       dragState.rafId = window.requestAnimationFrame(handleDragFrame);
    }
@@ -101,24 +77,24 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    function handleDragFrame(): void {
       const dragState = dragStateRef.current;
       if (!dragState) return;
-      const { scrollEl, latestY, latestX, startX, startY, startScrollTop, startIndex, pointerOffsetY, itemHeight, measures } = dragState;
+      const { scrollEl, latest, start, pointer, itemHeight, measures } = dragState;
       const { scrollingElement, documentElement } = document;
       const { scrollSize, maxFrameScroll } = { scrollSize: 72, maxFrameScroll: 18 };
       let scrollRect: DOMRect | { bottom: number; top: number } = dragState.scrollEl.getBoundingClientRect();
       if (scrollEl === scrollingElement || scrollEl === documentElement) scrollRect = { bottom: window.innerHeight, top: 0 };
       const { bottom, top } = scrollRect;
       let scrollAmount = 0;
-      if (latestY - top < scrollSize) scrollAmount = -Math.ceil(((scrollSize - (latestY - top)) / scrollSize) * maxFrameScroll);
-      else if (bottom - latestY < scrollSize) scrollAmount = Math.ceil(((scrollSize - (bottom - latestY)) / scrollSize) * maxFrameScroll);
+      if (latest.y - top < scrollSize) scrollAmount = -Math.ceil(((scrollSize - (latest.y - top)) / scrollSize) * maxFrameScroll);
+      else if (bottom - latest.y < scrollSize) scrollAmount = Math.ceil(((scrollSize - (bottom - latest.y)) / scrollSize) * maxFrameScroll);
       const previousScrollTop = scrollEl.scrollTop;
       if (scrollAmount !== 0) scrollEl.scrollTop += scrollAmount;
       dragState.rafId = scrollEl.scrollTop === previousScrollTop ? null : window.requestAnimationFrame(handleDragFrame);
-      dragState.contentEl.style.transform = `translate3d(${latestX - startX}px, ${latestY - startY}px, 0)`;
-      const scrollOffset = scrollEl.scrollTop - startScrollTop;
-      const draggedMidpointY = latestY - pointerOffsetY + itemHeight / 2;
-      let nextIndex = startIndex;
-      const step = draggedMidpointY >= measures[startIndex].midpointY - scrollOffset ? 1 : -1;
-      for (let i = startIndex + step; i >= 0 && i < measures.length; i += step) {
+      dragState.contentEl.style.transform = `translate3d(${latest.x - start.x}px, ${latest.y - start.y}px, 0)`;
+      const scrollOffset = scrollEl.scrollTop - start.scrollTop;
+      const draggedMidpointY = latest.y - pointer.offsetY + itemHeight / 2;
+      let nextIndex = start.index;
+      const step = draggedMidpointY >= measures[start.index].midpointY - scrollOffset ? 1 : -1;
+      for (let i = start.index + step; i >= 0 && i < measures.length; i += step) {
          const { midpointY } = measures[i];
          const crossedMidpoint = step === 1 ? draggedMidpointY > midpointY - scrollOffset : draggedMidpointY < midpointY - scrollOffset;
          if (!crossedMidpoint) break;
@@ -128,18 +104,18 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       dragState.currentIndex = nextIndex;
       const { currentIndex } = dragState;
       dragState.wrapperEls.forEach((el, index) => {
-         if (index === startIndex) return;
+         if (index === start.index) return;
          el.style.transition = 'transform 120ms ease';
-         if (currentIndex > startIndex && index > startIndex && index <= currentIndex) el.style.transform = `translate3d(0, -${itemHeight}px, 0)`;
-         else if (currentIndex < startIndex && index >= currentIndex && index < startIndex) el.style.transform = `translate3d(0, ${itemHeight}px, 0)`;
-         else el.style.transform = '';
+         const translateNeg = currentIndex > start.index && index > start.index && index <= currentIndex;
+         const translatePos = currentIndex < start.index && index >= currentIndex && index < start.index;
+         el.style.transform = translateNeg ? `translate3d(0, -${itemHeight}px, 0)` : translatePos ? `translate3d(0, ${itemHeight}px, 0)` : '';
       });
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
       const dragState = dragStateRef.current;
-      if (!dragState || dragState.pointerId !== event.pointerId) return;
-      const { rafId, currentIndex, startIndex } = dragState;
+      if (!dragState || dragState.pointer.id !== event.pointerId) return;
+      const { rafId, currentIndex, start } = dragState;
       event.preventDefault();
       event.stopPropagation();
       if (rafId !== null) window.cancelAnimationFrame(rafId);
@@ -151,9 +127,9 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
          wrapperEl.style.transition = '';
       });
       dragStateRef.current = null;
-      if (currentIndex === startIndex) return;
+      if (currentIndex === start.index) return;
       const newOrderedItems = [...items];
-      const [draggedItem] = newOrderedItems.splice(startIndex, 1);
+      const [draggedItem] = newOrderedItems.splice(start.index, 1);
       if (!draggedItem) return;
       newOrderedItems.splice(currentIndex, 0, draggedItem);
       onDrop(newOrderedItems);
