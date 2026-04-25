@@ -1,5 +1,5 @@
 export interface T_Task {
-   id: number;
+   id: string;
    label: string;
    isChecked?: boolean;
    showWhenTags?: T_Tag['id'][];
@@ -8,7 +8,7 @@ export interface T_Task {
 }
 
 export interface T_Tag {
-   id: number;
+   id: string;
    label: string;
    isEnabled: boolean;
    color: string;
