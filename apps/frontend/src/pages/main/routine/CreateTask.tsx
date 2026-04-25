@@ -10,7 +10,7 @@ interface T_CreateTaskProps {
 export default function CreateTask({ section }: T_CreateTaskProps): React.JSX.Element {
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    function handleCreateTask(): void {
-      setTasks([...tasks, { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] }]);
+      setTasks([{ id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] }, ...tasks]);
    }
    return (
       <IconButton color="primary" onClick={handleCreateTask}>
