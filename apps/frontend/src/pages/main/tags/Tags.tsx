@@ -1,7 +1,7 @@
 import type { T_Tag } from '@repo/types/app';
 import { Box, Divider, ListItem, ListItemIcon, Switch, Typography } from '@mui/material';
 import { DragIndicatorOutlined } from '@mui/icons-material';
-import type { FocusEvent, KeyboardEvent } from 'react';
+import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import DragAndDropList from '../../../components/DragAndDropList';
@@ -16,13 +16,19 @@ export default function Tags(): React.JSX.Element {
       setTags(newTags);
    }
 
-   function handleToggleTag(tagIndex: number): void {
+   function handleToggle(tagIndex: number): void {
       const newTags = [...tags];
       newTags[tagIndex].isEnabled = !newTags[tagIndex].isEnabled;
       setTags(newTags);
    }
 
-   function handleLabelBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
+   function handleColorChange(event: ChangeEvent<HTMLInputElement>, tagIndex: number): void {
+      const newTags = [...tags];
+      newTags[tagIndex] = { ...newTags[tagIndex], color: event.currentTarget.value };
+      setTags(newTags);
+   }
+
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
       const newLabel = event.currentTarget.textContent ?? '';
       if (newLabel === tags[tagIndex].label) return;
       const newTags = [...tags];
@@ -30,7 +36,7 @@ export default function Tags(): React.JSX.Element {
       setTags(newTags);
    }
 
-   function handleLabelKeyDown(event: KeyboardEvent<HTMLSpanElement>): void {
+   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
       if (event.key !== 'Enter') return;
       event.preventDefault();
       event.currentTarget.blur();
@@ -51,20 +57,27 @@ export default function Tags(): React.JSX.Element {
                   </ListItemIcon>
                   <SwipeActionWrapper
                      rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                     leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleTag(i) }}
+                     leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
                      style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                   >
                      <Typography
                         component="span"
                         contentEditable
                         suppressContentEditableWarning
-                        onBlur={(event) => handleLabelBlur(event, i)}
-                        onKeyDown={handleLabelKeyDown}
-                        sx={{ outline: 'none' }}
+                        onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                        onKeyDown={handleBlurOnEnterClick}
+                        sx={{ outline: 'none', width: '60%' }}
                      >
                         {tag.label}
                      </Typography>
-                     <Switch checked={tag.isEnabled} onChange={() => handleToggleTag(i)} />
+                     <Box
+                        component="input"
+                        type="color"
+                        value={tag.color}
+                        onChange={(event) => handleColorChange(event, i)}
+                        sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
+                     />
+                     <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
                   </SwipeActionWrapper>
                </ListItem>
             </Box>
