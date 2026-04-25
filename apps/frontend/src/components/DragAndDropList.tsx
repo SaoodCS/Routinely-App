@@ -29,66 +29,60 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    } | null>(null);
 
    function handlePointerDown(event: PointerEvent<HTMLDivElement>): void {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
+      const { target, currentTarget, button, pointerId, clientX, clientY } = event;
+      if (!(target instanceof Element) || dragStateRef.current) return;
       const handleEl = target.closest('[data-drag-handle]');
+      if (!(handleEl instanceof HTMLElement) || !currentTarget.contains(handleEl)) return;
       const startIndex = handleEl instanceof HTMLElement ? Number(handleEl.dataset.dragIndex) : NaN;
-      if (
-         event.button !== 0 ||
-         !(handleEl instanceof HTMLElement) ||
-         !event.currentTarget.contains(handleEl) ||
-         !Number.isInteger(startIndex) ||
-         dragStateRef.current
-      ) {
-         return;
-      }
+      if (button !== 0 || !Number.isInteger(startIndex)) return;
       event.preventDefault();
       event.stopPropagation();
-      const wrapperEls = Array.from(event.currentTarget.children).filter((element): element is HTMLDivElement => element instanceof HTMLDivElement);
-      const contentEls = wrapperEls
-         .map((wrapperEl) => wrapperEl.firstElementChild)
-         .filter((element): element is HTMLDivElement => element instanceof HTMLDivElement);
+      const wrapperEls = Array.from(currentTarget.children).filter((element) => element instanceof HTMLDivElement);
+      const contentEls = wrapperEls.map((wrapperEl) => wrapperEl.firstElementChild).filter((element) => element instanceof HTMLDivElement);
       if (!items[startIndex] || wrapperEls.length !== items.length || contentEls.length !== items.length) return;
       const wrapperEl = wrapperEls[startIndex];
       const contentEl = contentEls[startIndex];
       if (!wrapperEl || !contentEl) return;
-
-      let scrollEl = event.currentTarget.parentElement;
+      let scrollEl = currentTarget.parentElement;
       while (scrollEl) {
-         const overflowY = window.getComputedStyle(scrollEl).overflowY;
+         const { overflowY } = window.getComputedStyle(scrollEl);
          if ((overflowY === 'auto' || overflowY === 'scroll') && scrollEl.scrollHeight > scrollEl.clientHeight) break;
          scrollEl = scrollEl.parentElement;
       }
       scrollEl ??= document.scrollingElement instanceof HTMLElement ? document.scrollingElement : document.documentElement;
-      handleEl.setPointerCapture(event.pointerId);
-      const itemRect = contentEl.getBoundingClientRect();
-      wrapperEl.style.height = `${itemRect.height}px`;
-      contentEl.style.cursor = 'grabbing';
-      contentEl.style.height = `${itemRect.height}px`;
-      contentEl.style.left = `${itemRect.left}px`;
-      contentEl.style.position = 'fixed';
-      contentEl.style.top = `${itemRect.top}px`;
-      contentEl.style.width = `${itemRect.width}px`;
-      contentEl.style.willChange = 'transform';
-      contentEl.style.zIndex = '1000';
+      handleEl.setPointerCapture(pointerId);
+      const { height, left, top, width } = contentEl.getBoundingClientRect();
       dragStateRef.current = {
-         contentEl,
+         contentEl: {
+            ...contentEl,
+            style: {
+               ...contentEl.style,
+               position: 'fixed',
+               cursor: 'grabbing',
+               height: `${height}px`,
+               left: `${left}px`,
+               top: `${top}px`,
+               width: `${width}px`,
+               willChange: 'transform',
+               zIndex: '2',
+            },
+         },
          currentIndex: startIndex,
-         itemHeight: itemRect.height,
-         latestX: event.clientX,
-         latestY: event.clientY,
+         itemHeight: height,
+         latestX: clientX,
+         latestY: clientY,
          measures: wrapperEls.map((el) => {
             return { midpointY: el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2 };
          }),
-         pointerId: event.pointerId,
-         pointerOffsetY: event.clientY - itemRect.top,
+         pointerId: pointerId,
+         pointerOffsetY: clientY - top,
          rafId: null,
          scrollEl,
          startScrollTop: scrollEl.scrollTop,
-         startX: event.clientX,
-         startY: event.clientY,
+         startX: clientX,
+         startY: clientY,
          startIndex,
-         wrapperEl,
+         wrapperEl: { ...wrapperEl, style: { ...wrapperEl.style, height: `${height}px` } },
          wrapperEls,
       };
    }
@@ -123,13 +117,12 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       const scrollOffset = scrollEl.scrollTop - startScrollTop;
       const draggedMidpointY = latestY - pointerOffsetY + itemHeight / 2;
       let nextIndex = startIndex;
-      for (let index = startIndex + 1; index < measures.length; index += 1) {
-         if (draggedMidpointY > measures[index].midpointY - scrollOffset) nextIndex = index;
-         else break;
-      }
-      for (let index = startIndex - 1; index >= 0; index -= 1) {
-         if (draggedMidpointY < measures[index].midpointY - scrollOffset) nextIndex = index;
-         else break;
+      const step = draggedMidpointY >= measures[startIndex].midpointY - scrollOffset ? 1 : -1;
+      for (let i = startIndex + step; i >= 0 && i < measures.length; i += step) {
+         const { midpointY } = measures[i];
+         const crossedMidpoint = step === 1 ? draggedMidpointY > midpointY - scrollOffset : draggedMidpointY < midpointY - scrollOffset;
+         if (!crossedMidpoint) break;
+         nextIndex = i;
       }
       if (nextIndex === dragState.currentIndex) return;
       dragState.currentIndex = nextIndex;
@@ -146,12 +139,11 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
       const dragState = dragStateRef.current;
       if (!dragState || dragState.pointerId !== event.pointerId) return;
-
+      const { rafId, currentIndex, startIndex } = dragState;
       event.preventDefault();
       event.stopPropagation();
-      if (dragState.rafId !== null) window.cancelAnimationFrame(dragState.rafId);
+      if (rafId !== null) window.cancelAnimationFrame(rafId);
       if (event.target instanceof HTMLElement && event.target.hasPointerCapture(event.pointerId)) event.target.releasePointerCapture(event.pointerId);
-
       dragState.contentEl.removeAttribute('style');
       dragState.wrapperEl.style.height = '';
       dragState.wrapperEls.forEach((wrapperEl) => {
@@ -159,14 +151,11 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
          wrapperEl.style.transition = '';
       });
       dragStateRef.current = null;
-
-      if (dragState.currentIndex === dragState.startIndex) return;
-
+      if (currentIndex === startIndex) return;
       const newOrderedItems = [...items];
-      const [draggedItem] = newOrderedItems.splice(dragState.startIndex, 1);
+      const [draggedItem] = newOrderedItems.splice(startIndex, 1);
       if (!draggedItem) return;
-
-      newOrderedItems.splice(dragState.currentIndex, 0, draggedItem);
+      newOrderedItems.splice(currentIndex, 0, draggedItem);
       onDrop(newOrderedItems);
    }
 
@@ -174,13 +163,11 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       <div onPointerCancel={handlePointerEnd} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerEnd}>
          {items.map((item, index) => (
             <div key={item.id}>
-               <div>
-                  {renderItem(item, {
-                     'data-drag-handle': '',
-                     'data-drag-index': index,
-                     style: { cursor: 'grab', touchAction: 'none', userSelect: 'none' },
-                  })}
-               </div>
+               {renderItem(item, {
+                  'data-drag-handle': '',
+                  'data-drag-index': index,
+                  style: { cursor: 'grab', touchAction: 'none', userSelect: 'none' },
+               })}
             </div>
          ))}
       </div>
