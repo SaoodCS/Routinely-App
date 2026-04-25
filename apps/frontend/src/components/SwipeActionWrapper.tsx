@@ -108,7 +108,7 @@ function ActionBackground(props: {
          style={{
             position: 'absolute',
             insetBlock: 0,
-            [side]: 0,
+            [side]: '-8px',
             alignItems: 'center',
             backgroundColor: action.bgColor ?? '#1b5e20',
             boxSizing: 'border-box',
