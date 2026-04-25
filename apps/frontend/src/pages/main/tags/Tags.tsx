@@ -46,8 +46,8 @@ export default function Tags(): React.JSX.Element {
       event.currentTarget.blur();
    }
 
-   function isTagFiltered(tagLabel: string): boolean {
-      return !searchQuery || tagLabel.toLowerCase().includes(searchQuery.toLowerCase());
+   function isTagHidden(tagLabel: string): boolean {
+      return !(!searchQuery || tagLabel.toLowerCase().includes(searchQuery.toLowerCase()));
    }
 
    return (
@@ -57,7 +57,7 @@ export default function Tags(): React.JSX.Element {
          items={tags}
          onDrop={(newOrderedItems) => setTags(newOrderedItems)}
          renderItem={(tag, dragElProps, i) =>
-            isTagFiltered(tag.label) && (
+            !isTagHidden(tag.label) && (
                <Box>
                   {i > 0 && <Divider />}
                   <ListItem>
