@@ -1,12 +1,12 @@
-import type { T_Tag } from '@repo/types/app';
-import { Box, Divider, ListItem, ListItemIcon, Switch, Typography } from '@mui/material';
 import { DragIndicatorOutlined } from '@mui/icons-material';
+import { Box, Divider, ListItem, ListItemIcon, Switch, Typography } from '@mui/material';
+import type { T_Tag } from '@repo/types/app';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
-import useLocalStorage from '../../../hooks/useLocalStorage';
-import useScrollSaver from '../../../hooks/useScrollSaver';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import useScrollSaver from '../../../hooks/useScrollSaver';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();

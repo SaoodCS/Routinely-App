@@ -7,8 +7,8 @@ import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import HideWhenMenuButton from './HideWhenMenuButtonButton';
-import ShowWhenMenuButton from './ShowWhenMenuButtonButton';
+import HideWhenMenuButton from './HideWhenMenuButton';
+import ShowWhenMenuButton from './ShowWhenMenuButton';
 
 export default function MorningRoutine(): React.JSX.Element {
    const [searchParams] = useSearchParams();

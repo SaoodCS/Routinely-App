@@ -1,10 +1,10 @@
 import { CancelOutlined, SearchOutlined } from '@mui/icons-material';
-import { Fade, Grow, IconButton, Menu, TextField } from '@mui/material';
+import { Fade, IconButton, Menu, TextField } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-export default function SearchQuery(): React.JSX.Element {
+export default function SearchQueryMenuButton(): React.JSX.Element {
    const [searchParams, setSearchParams] = useSearchParams();
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
    const searchQuery = searchParams.get('search') ?? '';

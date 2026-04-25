@@ -4,16 +4,16 @@ import { Logout } from '../pages/auth/Logout';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import CreateTaskButton from '../pages/main/routine/CreateTaskButtonButton';
 import EveningRoutine from '../pages/main/routine/EveningRoutine';
 import MorningRoutine from '../pages/main/routine/MorningRoutine';
 import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
-import SearchQuery from '../pages/main/SearchQuery';
 import Settings from '../pages/main/settings/Settings';
-import CreateTagButton from '../pages/main/tags/CreateTagButtonButton';
-import SortTagsButton from '../pages/main/tags/SortTagsButtonButton';
 import Tags from '../pages/main/tags/Tags';
+import CreateTaskButton from '../pages/main/routine/CreateTaskButton';
+import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
+import CreateTagButton from '../pages/main/tags/CreateTagButton';
+import SortTagsButton from '../pages/main/tags/SortTagsButton';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -81,7 +81,7 @@ export const router = createBrowserRouter(
                                     <>
                                        <CreateTaskButton section="morning" />
                                        <TagToggleMenuButton />
-                                       <SearchQuery />
+                                       <SearchQueryMenuButton />
                                     </>
                                  ),
                               },
@@ -98,7 +98,7 @@ export const router = createBrowserRouter(
                                     <>
                                        <CreateTaskButton section="evening" />
                                        <TagToggleMenuButton />
-                                       <SearchQuery />
+                                       <SearchQueryMenuButton />
                                     </>
                                  ),
                               },
@@ -117,7 +117,7 @@ export const router = createBrowserRouter(
                               <>
                                  <CreateTagButton />
                                  <SortTagsButton />
-                                 <SearchQuery />
+                                 <SearchQueryMenuButton />
                               </>
                            ),
                         },
