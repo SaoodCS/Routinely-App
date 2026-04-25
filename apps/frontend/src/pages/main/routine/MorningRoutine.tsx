@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 import type { T_Task } from '@repo/types/app';
 import { Box, Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router';
@@ -45,26 +46,21 @@ export default function MorningRoutine(): React.JSX.Element {
       return !(!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase()));
    }
 
-   function addTaskBelow(index: number): void {
+   function addTaskBelow(indexes: [number] | [number, number] | [number, number, number]): void {
       const newTasks = [...tasks];
-      newTasks.splice(index + 1, 0, { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] });
+      const newTask: T_Task = { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, hideWhenTags: [], showWhenTags: [] };
+      if (indexes.length === 1) newTasks.splice(indexes[0] + 1, 0, newTask);
+      else if (indexes.length === 2) newTasks[indexes[0]].children!.splice(indexes[1] + 1, 0, newTask);
+      else newTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2] + 1, 0, newTask);
       setTasks(newTasks);
    }
 
-   function addSubTask(indexes: [number, number]): void {
+   function addSubTask(indexes: [number] | [number, number]): void {
       const newTasks = [...tasks];
-      const parentTask = newTasks[indexes[0]];
-      parentTask.children ??= [];
-      const newTask = { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] };
-      parentTask.children.splice(indexes[1] + 1, 0, newTask);
-      setTasks(newTasks);
-   }
-   function addSubSubTask(indexes: [number, number, number]): void {
-      const newTasks = [...tasks];
-      const parentTask = newTasks[indexes[0]].children![indexes[1]];
-      parentTask.children ??= [];
-      const newTask = { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] };
-      parentTask.children.splice(indexes[2] + 1, 0, newTask);
+      const newTask: T_Task = { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, hideWhenTags: [], showWhenTags: [] };
+      let parentTask = newTasks[indexes[0]];
+      if (indexes.length === 2) parentTask = parentTask.children![indexes[1]];
+      parentTask.children = [...(parentTask.children ?? []), newTask];
       setTasks(newTasks);
    }
 
@@ -86,10 +82,10 @@ export default function MorningRoutine(): React.JSX.Element {
                            <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
                               <DragIndicatorOutlined />
                            </ListItemIcon>
-                           <IconButton onClick={() => addTaskBelow(i)} size="small">
+                           <IconButton onClick={() => addTaskBelow([i])} size="small">
                               <KeyboardDoubleArrowDown fontSize="small" />
                            </IconButton>
-                           <IconButton onClick={() => addSubTask([i, 0])} size="small">
+                           <IconButton onClick={() => addSubTask([i])} size="small">
                               <KeyboardDoubleArrowRight fontSize="small" />
                            </IconButton>
                            <ShowWhenMenu section="morning" indexes={[i]} task={task} />
