@@ -20,7 +20,6 @@ export default function TagFilter(): React.JSX.Element {
             <FilterListOutlined />
          </IconButton>
          <Menu
-            id="tag-filter-menu"
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}

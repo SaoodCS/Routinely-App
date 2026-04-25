@@ -2,11 +2,16 @@ import type { T_Tag } from '@repo/types/app';
 import { Box, Divider, ListItem, ListItemIcon, Switch, Typography } from '@mui/material';
 import { DragIndicatorOutlined } from '@mui/icons-material';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { useSearchParams } from 'react-router';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
+
 export default function Tags(): React.JSX.Element {
+   const [searchParams] = useSearchParams();
+   const searchQuery = searchParams.get('search');
+
    const { ref } = useScrollSaver('tags-scroll');
    const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
 
