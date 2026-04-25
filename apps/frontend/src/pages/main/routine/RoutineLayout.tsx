@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Outlet } from 'react-router';
 export default function RoutineLayout(): React.JSX.Element {
-   return <Box>RoutineLayout</Box>;
+   return <Outlet />;
 }
