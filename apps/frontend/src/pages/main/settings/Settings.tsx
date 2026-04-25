@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import DragAndDropList from '../../../components/DragAndDropList';
-import ScrollRestoreWrapper from '../../../components/ScrollRestoreWrapper';
+import useScrollSaver from '../../../hooks/useScrollSaver';
 
 const itemDummyData: { id: number; name: string; description: string }[] = [
    { id: 11, name: 'Item 1', description: 'Description of item 1' },
@@ -33,39 +33,40 @@ const subItemDummyData: { [key: number]: typeof itemDummyData } = {
 export default function Settings(): React.JSX.Element {
    const [items, setItems] = useState<typeof itemDummyData>(itemDummyData);
    const [subItems, setSubItems] = useState<typeof subItemDummyData>(subItemDummyData);
+   const { ref } = useScrollSaver('settings');
 
    return (
-      <ScrollRestoreWrapper storeKey="settings" sx={{ height: '100%', overflow: 'auto' }}>
-         <DragAndDropList
-            items={items}
-            onDrop={(newOrderedItems) => {
-               setItems(newOrderedItems);
-               // Can add functionality to update backend here
-            }}
-            renderItem={(item, dragElProps) => (
-               <div>
-                  <div {...dragElProps}>::</div>
-                  <div>{item.name}</div>
-                  <div>{item.description}</div>
-                  {subItems[item.id] && (
-                     <DragAndDropList
-                        items={subItems[item.id]}
-                        onDrop={(newOrderedSubItems) => {
-                           setSubItems({ ...subItems, [item.id]: newOrderedSubItems });
-                           // Can add functionality to update backend here
-                        }}
-                        renderItem={(subItem, dragElProps) => (
-                           <div style={{ paddingLeft: '1rem' }}>
-                              <div {...dragElProps}>::</div>
-                              <div>{subItem.name}</div>
-                              <div>{subItem.description}</div>
-                           </div>
-                        )}
-                     />
-                  )}
-               </div>
-            )}
-         />
-      </ScrollRestoreWrapper>
+      <DragAndDropList
+         ref={ref}
+         style={{ overflow: 'auto', height: '100%', maxHeight: '100%' }}
+         items={items}
+         onDrop={(newOrderedItems) => {
+            setItems(newOrderedItems);
+            // Can add functionality to update backend here
+         }}
+         renderItem={(item, dragElProps) => (
+            <div>
+               <div {...dragElProps}>::</div>
+               <div>{item.name}</div>
+               <div>{item.description}</div>
+               {subItems[item.id] && (
+                  <DragAndDropList
+                     items={subItems[item.id]}
+                     onDrop={(newOrderedSubItems) => {
+                        setSubItems({ ...subItems, [item.id]: newOrderedSubItems });
+                        // Can add functionality to update backend here
+                     }}
+                     renderItem={(subItem, dragElProps) => (
+                        <div style={{ paddingLeft: '1rem' }}>
+                           <div {...dragElProps}>::</div>
+                           <div>{subItem.name}</div>
+                           <div>{subItem.description}</div>
+                        </div>
+                     )}
+                  />
+               )}
+            </div>
+         )}
+      />
    );
 }

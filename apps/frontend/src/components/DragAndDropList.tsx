@@ -1,15 +1,16 @@
-// NOTE: SET OVERFLOW: AUTO IN THE PARENT ELEMENT THAT WRAPS AROUND THIS COMPONENT TO ENABLE SCROLLING
-import type { CSSProperties, JSX, PointerEvent, ReactNode } from 'react';
+import type { CSSProperties, JSX, PointerEvent, ReactNode, Ref } from 'react';
 import { useRef } from 'react';
 
 interface T_DragAndDropListProps<TItem extends { id: number | string }> {
    items: TItem[];
    onDrop: (newOrderedItems: TItem[]) => void;
    renderItem: (item: TItem, dragElProps: { 'data-drag-handle': string; 'data-drag-index': number; style: CSSProperties }) => ReactNode;
+   ref?: Ref<HTMLDivElement>;
+   style?: CSSProperties;
 }
 
 export default function DragAndDropList<TItem extends { id: number | string }>(props: T_DragAndDropListProps<TItem>): JSX.Element {
-   const { items, onDrop, renderItem } = props;
+   const { items, onDrop, renderItem, ref, style } = props;
    const dragStateRef = useRef<{
       contentEl: HTMLDivElement;
       contentElStyle: string;
@@ -40,7 +41,7 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       const wrapperEl = wrapperEls[startIndex];
       const contentEl = wrapperEl?.firstElementChild;
       if (!(contentEl instanceof HTMLDivElement)) return;
-      let scrollEl = currentTarget.parentElement;
+      let scrollEl: HTMLElement | null = currentTarget;
       while (scrollEl) {
          const { overflowY } = window.getComputedStyle(scrollEl);
          if ((overflowY === 'auto' || overflowY === 'scroll') && scrollEl.scrollHeight > scrollEl.clientHeight) break;
@@ -150,7 +151,14 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    }
 
    return (
-      <div onPointerCancel={handlePointerEnd} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerEnd}>
+      <div
+         onPointerCancel={handlePointerEnd}
+         onPointerDown={handlePointerDown}
+         onPointerMove={handlePointerMove}
+         onPointerUp={handlePointerEnd}
+         ref={ref}
+         style={style}
+      >
          {items.map((item, index) => (
             <div key={item.id}>
                {renderItem(item, {
