@@ -61,7 +61,7 @@ export default function Tags(): React.JSX.Element {
                <Box>
                   {i > 0 && <Divider />}
                   <ListItem>
-                     <ListItemIcon sx={{ minWidth: 30 }} {...dragElProps}>
+                     <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
                         <DragIndicatorOutlined />
                      </ListItemIcon>
                      <SwipeActionWrapper

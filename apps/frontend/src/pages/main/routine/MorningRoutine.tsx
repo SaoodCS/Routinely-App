@@ -53,26 +53,27 @@ export default function MorningRoutine(): React.JSX.Element {
                <Box>
                   {i > 0 && <Divider />}
                   <ListItem>
-                     <ListItemIcon sx={{ minWidth: 30 }} {...dragElProps}>
+                     <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
                         <DragIndicatorOutlined />
                      </ListItemIcon>
                      <SwipeActionWrapper
                         rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
                         leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(i) }}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                      >
-                        <Stack direction={'row'} width={'100%'} alignItems={'center'}>
-                           <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(i)} />
-                           <Typography
-                              component="span"
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                              onKeyDown={handleBlurOnEnterClick}
-                              sx={{ outline: 'none' }}
-                           >
-                              {task.label}
-                           </Typography>
+                        <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                           <Stack direction={'row'} alignItems={'center'}>
+                              <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(i)} />
+                              <Typography
+                                 component="span"
+                                 contentEditable
+                                 suppressContentEditableWarning
+                                 onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                                 onKeyDown={handleBlurOnEnterClick}
+                                 sx={{ outline: 'none' }}
+                              >
+                                 {task.label}
+                              </Typography>
+                           </Stack>
                         </Stack>
                      </SwipeActionWrapper>
                   </ListItem>
