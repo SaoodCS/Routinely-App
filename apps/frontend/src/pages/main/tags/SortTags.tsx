@@ -1,4 +1,4 @@
-import { SwapVertOutlined } from '@mui/icons-material';
+import { SortByAlphaOutlined } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import type { T_Tag } from '@repo/types/app';
 import { isEqual, orderBy } from 'lodash';
@@ -15,7 +15,7 @@ export default function SortTags(): React.JSX.Element {
 
    return (
       <IconButton color="primary" onClick={handleSortTags}>
-         <SwapVertOutlined />
+         <SortByAlphaOutlined />
       </IconButton>
    );
 }
