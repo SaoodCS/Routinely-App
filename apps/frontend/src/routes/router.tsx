@@ -9,6 +9,8 @@ import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import MorningRoutine from '../pages/main/routine/MorningRoutine';
 import EveningRoutine from '../pages/main/routine/EveningRoutine';
 import Tags from '../pages/main/tags/Tags';
+import CreateTask from '../pages/main/routine/CreateTask';
+import TagFilter from '../pages/main/routine/TagFilter';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -69,12 +71,34 @@ export const router = createBrowserRouter(
                         <Route
                            path={ROUTE_PATHS.main_routine_morning}
                            element={<MorningRoutine />}
-                           handle={{ header: { title: 'Morning' }, nav: { inBottomNav: true } }}
+                           handle={{
+                              header: {
+                                 title: 'Morning',
+                                 RightElement: () => (
+                                    <>
+                                       <CreateTask section="morning" />
+                                       <TagFilter />
+                                    </>
+                                 ),
+                              },
+                              nav: { inBottomNav: true },
+                           }}
                         />
                         <Route
                            path={ROUTE_PATHS.main_routine_evening}
                            element={<EveningRoutine />}
-                           handle={{ header: { title: 'Evening' }, nav: { inBottomNav: true } }}
+                           handle={{
+                              header: {
+                                 title: 'Evening',
+                                 RightElement: () => (
+                                    <>
+                                       <CreateTask section="morning" />
+                                       <TagFilter />
+                                    </>
+                                 ),
+                              },
+                              nav: { inBottomNav: true },
+                           }}
                         />
                      </Route>
                   </Route>

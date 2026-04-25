@@ -1,3 +1,5 @@
+export type T_Routine_Section = 'morning' | 'evening';
+
 export interface T_Task {
    id: string;
    label: string;
