@@ -1,5 +1,5 @@
-import { ClearOutlined, SearchOutlined } from '@mui/icons-material';
-import { IconButton, InputAdornment, Menu, TextField } from '@mui/material';
+import { CancelOutlined, SearchOutlined } from '@mui/icons-material';
+import { Fade, Grow, IconButton, Menu, TextField } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
@@ -28,32 +28,20 @@ export default function SearchQuery(): React.JSX.Element {
          <IconButton color="primary" onClick={(event) => setAnchorEl(event.currentTarget)}>
             <SearchOutlined />
          </IconButton>
+         {searchQuery && (
+            <Fade in={Boolean(searchQuery)}>
+               <IconButton color="error" onClick={handleClear}>
+                  <CancelOutlined />
+               </IconButton>
+            </Fade>
+         )}
          <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
             slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '10rem' } } }}
          >
-            <TextField
-               autoFocus
-               value={searchQuery}
-               onChange={handleChange}
-               variant="standard"
-               placeholder="Search"
-               size="small"
-               sx={{ m: 1 }}
-               slotProps={{
-                  input: {
-                     endAdornment: (
-                        <InputAdornment position="end">
-                           <IconButton disabled={!searchQuery} edge="end" size="small" onClick={handleClear}>
-                              <ClearOutlined fontSize="small" />
-                           </IconButton>
-                        </InputAdornment>
-                     ),
-                  },
-               }}
-            />
+            <TextField autoFocus value={searchQuery} onChange={handleChange} variant="standard" placeholder="Search" size="small" sx={{ m: 1 }} />
          </Menu>
       </>
    );
