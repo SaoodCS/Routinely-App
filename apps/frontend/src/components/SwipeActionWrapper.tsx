@@ -19,6 +19,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
    const { children, leftAction, rightAction, disabled = false } = props;
    const pointerStartXRef = useRef<number | null>(null);
    const pointerIdRef = useRef<number | null>(null);
+   const offsetXRef = useRef(0);
    const [offsetX, setOffsetX] = useState(0);
    const [isDragging, setIsDragging] = useState(false);
    const [didSwipe, setDidSwipe] = useState(false);
@@ -38,24 +39,27 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
       if (pointerStartXRef.current === null || pointerIdRef.current !== event.pointerId) return;
       const pointerOffsetX = event.clientX - pointerStartXRef.current;
       const swipeDistance = Math.max(Math.abs(pointerOffsetX) - 18, 0);
-      const offsetX = Math.sign(pointerOffsetX) * swipeDistance;
+      const rawOffsetX = Math.sign(pointerOffsetX) * swipeDistance;
       const min = hasRightAction ? -112 : 0;
       const max = hasLeftAction ? 112 : 0;
-      const nextOffsetX = Math.min(Math.max(offsetX, min), max);
-      if (nextOffsetX !== 0) setIsDragging(true);
-      if (Math.abs(nextOffsetX) > 6) setDidSwipe(true);
-      setOffsetX(nextOffsetX);
+      const nextOffsetX = Math.min(Math.max(rawOffsetX, min), max);
+      offsetXRef.current = nextOffsetX;
+      if (nextOffsetX !== 0 && !isDragging) setIsDragging(true);
+      if (Math.abs(nextOffsetX) > 6 && !didSwipe) setDidSwipe(true);
+      if (nextOffsetX !== offsetX) setOffsetX(nextOffsetX);
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
       if (pointerStartXRef.current === null || pointerIdRef.current !== event.pointerId) return;
       let actionSide: 'left' | 'right' | null = null;
-      if (offsetX >= 72 && hasLeftAction) actionSide = 'left';
-      if (offsetX <= -72 && hasRightAction) actionSide = 'right';
+      const finalOffsetX = offsetXRef.current;
+      if (finalOffsetX >= 72 && hasLeftAction) actionSide = 'left';
+      if (finalOffsetX <= -72 && hasRightAction) actionSide = 'right';
       const action = actionSide === 'left' ? leftAction : rightAction;
       if (actionSide && action && !action.disabled) void action.onAction();
       pointerStartXRef.current = null;
       pointerIdRef.current = null;
+      offsetXRef.current = 0;
       setIsDragging(false);
       setOffsetX(0);
    }
