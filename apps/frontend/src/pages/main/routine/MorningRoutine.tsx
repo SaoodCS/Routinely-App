@@ -1,5 +1,5 @@
 import type { T_Task } from '@repo/types/app';
-import { Box, Divider, ListItem, ListItemIcon, Typography } from '@mui/material';
+import { Box, Checkbox, Divider, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router';
 import { DragIndicatorOutlined } from '@mui/icons-material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
@@ -61,16 +61,19 @@ export default function MorningRoutine(): React.JSX.Element {
                         leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(i) }}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                      >
-                        <Typography
-                           component="span"
-                           contentEditable
-                           suppressContentEditableWarning
-                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                           onKeyDown={handleBlurOnEnterClick}
-                           sx={{ outline: 'none', width: '60%' }}
-                        >
-                           {task.label}
-                        </Typography>
+                        <Stack direction={'row'} width={'100%'} alignItems={'center'}>
+                           <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(i)} />
+                           <Typography
+                              component="span"
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                              onKeyDown={handleBlurOnEnterClick}
+                              sx={{ outline: 'none' }}
+                           >
+                              {task.label}
+                           </Typography>
+                        </Stack>
                      </SwipeActionWrapper>
                   </ListItem>
                </Box>
