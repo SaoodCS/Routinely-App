@@ -1,7 +1,6 @@
 import { FilterListOutlined } from '@mui/icons-material';
-import { Divider, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
+import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
 import { useState } from 'react';
-import Check from '@mui/icons-material/Check';
 import type { T_Tag } from '@repo/types/app';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
@@ -9,8 +8,10 @@ export default function TagFilter(): React.JSX.Element {
    const [tags, setTags] = useLocalStorage<T_Tag[]>('tags', []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-   function handleToggleTag(tagId: T_Tag['id']): void {
-      setTags(tags.map((tag) => (tag.id === tagId ? { ...tag, isEnabled: !tag.isEnabled } : tag)));
+   function handleToggleTag(tagIndex: number): void {
+      const newTags = [...tags];
+      newTags[tagIndex].isEnabled = !newTags[tagIndex].isEnabled;
+      setTags(newTags);
    }
 
    return (
@@ -33,11 +34,11 @@ export default function TagFilter(): React.JSX.Element {
                      {i > 0 && <Divider />}
                      <MenuItem
                         key={tag.id}
-                        onClick={() => handleToggleTag(tag.id)}
-                        sx={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}
+                        onClick={() => handleToggleTag(i)}
+                        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                      >
                         <ListItemText>{tag.label}</ListItemText>
-                        {tag.isEnabled && <Check fontSize="small" color={'success'} />}
+                        <Switch checked={tag.isEnabled} size="small" />
                      </MenuItem>
                   </>
                ))
