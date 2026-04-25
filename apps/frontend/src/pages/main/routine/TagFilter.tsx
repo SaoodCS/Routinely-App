@@ -23,7 +23,7 @@ export default function TagFilter(): React.JSX.Element {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => setAnchorEl(null)}
-            slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '10rem' } } }}
+            slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } }}
          >
             {tags.length === 0 ? (
                <MenuItem disabled>No tags</MenuItem>

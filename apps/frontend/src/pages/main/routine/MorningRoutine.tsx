@@ -1,11 +1,12 @@
 import type { T_Task } from '@repo/types/app';
-import { Box, Checkbox, Divider, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import { Box, Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router';
-import { DragIndicatorOutlined } from '@mui/icons-material';
+import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight, ExpandCircleDownOutlined } from '@mui/icons-material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
+import ShowWhenMenu from './ShowWhenMenu';
 
 export default function MorningRoutine(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -43,6 +44,18 @@ export default function MorningRoutine(): React.JSX.Element {
       return !(!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase()));
    }
 
+   function addTaskBelow(index: number): void {
+      const newTasks = [...tasks];
+      newTasks.splice(index + 1, 0, { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] });
+      setTasks(newTasks);
+   }
+
+   function addSubTask(indexes: [number, number]): void {}
+   function addSubSubTask(indexes: [number, number, number]): void {}
+
+   function isShowWhenTagsOpen(i: number): void {}
+   function isHideWhenTagsOpen(i: number): void {}
+
    return (
       <DragAndDropList
          ref={ref}
@@ -53,13 +66,26 @@ export default function MorningRoutine(): React.JSX.Element {
                <Box>
                   {i > 0 && <Divider />}
                   <ListItem>
-                     <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
-                        <DragIndicatorOutlined />
-                     </ListItemIcon>
                      <SwipeActionWrapper
                         rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
                         leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(i) }}
                      >
+                        <Stack direction={'row'} justifyContent={'start'} alignItems={'center'}>
+                           <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
+                              <DragIndicatorOutlined />
+                           </ListItemIcon>
+                           <IconButton onClick={() => addTaskBelow(i)} size="small">
+                              <KeyboardDoubleArrowDown fontSize="small" />
+                           </IconButton>
+                           <IconButton onClick={() => addSubTask([i, 0])} size="small">
+                              <KeyboardDoubleArrowRight fontSize="small" />
+                           </IconButton>
+                           <ShowWhenMenu section="morning" indexes={[i]} task={task} />
+                           
+                           <IconButton onClick={() => isHideWhenTagsOpen(i)} size="small" color="error">
+                              <ExpandCircleDownOutlined fontSize="small" />
+                           </IconButton>
+                        </Stack>
                         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                            <Stack direction={'row'} alignItems={'center'}>
                               <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(i)} />
@@ -85,7 +111,6 @@ export default function MorningRoutine(): React.JSX.Element {
    );
 }
 
-// checkbox icon
 // add new task below icon
 // add new subtask icon (only for tasks and subtasks, not subtasks of subtasks)
 // select tags dropdown icon
