@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 
 const itemDummyData: { id: number; name: string; description: string }[] = [
    { id: 11, name: 'Item 1', description: 'Description of item 1' },
@@ -46,9 +47,11 @@ export default function Settings(): React.JSX.Element {
          }}
          renderItem={(item, dragElProps) => (
             <div>
-               <div {...dragElProps}>::</div>
-               <div>{item.name}</div>
-               <div>{item.description}</div>
+               <SwipeActionWrapper leftAction={{ label: 'Delete', onAction: () => {} }} rightAction={{ label: 'what', onAction: () => {} }}>
+                  <div {...dragElProps}>::</div>
+                  <div>{item.name}</div>
+                  <div>{item.description}</div>
+               </SwipeActionWrapper>
                {subItems[item.id] && (
                   <DragAndDropList
                      items={subItems[item.id]}

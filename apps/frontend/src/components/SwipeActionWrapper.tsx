@@ -1,4 +1,3 @@
-import { Box, Typography, useTheme } from '@mui/material';
 import type { PointerEvent, ReactNode } from 'react';
 import { useRef, useState } from 'react';
 
@@ -18,7 +17,6 @@ interface T_SwipeActionWrapperProps {
 
 export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): React.JSX.Element {
    const { children, leftAction, rightAction, disabled = false } = props;
-   const { transitions } = useTheme();
    const pointerStartXRef = useRef<number | null>(null);
    const pointerIdRef = useRef<number | null>(null);
    const [offsetX, setOffsetX] = useState(0);
@@ -38,24 +36,22 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
 
    function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
       if (pointerStartXRef.current === null || pointerIdRef.current !== event.pointerId) return;
-      const offsetX = event.clientX - pointerStartXRef.current;
-      const maxSwipeDistance = 112;
-      const min = hasRightAction ? -maxSwipeDistance : 0;
-      const max = hasLeftAction ? maxSwipeDistance : 0;
+      const pointerOffsetX = event.clientX - pointerStartXRef.current;
+      const swipeDistance = Math.max(Math.abs(pointerOffsetX) - 18, 0);
+      const offsetX = Math.sign(pointerOffsetX) * swipeDistance;
+      const min = hasRightAction ? -112 : 0;
+      const max = hasLeftAction ? 112 : 0;
       const nextOffsetX = Math.min(Math.max(offsetX, min), max);
-      if (Math.abs(nextOffsetX) > 6) {
-         setIsDragging(true);
-         setDidSwipe(true);
-      }
+      if (nextOffsetX !== 0) setIsDragging(true);
+      if (Math.abs(nextOffsetX) > 6) setDidSwipe(true);
       setOffsetX(nextOffsetX);
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
       if (pointerStartXRef.current === null || pointerIdRef.current !== event.pointerId) return;
       let actionSide: 'left' | 'right' | null = null;
-      const actionThreshold = 72;
-      if (offsetX >= actionThreshold && hasLeftAction) actionSide = 'left';
-      if (offsetX <= -actionThreshold && hasRightAction) actionSide = 'right';
+      if (offsetX >= 72 && hasLeftAction) actionSide = 'left';
+      if (offsetX <= -72 && hasRightAction) actionSide = 'right';
       const action = actionSide === 'left' ? leftAction : rightAction;
       if (actionSide && action && !action.disabled) void action.onAction();
       pointerStartXRef.current = null;
@@ -71,26 +67,26 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
    }
 
    return (
-      <Box sx={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y', userSelect: isDragging ? 'none' : undefined }}>
-         {leftAction && <ActionBackground action={leftAction} side="left" visible={offsetX > 0} />}
-         {rightAction && <ActionBackground action={rightAction} side="right" visible={offsetX < 0} />}
-         <Box
+      <div style={{ position: 'relative', overflow: 'hidden', touchAction: 'pan-y', userSelect: isDragging ? 'none' : undefined }}>
+         {leftAction && <ActionBackground action={leftAction} isDragging={isDragging} revealDistance={Math.max(offsetX, 0)} side="left" />}
+         {rightAction && <ActionBackground action={rightAction} isDragging={isDragging} revealDistance={Math.max(-offsetX, 0)} side="right" />}
+         <div
             onClickCapture={handleClickCapture}
             onPointerCancel={handlePointerEnd}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerEnd}
-            sx={{
+            style={{
                position: 'relative',
                zIndex: 1,
                transform: `translateX(${offsetX}px)`,
-               transition: isDragging ? 'none' : transitions.create('transform', { duration: transitions.duration.shortest }),
+               transition: isDragging ? 'none' : 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
                willChange: isInteractive ? 'transform' : undefined,
             }}
          >
             {children}
-         </Box>
-      </Box>
+         </div>
+      </div>
    );
 }
 //
@@ -98,33 +94,36 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
 //
 function ActionBackground(props: {
    action: Exclude<T_SwipeActionWrapperProps['leftAction'], undefined>;
+   isDragging: boolean;
+   revealDistance: number;
    side: 'left' | 'right';
-   visible: boolean;
 }): React.JSX.Element {
-   const { action, side, visible } = props;
-   const { palette } = useTheme();
+   const { action, isDragging, revealDistance, side } = props;
+   const translateX = side === 'left' ? revealDistance - 112 : 112 - revealDistance;
+
    return (
-      <Box
-         sx={{
+      <div
+         style={{
             position: 'absolute',
             insetBlock: 0,
             [side]: 0,
             alignItems: 'center',
-            bgcolor: action.backgroundColor ?? palette.success.dark,
-            color: action.color ?? 'common.white',
+            backgroundColor: action.backgroundColor ?? '#1b5e20',
+            boxSizing: 'border-box',
+            color: action.color ?? '#fff',
             display: 'flex',
-            gap: 1,
-            justifyContent: side === 'left' ? 'flex-start' : 'flex-end',
-            minWidth: 112,
-            opacity: visible ? 1 : 0,
-            px: 2,
-            transition: 'opacity 120ms ease',
+            gap: '8px',
+            justifyContent: 'center',
+            opacity: revealDistance > 0 ? 1 : 0,
+            overflow: 'hidden',
+            paddingInline: '16px',
+            transform: `translateX(${translateX}px)`,
+            transition: isDragging ? 'none' : 'opacity 120ms ease, transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
+            width: `${112}px`,
          }}
       >
          {action.icon}
-         <Typography component="span" sx={{ fontWeight: 700 }} variant="body2">
-            {action.label}
-         </Typography>
-      </Box>
+         <span style={{ flexShrink: 0, fontSize: '0.875rem', fontWeight: 700, lineHeight: 1.43, whiteSpace: 'nowrap' }}>{action.label}</span>
+      </div>
    );
 }
