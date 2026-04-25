@@ -13,6 +13,7 @@ import CreateTask from '../pages/main/routine/CreateTask';
 import TagFilter from '../pages/main/routine/TagFilter';
 import CreateTag from '../pages/main/tags/CreateTag';
 import SortTags from '../pages/main/tags/SortTags';
+import SearchQuery from '../pages/main/SearchQuery';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -80,6 +81,7 @@ export const router = createBrowserRouter(
                                     <>
                                        <CreateTask section="morning" />
                                        <TagFilter />
+                                       <SearchQuery />
                                     </>
                                  ),
                               },
@@ -96,6 +98,7 @@ export const router = createBrowserRouter(
                                     <>
                                        <CreateTask section="evening" />
                                        <TagFilter />
+                                       <SearchQuery />
                                     </>
                                  ),
                               },
@@ -114,6 +117,7 @@ export const router = createBrowserRouter(
                               <>
                                  <CreateTag />
                                  <SortTags />
+                                 <SearchQuery />
                               </>
                            ),
                         },
