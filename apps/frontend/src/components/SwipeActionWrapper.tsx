@@ -51,12 +51,9 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
       if (pointerStartXRef.current === null || pointerIdRef.current !== event.pointerId) return;
-      let actionSide: 'left' | 'right' | null = null;
       const finalOffsetX = offsetXRef.current;
-      if (finalOffsetX >= 72 && hasLeftAction) actionSide = 'left';
-      if (finalOffsetX <= -72 && hasRightAction) actionSide = 'right';
-      const action = actionSide === 'left' ? leftAction : rightAction;
-      if (actionSide && action && !action.disabled) void action.onAction();
+      if (finalOffsetX >= 72 && hasLeftAction) void leftAction?.onAction();
+      if (finalOffsetX <= -72 && hasRightAction) void rightAction?.onAction();
       pointerStartXRef.current = null;
       pointerIdRef.current = null;
       offsetXRef.current = 0;
@@ -93,9 +90,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
       </div>
    );
 }
-//
-//
-//
+
 function ActionBackground(props: {
    action: Exclude<T_SwipeActionWrapperProps['leftAction'], undefined>;
    isDragging: boolean;
@@ -123,7 +118,7 @@ function ActionBackground(props: {
             paddingInline: '16px',
             transform: `translateX(${translateX}px)`,
             transition: isDragging ? 'none' : 'opacity 120ms ease, transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-            width: `${112}px`,
+            width: '112px',
          }}
       >
          {action.icon}
