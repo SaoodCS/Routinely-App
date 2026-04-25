@@ -1,5 +1,5 @@
 import type { T_Task } from '@repo/types/app';
-import { Box, Divider, IconButton, ListItem, ListItemIcon, Typography } from '@mui/material';
+import { Box, Divider, ListItem, ListItemIcon, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router';
 import { DragIndicatorOutlined } from '@mui/icons-material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
@@ -16,6 +16,12 @@ export default function MorningRoutine(): React.JSX.Element {
    function handleDelete(taskIndex: number): void {
       const newTasks = [...tasks];
       newTasks.splice(taskIndex, 1);
+      setTasks(newTasks);
+   }
+
+   function handleToggleIsChecked(taskIndex: number): void {
+      const newTasks = [...tasks];
+      newTasks[taskIndex].isChecked = !newTasks[taskIndex].isChecked;
       setTasks(newTasks);
    }
 
@@ -52,6 +58,7 @@ export default function MorningRoutine(): React.JSX.Element {
                      </ListItemIcon>
                      <SwipeActionWrapper
                         rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
+                        leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(i) }}
                         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                      >
                         <Typography
@@ -64,9 +71,6 @@ export default function MorningRoutine(): React.JSX.Element {
                         >
                            {task.label}
                         </Typography>
-                        <IconButton>
-                           
-                        </IconButton>
                      </SwipeActionWrapper>
                   </ListItem>
                </Box>
@@ -77,7 +81,11 @@ export default function MorningRoutine(): React.JSX.Element {
    );
 }
 
+// checkbox icon
 // add new task below icon
-// add new subtask icon
+// add new subtask icon (only for tasks and subtasks, not subtasks of subtasks)
 // select tags dropdown icon
-// tags 
+// some sort of indication to what tags are associated with the task
+
+// header: hide/show all tags
+// header: reset all tasks
