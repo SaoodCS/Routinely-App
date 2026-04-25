@@ -18,7 +18,7 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       wrapperEls: HTMLDivElement[];
       start: { x: number; y: number; index: number; scrollTop: number };
       latest: { x: number; y: number };
-      measures: { midpointY: number }[];
+      midpointYs: number[];
       pointer: { id: number; offsetY: number };
       currentIndex: number;
       itemHeight: number;
@@ -34,12 +34,11 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       if (button !== 0 || !Number.isInteger(startIndex)) return;
       event.preventDefault();
       event.stopPropagation();
-      const wrapperEls = Array.from(currentTarget.children).filter((element) => element instanceof HTMLDivElement);
-      const contentEls = wrapperEls.map((wrapperEl) => wrapperEl.firstElementChild).filter((element) => element instanceof HTMLDivElement);
-      if (!items[startIndex] || wrapperEls.length !== items.length || contentEls.length !== items.length) return;
+      const wrapperEls = Array.from(currentTarget.children);
+      if (!items[startIndex] || wrapperEls.length !== items.length || !wrapperEls.every((element) => element instanceof HTMLDivElement)) return;
       const wrapperEl = wrapperEls[startIndex];
-      const contentEl = contentEls[startIndex];
-      if (!wrapperEl || !contentEl) return;
+      const contentEl = wrapperEl?.firstElementChild;
+      if (!(contentEl instanceof HTMLDivElement)) return;
       let scrollEl = currentTarget.parentElement;
       while (scrollEl) {
          const { overflowY } = window.getComputedStyle(scrollEl);
@@ -65,7 +64,10 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
          latest: { x: clientX, y: clientY },
          currentIndex: startIndex,
          itemHeight: height,
-         measures: wrapperEls.map((el) => ({ midpointY: el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2 })),
+         midpointYs: wrapperEls.map((el) => {
+            const { height, top } = el.getBoundingClientRect();
+            return top + height / 2;
+         }),
          pointer: { id: pointerId, offsetY: clientY - top },
          rafId: null,
       };
@@ -84,39 +86,43 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
    function handleDragFrame(): void {
       const dragState = dragStateRef.current;
       if (!dragState) return;
-      const { scrollEl, latest, start, pointer, itemHeight, measures } = dragState;
+      const { scrollEl, latest, start, pointer, itemHeight, midpointYs } = dragState;
       const { scrollingElement, documentElement } = document;
-      const { scrollSize, maxFrameScroll } = { scrollSize: 72, maxFrameScroll: 18 };
       let scrollRect: DOMRect | { bottom: number; top: number } = dragState.scrollEl.getBoundingClientRect();
       if (scrollEl === scrollingElement || scrollEl === documentElement) scrollRect = { bottom: window.innerHeight, top: 0 };
       const { bottom, top } = scrollRect;
       let scrollAmount = 0;
-      if (latest.y - top < scrollSize) scrollAmount = -Math.ceil(((scrollSize - (latest.y - top)) / scrollSize) * maxFrameScroll);
-      else if (bottom - latest.y < scrollSize) scrollAmount = Math.ceil(((scrollSize - (bottom - latest.y)) / scrollSize) * maxFrameScroll);
+      if (latest.y - top < 72) scrollAmount = -Math.ceil(((72 - (latest.y - top)) / 72) * 18);
+      else if (bottom - latest.y < 72) scrollAmount = Math.ceil(((72 - (bottom - latest.y)) / 72) * 18);
       const previousScrollTop = scrollEl.scrollTop;
       if (scrollAmount !== 0) scrollEl.scrollTop += scrollAmount;
       dragState.rafId = scrollEl.scrollTop === previousScrollTop ? null : window.requestAnimationFrame(handleDragFrame);
       dragState.contentEl.style.transform = `translate3d(${latest.x - start.x}px, ${latest.y - start.y}px, 0)`;
       const scrollOffset = scrollEl.scrollTop - start.scrollTop;
       const draggedMidpointY = latest.y - pointer.offsetY + itemHeight / 2;
-      let nextIndex = start.index;
-      const step = draggedMidpointY >= measures[start.index].midpointY - scrollOffset ? 1 : -1;
-      for (let i = start.index + step; i >= 0 && i < measures.length; i += step) {
-         const { midpointY } = measures[i];
-         const crossedMidpoint = step === 1 ? draggedMidpointY > midpointY - scrollOffset : draggedMidpointY < midpointY - scrollOffset;
-         if (!crossedMidpoint) break;
-         nextIndex = i;
+      let low = 0;
+      let high = midpointYs.length;
+      const movingDown = draggedMidpointY + scrollOffset >= midpointYs[start.index];
+      while (low < high) {
+         const mid = (low + high) >> 1;
+         if (movingDown ? midpointYs[mid] < draggedMidpointY + scrollOffset : midpointYs[mid] <= draggedMidpointY + scrollOffset) low = mid + 1;
+         else high = mid;
       }
-      if (nextIndex === dragState.currentIndex) return;
+      const nextIndex = movingDown ? Math.max(start.index, low - 1) : low;
+      const previousIndex = dragState.currentIndex;
+      if (nextIndex === previousIndex) return;
       dragState.currentIndex = nextIndex;
-      const { currentIndex } = dragState;
-      dragState.wrapperEls.forEach((el, index) => {
-         if (index === start.index) return;
+      const fromIndex = Math.min(previousIndex, nextIndex);
+      const toIndex = Math.max(previousIndex, nextIndex);
+      for (let index = fromIndex; index <= toIndex; index++) {
+         const el = dragState.wrapperEls[index];
+         if (!el) continue;
+         if (index === start.index) continue;
          el.style.transition = 'transform 120ms ease';
-         const translateNeg = currentIndex > start.index && index > start.index && index <= currentIndex;
-         const translatePos = currentIndex < start.index && index >= currentIndex && index < start.index;
+         const translateNeg = nextIndex > start.index && index > start.index && index <= nextIndex;
+         const translatePos = nextIndex < start.index && index >= nextIndex && index < start.index;
          el.style.transform = translateNeg ? `translate3d(0, -${itemHeight}px, 0)` : translatePos ? `translate3d(0, ${itemHeight}px, 0)` : '';
-      });
+      }
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
