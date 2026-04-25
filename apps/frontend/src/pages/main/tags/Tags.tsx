@@ -11,7 +11,6 @@ import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
-
    const { ref } = useScrollSaver('tags-scroll');
    const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
 
@@ -47,8 +46,8 @@ export default function Tags(): React.JSX.Element {
       event.currentTarget.blur();
    }
 
-   function isTagFiltered(tag: T_Tag): boolean {
-      return !searchQuery || tag.label.toLowerCase().includes(searchQuery.toLowerCase());
+   function isTagFiltered(tagLabel: string): boolean {
+      return !searchQuery || tagLabel.toLowerCase().includes(searchQuery.toLowerCase());
    }
 
    return (
@@ -58,7 +57,7 @@ export default function Tags(): React.JSX.Element {
          items={tags}
          onDrop={(newOrderedItems) => setTags(newOrderedItems)}
          renderItem={(tag, dragElProps, i) =>
-            isTagFiltered(tag) && (
+            isTagFiltered(tag.label) && (
                <Box>
                   {i > 0 && <Divider />}
                   <ListItem>
