@@ -11,6 +11,7 @@ import EveningRoutine from '../pages/main/routine/EveningRoutine';
 import Tags from '../pages/main/tags/Tags';
 import CreateTask from '../pages/main/routine/CreateTask';
 import TagFilter from '../pages/main/routine/TagFilter';
+import CreateTag from '../pages/main/tags/CreateTag';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -102,7 +103,17 @@ export const router = createBrowserRouter(
                         />
                      </Route>
                   </Route>
-                  <Route path={ROUTE_PATHS.main_tags} element={<Tags />} handle={{ header: { title: 'Tags' }, nav: { inBottomNav: true } }} />
+                  <Route
+                     path={ROUTE_PATHS.main_tags}
+                     element={<Tags />}
+                     handle={{
+                        header: {
+                           title: 'Tags',
+                           RightElement: () => <CreateTag />,
+                        },
+                        nav: { inBottomNav: true },
+                     }}
+                  />
 
                   {/* Settings Routes */}
                   <Route
