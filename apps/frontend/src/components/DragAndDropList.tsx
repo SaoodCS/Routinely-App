@@ -164,7 +164,7 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
                {renderItem(item, {
                   'data-drag-handle': '',
                   'data-drag-index': index,
-                  style: { cursor: 'grab', touchAction: 'none', userSelect: 'none' },
+                  style: { cursor: 'grab', touchAction: 'none', userSelect: 'none', width: 'fit-content', height: 'fit-content' },
                })}
             </div>
          ))}
