@@ -51,11 +51,22 @@ export default function MorningRoutine(): React.JSX.Element {
       setTasks(newTasks);
    }
 
-   function addSubTask(indexes: [number, number]): void {}
-   function addSubSubTask(indexes: [number, number, number]): void {}
-
-   function isShowWhenTagsOpen(i: number): void {}
-   function isHideWhenTagsOpen(i: number): void {}
+   function addSubTask(indexes: [number, number]): void {
+      const newTasks = [...tasks];
+      const parentTask = newTasks[indexes[0]];
+      parentTask.children ??= [];
+      const newTask = { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] };
+      parentTask.children.splice(indexes[1] + 1, 0, newTask);
+      setTasks(newTasks);
+   }
+   function addSubSubTask(indexes: [number, number, number]): void {
+      const newTasks = [...tasks];
+      const parentTask = newTasks[indexes[0]].children![indexes[1]];
+      parentTask.children ??= [];
+      const newTask = { id: `${Date.now()}-task`, label: 'New Task', isChecked: false, showWhenTags: [], hideWhenTags: [] };
+      parentTask.children.splice(indexes[2] + 1, 0, newTask);
+      setTasks(newTasks);
+   }
 
    return (
       <DragAndDropList
