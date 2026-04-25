@@ -1,3 +1,4 @@
+// component has 0 UI library dependencies so can copy to any react project
 import type { CSSProperties, JSX, PointerEvent, ReactNode, Ref } from 'react';
 import { useRef } from 'react';
 

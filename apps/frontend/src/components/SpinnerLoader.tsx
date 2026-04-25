@@ -1,3 +1,4 @@
+// component has mui dependencies
 import { Box, CircularProgress, type CircularProgressProps } from '@mui/material';
 import type React from 'react';
 
