@@ -2,7 +2,7 @@ import { IconButton, Menu } from '@mui/material';
 import { useState } from 'react';
 import { VisibilityOutlined } from '@mui/icons-material';
 
-export default function HideShowAllTagsMenuButton(): React.JSX.Element {
+export default function ToggleAllTagsMenuButton(): React.JSX.Element {
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    return (

@@ -6,14 +6,14 @@ import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
 import EveningRoutine from '../pages/main/routine/EveningRoutine';
 import MorningRoutine from '../pages/main/routine/MorningRoutine';
+import ResetCheckedMenuButton from '../pages/main/routine/ResetCheckedMenuButton';
 import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
-import Settings from '../pages/main/settings/Settings';
-import Tags from '../pages/main/tags/Tags';
+import ToggleAllTagsMenuButton from '../pages/main/routine/ToggleAllTagsMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
+import Settings from '../pages/main/settings/Settings';
 import SortTagsButton from '../pages/main/tags/SortTagsButton';
-import HideShowAllTagsMenuButton from '../pages/main/routine/HideShowAllTagsMenuButton';
-import ResetCheckedMenuButton from '../pages/main/routine/ResetCheckedMenuButton';
+import Tags from '../pages/main/tags/Tags';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -79,8 +79,8 @@ export const router = createBrowserRouter(
                                  title: 'Morning',
                                  RightElement: () => (
                                     <>
-                                       <HideShowAllTagsMenuButton />
-                                       <ResetCheckedMenuButton />
+                                       <ToggleAllTagsMenuButton />
+                                       <ResetCheckedMenuButton section="morning" />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
                                     </>
@@ -97,8 +97,8 @@ export const router = createBrowserRouter(
                                  title: 'Evening',
                                  RightElement: () => (
                                     <>
-                                       <HideShowAllTagsMenuButton />
-                                       <ResetCheckedMenuButton />
+                                       <ToggleAllTagsMenuButton />
+                                       <ResetCheckedMenuButton section="evening" />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
                                     </>
