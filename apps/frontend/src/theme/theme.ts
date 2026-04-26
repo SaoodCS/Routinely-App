@@ -1,7 +1,12 @@
 import type { ThemeOptions } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 
-const palette: ThemeOptions['palette'] = { mode: 'dark', background: { default: '#121212' }, primary: { dark: '#42a5f5', main: '#90caf9' } };
+const palette: ThemeOptions['palette'] = {
+   mode: 'dark',
+   background: { default: '#121212' },
+   primary: { dark: '#42a5f5', main: '#90caf9' },
+   secondary: { main: '#ce93d8', dark: '#80cbc4' },
+};
 
 const typography: ThemeOptions['typography'] = {
    fontFamily: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'].join(','),

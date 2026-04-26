@@ -1,9 +1,11 @@
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import type { FocusEvent, JSX } from 'react';
 import { useSearchParams } from 'react-router';
-import { Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import type { TypographyOwnProps } from '@mui/material';
+import { Checkbox, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { createNewTask } from '@repo/utils/app.helpers';
+import { useTheme, alpha } from '@mui/material/styles';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
@@ -22,6 +24,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
+   const { palette } = useTheme();
+   const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
+   const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
+   const depthTypographyVariant: TypographyOwnProps['variant'][] = ['body1', 'subtitle2', 'body2'];
 
    function addTaskBelow(indexes: T_TaskItemProps['indexes']): void {
       const updatedTasks = [...tasks];
@@ -81,15 +87,20 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
 
    return !isTaskHidden(task) ? (
       <>
-         <Divider />
-         <ListItem sx={{ px: 0.5, py: 0.5 }}>
+         <ListItem sx={{ px: 0.5, py: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(indexes) }}
+               style={{
+                  borderRadius: '5px',
+                  borderLeft: `4px solid`,
+                  backgroundColor: alpha(depthBaseColors[indexes.length - 1], 0.15),
+                  borderLeftColor: depthBaseColors[indexes.length - 1],
+               }}
             >
                <Stack direction={'row'} justifyContent={'start'} alignItems={'center'}>
                   <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
-                     <DragIndicatorOutlined />
+                     <DragIndicatorOutlined sx={{ color: alpha(depthBaseColors[indexes.length - 1], 0.75) }} />
                   </ListItemIcon>
                   <IconButton onClick={() => addTaskBelow(indexes)} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
@@ -105,11 +116,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                      <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} sx={{ py: 0.5, px: 0.5 }} />
                      <Typography
                         component="span"
+                        variant={depthTypographyVariant[indexes.length - 1]}
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(event) => handleSaveLabelOnBlur(event, indexes)}
                         onKeyDown={handleBlurOnEnterClick}
-                        sx={{ outline: 'none' }}
+                        sx={{
+                           outline: 'none',
+                           ...(task.isChecked ? { textDecoration: 'line-through' } : {}),
+                           //fontSize: `${depthFontSizeRem[indexes.length - 1]}rem`,
+                        }}
                      >
                         {task.label}
                      </Typography>
