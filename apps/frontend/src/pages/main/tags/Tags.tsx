@@ -1,6 +1,6 @@
 import { DragIndicatorOutlined } from '@mui/icons-material';
 import { Box, Divider, ListItem, ListItemIcon, Switch, Typography } from '@mui/material';
-import type { T_Tag } from '@repo/types/app';
+import type { T_Tag } from '@repo/types/app.types';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
@@ -15,29 +15,29 @@ export default function Tags(): React.JSX.Element {
    const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
 
    function handleDelete(tagIndex: number): void {
-      const newTags = [...tags];
-      newTags.splice(tagIndex, 1);
-      setTags(newTags);
+      const updatedTags = [...tags];
+      updatedTags.splice(tagIndex, 1);
+      setTags(updatedTags);
    }
 
    function handleToggle(tagIndex: number): void {
-      const newTags = [...tags];
-      newTags[tagIndex].isEnabled = !newTags[tagIndex].isEnabled;
-      setTags(newTags);
+      const updatedTags = [...tags];
+      updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
+      setTags(updatedTags);
    }
 
    function handleColorChange(event: ChangeEvent<HTMLInputElement>, tagIndex: number): void {
-      const newTags = [...tags];
-      newTags[tagIndex] = { ...newTags[tagIndex], color: event.currentTarget.value };
-      setTags(newTags);
+      const updatedTags = [...tags];
+      updatedTags[tagIndex] = { ...updatedTags[tagIndex], color: event.currentTarget.value };
+      setTags(updatedTags);
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
-      const newLabel = event.currentTarget.textContent ?? '';
-      if (newLabel === tags[tagIndex].label) return;
-      const newTags = [...tags];
-      newTags[tagIndex] = { ...newTags[tagIndex], label: newLabel };
-      setTags(newTags);
+      const updatedLabel = event.currentTarget.textContent ?? '';
+      if (updatedLabel === tags[tagIndex].label) return;
+      const updatedTags = [...tags];
+      updatedTags[tagIndex] = { ...updatedTags[tagIndex], label: updatedLabel };
+      setTags(updatedTags);
    }
 
    function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {

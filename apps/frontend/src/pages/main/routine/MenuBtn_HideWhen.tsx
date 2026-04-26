@@ -4,13 +4,13 @@ import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
-interface T_HideWhenMenuButtonProps {
+interface T_HideWhenMenuProps {
    section: T_Routine_Section;
    indexes: [number] | [number, number] | [number, number, number];
    task: T_Task;
 }
 
-export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhenMenuButtonProps): JSX.Element {
+export default function HideWhenMenu({ indexes, section, task }: T_HideWhenMenuProps): JSX.Element {
    const [tags] = useLocalStorage<T_Tag[]>('tags', []);
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -37,7 +37,7 @@ export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhe
             onClose={() => setAnchorEl(null)}
             slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } }}
          >
-            <MenuItem disabled>Hide Task When</MenuItem>
+            <MenuItem disabled>Show Task When</MenuItem>
             {tags.length === 0 ? (
                <MenuItem disabled>No tags</MenuItem>
             ) : (

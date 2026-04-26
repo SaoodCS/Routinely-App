@@ -1,6 +1,6 @@
 import { Check, ExpandCircleDownOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem } from '@mui/material';
-import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app';
+import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
@@ -16,14 +16,14 @@ export default function ShowWhenMenuButton({ indexes, section, task }: T_ShowWhe
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    function handleToggle(tagId: T_Tag['id']): void {
-      const newTask = { ...task };
-      if (newTask.showWhenTags?.includes(tagId)) newTask.showWhenTags = newTask.showWhenTags.filter((id) => id !== tagId);
-      else newTask.showWhenTags = [...(newTask.showWhenTags ?? []), tagId];
-      const newTasks = [...tasks];
-      if (indexes.length === 1) newTasks[indexes[0]] = newTask;
-      else if (indexes.length === 2) newTasks[indexes[0]].children![indexes[1]] = newTask;
-      else newTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = newTask;
-      setTasks(newTasks);
+      const updatedTask = { ...task };
+      if (updatedTask.showWhenTags?.includes(tagId)) updatedTask.showWhenTags = updatedTask.showWhenTags.filter((id) => id !== tagId);
+      else updatedTask.showWhenTags = [...(updatedTask.showWhenTags ?? []), tagId];
+      const updatedTasks = [...tasks];
+      if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
+      else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;
+      else updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = updatedTask;
+      setTasks(updatedTasks);
    }
 
    return (

@@ -1,6 +1,6 @@
 import { SortByAlphaOutlined } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import type { T_Tag } from '@repo/types/app';
+import type { T_Tag } from '@repo/types/app.types';
 import { isEqual, orderBy } from 'lodash';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 

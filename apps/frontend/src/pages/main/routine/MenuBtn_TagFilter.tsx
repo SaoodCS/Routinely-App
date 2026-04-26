@@ -4,7 +4,7 @@ import type { T_Tag } from '@repo/types/app.types';
 import { useState } from 'react';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
-export default function TagToggleMenuButton(): React.JSX.Element {
+export default function TagFilter(): React.JSX.Element {
    const [tags, setTags] = useLocalStorage<T_Tag[]>('tags', []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
