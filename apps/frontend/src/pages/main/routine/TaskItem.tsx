@@ -107,18 +107,22 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
 
    return isTaskVisible() ? (
       <>
-         <ListItem sx={{ px: 0.5, py: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
+         <ListItem sx={{ p: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(indexes) }}
                style={{
                   borderRadius: '5px',
-                  borderLeft: `4px solid`,
+                  borderLeft: `4px solid ${depthBaseColors[indexes.length - 1]}`,
                   backgroundColor: alpha(depthBaseColors[indexes.length - 1], 0.15),
-                  borderLeftColor: depthBaseColors[indexes.length - 1],
                }}
             >
-               <Stack direction={'row'} justifyContent={'start'} alignItems={'center'} sx={{ width: 1, '& > :last-child': { ml: 'auto' } }}>
+               <Stack
+                  direction={'row'}
+                  justifyContent={'start'}
+                  alignItems={'center'}
+                  sx={{ '& > :last-child': { ml: 'auto' }, '& button': { p: 0 } }}
+               >
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
                   </IconButton>
@@ -132,7 +136,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   )}
                   <ShowHideWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
-               <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ p: 0.5, pl: 0.75 }}>
+               <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 0.75, pb: 0.5 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
                   <Typography
                      component="span"
