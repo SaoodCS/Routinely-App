@@ -105,9 +105,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   <IconButton onClick={() => addTaskBelow(indexes)} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => addSubTask(indexes)} size="small">
-                     <KeyboardDoubleArrowRight fontSize="small" />
-                  </IconButton>
+                  {indexes.length !== 3 && (
+                     <IconButton onClick={() => addSubTask(indexes)} size="small">
+                        <KeyboardDoubleArrowRight fontSize="small" />
+                     </IconButton>
+                  )}
                   <ShowWhenMenuButton section="morning" indexes={indexes} task={task} />
                   <HideWhenMenuButton section="morning" indexes={indexes} task={task} />
                </Stack>
@@ -121,11 +123,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                         suppressContentEditableWarning
                         onBlur={(event) => handleSaveLabelOnBlur(event, indexes)}
                         onKeyDown={handleBlurOnEnterClick}
-                        sx={{
-                           outline: 'none',
-                           ...(task.isChecked ? { textDecoration: 'line-through' } : {}),
-                           //fontSize: `${depthFontSizeRem[indexes.length - 1]}rem`,
-                        }}
+                        sx={{ outline: 'none', ...(task.isChecked ? { textDecoration: 'line-through' } : {}) }}
                      >
                         {task.label}
                      </Typography>
