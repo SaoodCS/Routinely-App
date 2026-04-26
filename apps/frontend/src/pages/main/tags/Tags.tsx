@@ -7,6 +7,7 @@ import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import CreateTagButton from './CreateTagButton';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -51,47 +52,50 @@ export default function Tags(): React.JSX.Element {
    }
 
    return (
-      <DragAndDropList
-         ref={ref}
-         style={{ overflow: 'auto', height: '100%' }}
-         items={tags}
-         onDrop={(newOrderedItems) => setTags(newOrderedItems)}
-         renderItem={(tag, dragElProps, i) =>
-            !isTagHidden(tag.label) && (
-               <Box>
-                  {i > 0 && <Divider />}
-                  <ListItem>
-                     <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
-                        <DragIndicatorOutlined />
-                     </ListItemIcon>
-                     <SwipeActionWrapper
-                        rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                        leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                     >
-                        <Typography
-                           component="span"
-                           contentEditable
-                           suppressContentEditableWarning
-                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                           onKeyDown={handleBlurOnEnterClick}
-                           sx={{ outline: 'none', width: '60%' }}
+      <>
+         <CreateTagButton />
+         <DragAndDropList
+            ref={ref}
+            style={{ overflow: 'auto', height: '100%' }}
+            items={tags}
+            onDrop={(newOrderedItems) => setTags(newOrderedItems)}
+            renderItem={(tag, dragElProps, i) =>
+               !isTagHidden(tag.label) && (
+                  <Box>
+                     {i > 0 && <Divider />}
+                     <ListItem>
+                        <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
+                           <DragIndicatorOutlined />
+                        </ListItemIcon>
+                        <SwipeActionWrapper
+                           rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
+                           leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
+                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                         >
-                           {tag.label}
-                        </Typography>
-                        <Box
-                           component="input"
-                           type="color"
-                           value={tag.color}
-                           onChange={(event) => handleColorChange(event, i)}
-                           sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
-                        />
-                        <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                     </SwipeActionWrapper>
-                  </ListItem>
-               </Box>
-            )
-         }
-      />
+                           <Typography
+                              component="span"
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                              onKeyDown={handleBlurOnEnterClick}
+                              sx={{ outline: 'none', width: '60%' }}
+                           >
+                              {tag.label}
+                           </Typography>
+                           <Box
+                              component="input"
+                              type="color"
+                              value={tag.color}
+                              onChange={(event) => handleColorChange(event, i)}
+                              sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
+                           />
+                           <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                        </SwipeActionWrapper>
+                     </ListItem>
+                  </Box>
+               )
+            }
+         />
+      </>
    );
 }

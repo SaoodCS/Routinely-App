@@ -1,7 +1,7 @@
-import { AddBoxOutlined } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
+import { Fab } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
 interface T_CreateTaskButtonProps {
@@ -15,8 +15,8 @@ export default function CreateTaskButton({ section }: T_CreateTaskButtonProps): 
       setTasks([newTask, ...tasks]);
    }
    return (
-      <IconButton color="primary" onClick={handleCreateTaskButton}>
-         <AddBoxOutlined />
-      </IconButton>
+      <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+         <Add onClick={handleCreateTaskButton} />
+      </Fab>
    );
 }

@@ -10,10 +10,10 @@ import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
 import Settings from '../pages/main/settings/Settings';
 import Tags from '../pages/main/tags/Tags';
-import CreateTaskButton from '../pages/main/routine/CreateTaskButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
-import CreateTagButton from '../pages/main/tags/CreateTagButton';
 import SortTagsButton from '../pages/main/tags/SortTagsButton';
+import HideShowAllTagsMenuButton from '../pages/main/routine/HideShowAllTagsMenuButton';
+import ResetCheckedMenuButton from '../pages/main/routine/ResetCheckedMenuButton';
 import { ProtectedRoute, PublicOnlyRoute } from './guards';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
@@ -79,7 +79,8 @@ export const router = createBrowserRouter(
                                  title: 'Morning',
                                  RightElement: () => (
                                     <>
-                                       <CreateTaskButton section="morning" />
+                                       <HideShowAllTagsMenuButton />
+                                       <ResetCheckedMenuButton />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
                                     </>
@@ -96,7 +97,8 @@ export const router = createBrowserRouter(
                                  title: 'Evening',
                                  RightElement: () => (
                                     <>
-                                       <CreateTaskButton section="evening" />
+                                       <HideShowAllTagsMenuButton />
+                                       <ResetCheckedMenuButton />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
                                     </>
@@ -115,7 +117,6 @@ export const router = createBrowserRouter(
                            title: 'Tags',
                            RightElement: () => (
                               <>
-                                 <CreateTagButton />
                                  <SortTagsButton />
                                  <SearchQueryMenuButton />
                               </>
