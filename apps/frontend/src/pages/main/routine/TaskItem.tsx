@@ -30,7 +30,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
    const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.85rem'];
 
-   function addTaskBelow(indexes: T_TaskItemProps['indexes']): void {
+   function addTaskBelow(): void {
       const updatedTasks = [...tasks];
       const newTask = createNewTask();
       if (indexes.length === 1) updatedTasks.splice(indexes[0] + 1, 0, newTask);
@@ -39,7 +39,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
-   function addSubTask(indexes: T_TaskItemProps['indexes']): void {
+   function addSubTask(): void {
       const updatedTasks = [...tasks];
       const newTask = createNewTask();
       let parentTask = updatedTasks[indexes[0]];
@@ -48,7 +48,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
-   function handleDelete(indexes: T_TaskItemProps['indexes']): void {
+   function handleDelete(): void {
       const updatedTasks = [...tasks];
       if (indexes.length === 1) updatedTasks.splice(indexes[0], 1);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1], 1);
@@ -56,7 +56,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
-   function handleToggleIsChecked(indexes: T_TaskItemProps['indexes']): void {
+   function handleToggleIsChecked(): void {
       const updatedTasks = [...tasks];
       let updatedTask = updatedTasks[indexes[0]];
       if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
@@ -71,7 +71,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       event.currentTarget.blur();
    }
 
-   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>, indexes: T_TaskItemProps['indexes']): void {
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
       const updatedLabel = event.currentTarget.textContent ?? '';
       if (updatedLabel === task.label) return;
       const updatedTasks = [...tasks];
@@ -109,8 +109,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       <>
          <ListItem sx={{ p: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper
-               rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
-               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(indexes) }}
+               rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
+               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleIsChecked }}
                style={{
                   borderRadius: '5px',
                   borderLeft: `4px solid ${depthBaseColors[indexes.length - 1]}`,
@@ -126,11 +126,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
                   </IconButton>
-                  <IconButton onClick={() => addTaskBelow(indexes)} size="small">
+                  <IconButton onClick={addTaskBelow} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
                   </IconButton>
                   {indexes.length !== 3 && (
-                     <IconButton onClick={() => addSubTask(indexes)} size="small">
+                     <IconButton onClick={addSubTask} size="small">
                         <KeyboardDoubleArrowRight fontSize="small" />
                      </IconButton>
                   )}
@@ -142,7 +142,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                      component="span"
                      contentEditable
                      suppressContentEditableWarning
-                     onBlur={(event) => handleSaveLabelOnBlur(event, indexes)}
+                     onBlur={(event) => handleSaveLabelOnBlur(event)}
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={depthFontSize[indexes.length - 1]}
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
