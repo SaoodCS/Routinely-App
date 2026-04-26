@@ -138,21 +138,19 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   )}
                   <ShowHideWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
-               <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                  <Stack direction={'row'} alignItems={'center'}>
-                     <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" />
-                     <Typography
-                        component="span"
-                        variant={depthTypographyVariant[indexes.length - 1]}
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(event) => handleSaveLabelOnBlur(event, indexes)}
-                        onKeyDown={handleBlurOnEnterClick}
-                        sx={{ outline: 'none', ...(task.isChecked ? { textDecoration: 'line-through' } : {}) }}
-                     >
-                        {task.label}
-                     </Typography>
-                  </Stack>
+               <Stack direction={'row'} alignItems={'center'}>
+                  <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" />
+                  <Typography
+                     component="span"
+                     variant={depthTypographyVariant[indexes.length - 1]}
+                     contentEditable
+                     suppressContentEditableWarning
+                     onBlur={(event) => handleSaveLabelOnBlur(event, indexes)}
+                     onKeyDown={handleBlurOnEnterClick}
+                     sx={{ outline: 'none', ...(task.isChecked ? { textDecoration: 'line-through' } : {}) }}
+                  >
+                     {task.label}
+                  </Typography>
                </Stack>
             </SwipeActionWrapper>
          </ListItem>
