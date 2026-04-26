@@ -57,9 +57,3 @@ export default function MorningRoutine(): React.JSX.Element {
       </>
    );
 }
-
-//TODO:
-// some sort of indication to what tags are associated with the task
-// header: hide/show all tags
-// header: reset all tasks
-// keyboard shortcuts for creating tasks etc.

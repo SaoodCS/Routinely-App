@@ -1,4 +1,4 @@
-import { ExpandCircleDownOutlined } from '@mui/icons-material';
+import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
@@ -30,8 +30,8 @@ export default function ShowHideWhenMenuButton({ indexes, section, task }: T_Sho
 
    return (
       <>
-         <IconButton onClick={(event) => setAnchorEl(event.currentTarget)} size="small" color="success">
-            <ExpandCircleDownOutlined fontSize="small" />
+         <IconButton onClick={(event) => setAnchorEl(event.currentTarget)} size="small">
+            <MoreVertOutlined fontSize="small" />
          </IconButton>
          <Menu
             anchorEl={anchorEl}

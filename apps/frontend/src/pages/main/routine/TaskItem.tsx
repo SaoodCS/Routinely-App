@@ -1,6 +1,6 @@
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import type { TypographyOwnProps } from '@mui/material';
-import { Checkbox, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import { IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
@@ -29,7 +29,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
    const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
    const depthTypographyVariant: TypographyOwnProps['variant'][] = ['body1', 'subtitle2', 'body2'];
-   const depthIconScale: number[] = [1, 0.9, 0.85];
 
    function addTaskBelow(indexes: T_TaskItemProps['indexes']): void {
       const updatedTasks = [...tasks];
@@ -123,11 +122,15 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   direction={'row'}
                   justifyContent={'start'}
                   alignItems={'center'}
-                  sx={{ scale: depthIconScale[indexes.length - 1], transformOrigin: 'left center' }}
+                  sx={{
+                     width: 1,
+                     '& > *': { color: depthBaseColors[indexes.length - 1], px: 0.5, py: 0.3 },
+                     '& > :last-child': { ml: 'auto' },
+                  }}
                >
-                  <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
-                     <DragIndicatorOutlined sx={{ color: alpha(depthBaseColors[indexes.length - 1], 0.75) }} />
-                  </ListItemIcon>
+                  <IconButton sx={{ minWidth: 20 }} {...dragElProps} size="small">
+                     <DragIndicatorOutlined fontSize="small" />
+                  </IconButton>
                   <IconButton onClick={() => addTaskBelow(indexes)} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
                   </IconButton>
@@ -138,8 +141,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   )}
                   <ShowHideWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
-               <Stack direction={'row'} alignItems={'center'}>
-                  <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" />
+               <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ p: 0.5, pl: 0.75 }}>
+                  {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
                   <Typography
                      component="span"
                      variant={depthTypographyVariant[indexes.length - 1]}
