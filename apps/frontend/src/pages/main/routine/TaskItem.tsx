@@ -75,7 +75,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
-   return (
+   function isTaskHidden(task: T_Task): boolean {
+      return !(!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase()));
+   }
+
+   return !isTaskHidden(task) ? (
       <>
          <Divider />
          <ListItem>
@@ -114,5 +118,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
             </SwipeActionWrapper>
          </ListItem>
       </>
+   ) : (
+      <></>
    );
 }
