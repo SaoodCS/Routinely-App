@@ -54,10 +54,8 @@ export default function MorningRoutine(): React.JSX.Element {
    );
 }
 
-// add new task below icon
-// add new subtask icon (only for tasks and subtasks, not subtasks of subtasks)
-// select tags dropdown icon
+//TODO:
 // some sort of indication to what tags are associated with the task
-
 // header: hide/show all tags
 // header: reset all tasks
+// keyboard shortcuts for creating tasks etc.
