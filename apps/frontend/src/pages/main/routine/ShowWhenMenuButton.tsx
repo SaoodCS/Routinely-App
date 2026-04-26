@@ -44,7 +44,11 @@ export default function ShowWhenMenuButton({ indexes, section, task }: T_ShowWhe
                tags.map((tag, i) => (
                   <span key={tag.id}>
                      {i > 0 && <Divider />}
-                     <MenuItem onClick={() => handleToggle(tag.id)} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                     <MenuItem
+                        onClick={() => handleToggle(tag.id)}
+                        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                        disabled={task.hideWhenTags?.includes(tag.id)}
+                     >
                         <ListItemText>{tag.label}</ListItemText>
                         {task.showWhenTags?.includes(tag.id) && <Check color="success" />}
                      </MenuItem>

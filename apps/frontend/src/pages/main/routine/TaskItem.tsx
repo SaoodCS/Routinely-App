@@ -1,4 +1,4 @@
-import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
+import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import type { FocusEvent, JSX } from 'react';
 import { useSearchParams } from 'react-router';
 import type { TypographyOwnProps } from '@mui/material';
@@ -6,6 +6,7 @@ import { Checkbox, IconButton, ListItem, ListItemIcon, Stack, Typography } from 
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useTheme, alpha } from '@mui/material/styles';
+import { filter, intersection, map } from 'lodash';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
@@ -24,6 +25,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
+   const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
    const { palette } = useTheme();
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
    const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
@@ -82,11 +84,30 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
-   function isTaskHidden(task: T_Task): boolean {
-      return !(!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase()));
+   function isTaskVisibleViaTag(task: T_Task): boolean {
+      const enabledTagIds: T_Tag['id'][] = map(filter(tags, 'isEnabled'), 'id');
+      const taskHideWhenTags: T_Task['hideWhenTags'] = task.hideWhenTags ?? [];
+      if (intersection(enabledTagIds, taskHideWhenTags).length > 0) return false;
+      if (!task.showWhenTags || task.showWhenTags.length === 0) return true;
+      const taskShowWhenTags: T_Task['showWhenTags'] = task.showWhenTags ?? [];
+      return intersection(enabledTagIds, taskShowWhenTags).length > 0;
    }
 
-   return !isTaskHidden(task) ? (
+   function isTaskVisible(): boolean {
+      if (searchQuery && !task.label.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (!isTaskVisibleViaTag(task)) return false;
+      if (indexes.length === 2 || indexes.length === 3) {
+         const parentTask = tasks[indexes[0]];
+         if (!isTaskVisibleViaTag(parentTask)) return false;
+      }
+      if (indexes.length === 3) {
+         const parentTask = tasks[indexes[0]].children![indexes[1]];
+         if (!isTaskVisibleViaTag(parentTask)) return false;
+      }
+      return true;
+   }
+
+   return isTaskVisible() ? (
       <>
          <ListItem sx={{ px: 0.5, py: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper

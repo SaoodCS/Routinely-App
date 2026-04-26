@@ -14,6 +14,7 @@ export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhe
    const [tags] = useLocalStorage<T_Tag[]>('tags', []);
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+   //const tagsExcludingShowWhen = tags.filter((tag) => !task.showWhenTags?.includes(tag.id));
 
    function handleToggle(tagId: T_Tag['id']): void {
       const updatedTask = { ...task };
@@ -44,7 +45,11 @@ export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhe
                tags.map((tag, i) => (
                   <span key={tag.id}>
                      {i > 0 && <Divider />}
-                     <MenuItem onClick={() => handleToggle(tag.id)} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                     <MenuItem
+                        onClick={() => handleToggle(tag.id)}
+                        sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                        disabled={task.showWhenTags?.includes(tag.id)}
+                     >
                         <ListItemText>{tag.label}</ListItemText>
                         {task.hideWhenTags?.includes(tag.id) && <Check color="error" />}
                      </MenuItem>
