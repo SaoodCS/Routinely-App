@@ -8,7 +8,7 @@ export default function Settings(): React.JSX.Element {
    }
 
    return (
-      <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem">
+      <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem" gap="1rem">
          <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
             <MenuList dense>
                <MenuItem onClick={resetAllData}>
