@@ -1,6 +1,6 @@
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import type { TypographyOwnProps } from '@mui/material';
-import { IconButton, ListItem, Stack, Typography } from '@mui/material';
+import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
@@ -106,7 +106,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    }
 
    return isTaskVisible() ? (
-      <>
+      <Grow in>
          <ListItem sx={{ p: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
@@ -115,6 +115,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   borderRadius: '5px',
                   borderLeft: `4px solid ${depthBaseColors[indexes.length - 1]}`,
                   backgroundColor: alpha(depthBaseColors[indexes.length - 1], 0.15),
+                  opacity: task.isChecked ? 0.5 : 1,
                }}
             >
                <Stack
@@ -153,7 +154,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                </Stack>
             </SwipeActionWrapper>
          </ListItem>
-      </>
+      </Grow>
    ) : (
       <></>
    );
