@@ -1,17 +1,16 @@
-import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
-import type { FocusEvent, JSX } from 'react';
-import { useSearchParams } from 'react-router';
+import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import type { TypographyOwnProps } from '@mui/material';
 import { Checkbox, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
-import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
+import { alpha, useTheme } from '@mui/material/styles';
+import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
-import { useTheme, alpha } from '@mui/material/styles';
 import { filter, intersection, map } from 'lodash';
+import type { FocusEvent, JSX } from 'react';
+import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
-import useLocalStorage from '../../../hooks/useLocalStorage';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import ShowWhenMenuButton from './ShowWhenMenuButton';
-import HideWhenMenuButton from './HideWhenMenuButton';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
 
 interface T_TaskItemProps {
    task: T_Task;
@@ -137,8 +136,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                         <KeyboardDoubleArrowRight fontSize="small" />
                      </IconButton>
                   )}
-                  <ShowWhenMenuButton section="morning" indexes={indexes} task={task} />
-                  <HideWhenMenuButton section="morning" indexes={indexes} task={task} />
+                  <ShowHideWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
                <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                   <Stack direction={'row'} alignItems={'center'}>
