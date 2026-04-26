@@ -118,17 +118,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   borderLeftColor: depthBaseColors[indexes.length - 1],
                }}
             >
-               <Stack
-                  direction={'row'}
-                  justifyContent={'start'}
-                  alignItems={'center'}
-                  sx={{
-                     width: 1,
-                     '& > *': { color: depthBaseColors[indexes.length - 1], px: 0.5, py: 0.3 },
-                     '& > :last-child': { ml: 'auto' },
-                  }}
-               >
-                  <IconButton sx={{ minWidth: 20 }} {...dragElProps} size="small">
+               <Stack direction={'row'} justifyContent={'start'} alignItems={'center'} sx={{ width: 1, '& > :last-child': { ml: 'auto' } }}>
+                  <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
                   </IconButton>
                   <IconButton onClick={() => addTaskBelow(indexes)} size="small">
