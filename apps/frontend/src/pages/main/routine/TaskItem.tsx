@@ -27,8 +27,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const [tags] = useLocalStorage<T_Tag[]>(`tags`, []);
    const { palette } = useTheme();
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
-   const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
-   const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.85rem'];
+   const depthLeftIndent: number[] = [1, 2, 3];
+   const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.8rem'];
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
@@ -107,7 +107,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
 
    return isTaskVisible() ? (
       <Grow in>
-         <ListItem sx={{ p: 0.5, pl: depthLeftIndent[indexes.length - 1] }}>
+         <ListItem sx={{ py: 0.5, px: 1, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleIsChecked }}

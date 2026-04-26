@@ -1,5 +1,5 @@
 import { DragIndicatorOutlined } from '@mui/icons-material';
-import { Box, Divider, ListItem, ListItemIcon, Switch, Typography } from '@mui/material';
+import { Box, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
 import type { T_Tag } from '@repo/types/app.types';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
@@ -62,36 +62,37 @@ export default function Tags(): React.JSX.Element {
             renderItem={(tag, dragElProps, i) =>
                !isTagHidden(tag.label) && (
                   <Box>
-                     {i > 0 && <Divider />}
-                     <ListItem>
-                        <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
-                           <DragIndicatorOutlined />
-                        </ListItemIcon>
-                        <SwipeActionWrapper
-                           rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                           leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
-                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                        >
-                           <Typography
-                              component="span"
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                              onKeyDown={handleBlurOnEnterClick}
-                              sx={{ outline: 'none', width: '60%' }}
+                     <Grow in>
+                        <ListItem sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
+                           <SwipeActionWrapper
+                              rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
+                              leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
+                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                            >
-                              {tag.label}
-                           </Typography>
-                           <Box
-                              component="input"
-                              type="color"
-                              value={tag.color}
-                              onChange={(event) => handleColorChange(event, i)}
-                              sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
-                           />
-                           <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                        </SwipeActionWrapper>
-                     </ListItem>
+                              <IconButton {...dragElProps} size="small">
+                                 <DragIndicatorOutlined />
+                              </IconButton>
+                              <Typography
+                                 component="span"
+                                 contentEditable
+                                 suppressContentEditableWarning
+                                 onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                                 onKeyDown={handleBlurOnEnterClick}
+                                 sx={{ outline: 'none', width: '60%' }}
+                              >
+                                 {tag.label}
+                              </Typography>
+                              <Box
+                                 component="input"
+                                 type="color"
+                                 value={tag.color}
+                                 onChange={(event) => handleColorChange(event, i)}
+                                 sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
+                              />
+                              <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                           </SwipeActionWrapper>
+                        </ListItem>
+                     </Grow>
                   </Box>
                )
             }
