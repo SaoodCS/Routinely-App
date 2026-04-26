@@ -15,3 +15,8 @@ export interface T_Tag {
    isEnabled: boolean;
    color: string;
 }
+
+export interface T_Settings {
+   inheritShowWhenTagsOnTaskCreation: boolean;
+   inheritHideWhenTagsOnTaskCreation: boolean;
+}
