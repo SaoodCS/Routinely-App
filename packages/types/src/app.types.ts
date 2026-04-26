@@ -19,4 +19,5 @@ export interface T_Tag {
 export interface T_TaskSettings {
    inheritShowWhenTagsOnTaskCreation: boolean;
    inheritHideWhenTagsOnTaskCreation: boolean;
+   showAllTasksWhileDragging: boolean;
 }
