@@ -28,7 +28,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const { palette } = useTheme();
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
    const depthLeftIndent: number[] = [1, 2, 3];
-   const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.8rem'];
+   const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.825rem'];
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
