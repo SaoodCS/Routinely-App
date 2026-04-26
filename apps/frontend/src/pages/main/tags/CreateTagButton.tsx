@@ -8,7 +8,7 @@ export default function CreateTagButton(): React.JSX.Element {
    const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
    function handleCreateTagButton(): void {
       const newTag = createNewTag();
-      setTags([newTag, ...tags]);
+      setTags([...tags, newTag]);
    }
    return (
       <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>

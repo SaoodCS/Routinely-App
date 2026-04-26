@@ -12,7 +12,7 @@ export default function CreateTaskButton({ section }: T_CreateTaskButtonProps): 
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    function handleCreateTaskButton(): void {
       const newTask = createNewTask();
-      setTasks([newTask, ...tasks]);
+      setTasks([...tasks, newTask]);
    }
    return (
       <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
