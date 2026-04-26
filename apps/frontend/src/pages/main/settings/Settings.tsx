@@ -4,6 +4,10 @@ import type React from 'react';
 import { lighten } from '@mui/material/styles';
 
 export default function Settings(): React.JSX.Element {
+   function resetAllData(): void {
+      localStorage.clear();
+   }
+
    return (
       <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem">
          <MenuList
@@ -15,7 +19,7 @@ export default function Settings(): React.JSX.Element {
                boxShadow: '0 0 1rem rgba(0, 0, 0, 0.2)',
             }}
          >
-            <MenuItem>
+            <MenuItem onClick={resetAllData}>
                <ListItemIcon>
                   <RestartAltOutlined />
                </ListItemIcon>
