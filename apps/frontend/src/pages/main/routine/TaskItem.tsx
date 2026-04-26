@@ -28,6 +28,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
    const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
    const depthTypographyVariant: TypographyOwnProps['variant'][] = ['body1', 'subtitle2', 'body2'];
+   const depthIconScale: number[] = [1, 0.9, 0.85];
 
    function addTaskBelow(indexes: T_TaskItemProps['indexes']): void {
       const updatedTasks = [...tasks];
@@ -43,7 +44,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       const newTask = createNewTask();
       let parentTask = updatedTasks[indexes[0]];
       if (indexes.length === 2) parentTask = parentTask.children![indexes[1]];
-      parentTask.children = [...(parentTask.children ?? []), newTask];
+      parentTask.children = [newTask, ...(parentTask.children ?? [])];
       setTasks(updatedTasks);
    }
 
@@ -98,7 +99,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   borderLeftColor: depthBaseColors[indexes.length - 1],
                }}
             >
-               <Stack direction={'row'} justifyContent={'start'} alignItems={'center'}>
+               <Stack
+                  direction={'row'}
+                  justifyContent={'start'}
+                  alignItems={'center'}
+                  sx={{
+                     // scale it down according to depthIconScale but stop it from moving right as a result:
+                     scale: depthIconScale[indexes.length - 1],
+                     transformOrigin: 'left center',
+                  }}
+               >
                   <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
                      <DragIndicatorOutlined sx={{ color: alpha(depthBaseColors[indexes.length - 1], 0.75) }} />
                   </ListItemIcon>
@@ -115,7 +125,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                </Stack>
                <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                   <Stack direction={'row'} alignItems={'center'}>
-                     <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} sx={{ py: 0.5, px: 0.5 }} />
+                     <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" />
                      <Typography
                         component="span"
                         variant={depthTypographyVariant[indexes.length - 1]}
