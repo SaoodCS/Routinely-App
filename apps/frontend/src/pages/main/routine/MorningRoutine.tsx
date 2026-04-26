@@ -1,14 +1,11 @@
-import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
-import { Box, Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import type { T_Task } from '@repo/types/app.types';
 import { useSearchParams } from 'react-router';
 import { createNewTask } from '@repo/utils/app.helpers';
 import DragAndDropList from '../../../components/DragAndDropList';
-import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import HideWhenMenuButton from './HideWhenMenuButton';
-import ShowWhenMenuButton from './ShowWhenMenuButton';
+import TaskItem from './TaskItem';
 
 export default function MorningRoutine(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -73,42 +70,37 @@ export default function MorningRoutine(): React.JSX.Element {
          renderItem={(task, dragElProps, i) =>
             !isTaskHidden(task) && (
                <Box>
-                  {i > 0 && <Divider />}
-                  <ListItem>
-                     <SwipeActionWrapper
-                        rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                        leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(i) }}
-                     >
-                        <Stack direction={'row'} justifyContent={'start'} alignItems={'center'}>
-                           <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
-                              <DragIndicatorOutlined />
-                           </ListItemIcon>
-                           <IconButton onClick={() => addTaskBelow([i])} size="small">
-                              <KeyboardDoubleArrowDown fontSize="small" />
-                           </IconButton>
-                           <IconButton onClick={() => addSubTask([i])} size="small">
-                              <KeyboardDoubleArrowRight fontSize="small" />
-                           </IconButton>
-                           <ShowWhenMenuButton section="morning" indexes={[i]} task={task} />
-                           <HideWhenMenuButton section="morning" indexes={[i]} task={task} />
-                        </Stack>
-                        <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                           <Stack direction={'row'} alignItems={'center'}>
-                              <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(i)} />
-                              <Typography
-                                 component="span"
-                                 contentEditable
-                                 suppressContentEditableWarning
-                                 onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                                 onKeyDown={handleBlurOnEnterClick}
-                                 sx={{ outline: 'none' }}
-                              >
-                                 {task.label}
-                              </Typography>
-                           </Stack>
-                        </Stack>
-                     </SwipeActionWrapper>
-                  </ListItem>
+                  <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section="morning" />
+                  {task.children && (
+                     <DragAndDropList
+                        items={task.children}
+                        onDrop={(newOrderedItems) => {
+                           const updatedTasks = [...tasks];
+                           updatedTasks[i].children = newOrderedItems;
+                           setTasks(updatedTasks);
+                        }}
+                        renderItem={(subtask, dragElProps, j) => (
+                           <Box key={subtask.id} ml={2}>
+                              <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section="morning" />
+                              {subtask.children && (
+                                 <DragAndDropList
+                                    items={subtask.children}
+                                    onDrop={(newOrderedItems) => {
+                                       const updatedTasks = [...tasks];
+                                       updatedTasks[i].children![j].children = newOrderedItems;
+                                       setTasks(updatedTasks);
+                                    }}
+                                    renderItem={(subsubtask, dragElProps, k) => (
+                                       <Box key={subsubtask.id} ml={2}>
+                                          <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section="morning" />
+                                       </Box>
+                                    )}
+                                 />
+                              )}
+                           </Box>
+                        )}
+                     />
+                  )}
                </Box>
             )
          }

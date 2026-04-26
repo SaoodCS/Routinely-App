@@ -1,7 +1,7 @@
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import type { FocusEvent, JSX } from 'react';
 import { useSearchParams } from 'react-router';
-import { Box, Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import { Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { createNewTask } from '@repo/utils/app.helpers';
 import type DragAndDropList from '../../../components/DragAndDropList';
@@ -76,8 +76,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    }
 
    return (
-      <Box>
-         {indexes.at(-1)! > 0 && <Divider />}
+      <>
+         <Divider />
          <ListItem>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
@@ -113,6 +113,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                </Stack>
             </SwipeActionWrapper>
          </ListItem>
-      </Box>
+      </>
    );
 }
