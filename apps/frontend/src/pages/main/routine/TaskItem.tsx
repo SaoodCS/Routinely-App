@@ -82,13 +82,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    return !isTaskHidden(task) ? (
       <>
          <Divider />
-         <ListItem
-            sx={{
-               px: 0.5,
-               py: 0.5,
-               height: '100%',
-            }}
-         >
+         <ListItem sx={{ px: 0.5, py: 0.5 }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(indexes) }}
