@@ -69,6 +69,7 @@ export default function MorningRoutine(): React.JSX.Element {
          ref={ref}
          items={tasks}
          onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
+         style={{ overflow: 'auto', maxHeight: '100%' }}
          renderItem={(task, dragElProps, i) =>
             !isTaskHidden(task) && (
                <Box>
@@ -111,7 +112,6 @@ export default function MorningRoutine(): React.JSX.Element {
                </Box>
             )
          }
-         style={{ overflow: 'auto', maxHeight: '100%' }}
       />
    );
 }

@@ -23,23 +23,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const searchQuery = searchParams.get('search');
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
 
-   function handleDelete(indexes: T_TaskItemProps['indexes']): void {
-      const updatedTasks = [...tasks];
-      if (indexes.length === 1) updatedTasks.splice(indexes[0], 1);
-      else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1], 1);
-      else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2], 1);
-      setTasks(updatedTasks);
-   }
-
-   function handleToggleIsChecked(indexes: T_TaskItemProps['indexes']): void {
-      const updatedTasks = [...tasks];
-      let task = updatedTasks[indexes[0]];
-      if (indexes.length === 2) task = task.children![indexes[1]];
-      else if (indexes.length === 3) task = task.children![indexes[1]].children![indexes[2]];
-      task.isChecked = !task.isChecked;
-      setTasks(updatedTasks);
-   }
-
    function addTaskBelow(indexes: T_TaskItemProps['indexes']): void {
       const updatedTasks = [...tasks];
       const newTask = createNewTask();
@@ -58,6 +41,23 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
+   function handleDelete(indexes: T_TaskItemProps['indexes']): void {
+      const updatedTasks = [...tasks];
+      if (indexes.length === 1) updatedTasks.splice(indexes[0], 1);
+      else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1], 1);
+      else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2], 1);
+      setTasks(updatedTasks);
+   }
+
+   function handleToggleIsChecked(indexes: T_TaskItemProps['indexes']): void {
+      const updatedTasks = [...tasks];
+      let updatedTask = updatedTasks[indexes[0]];
+      if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
+      else if (indexes.length === 3) updatedTask = updatedTask.children![indexes[1]].children![indexes[2]];
+      updatedTask.isChecked = !updatedTask.isChecked;
+      setTasks(updatedTasks);
+   }
+
    function handleBlurOnEnterClick(event: React.KeyboardEvent<HTMLSpanElement>): void {
       if (event.key !== 'Enter') return;
       event.preventDefault();
@@ -69,8 +69,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       if (updatedLabel === task.label) return;
       const updatedTasks = [...tasks];
       let updatedTask = updatedTasks[indexes[0]];
-      if (indexes.length === 2) updatedTask = task.children![indexes[1]];
-      else if (indexes.length === 3) updatedTask = task.children![indexes[1]].children![indexes[2]];
+      if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
+      else if (indexes.length === 3) updatedTask = updatedTask.children![indexes[1]].children![indexes[2]];
       updatedTask.label = updatedLabel;
       setTasks(updatedTasks);
    }
