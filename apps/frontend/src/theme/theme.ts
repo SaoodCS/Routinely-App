@@ -40,7 +40,11 @@ const components_layout: ThemeOptions['components'] = {
    MuiBottomNavigationAction: { styleOverrides: { label: { display: 'none' }, root: { padding: 'unset' } } },
 };
 
-const components: ThemeOptions['components'] = {};
+const components: ThemeOptions['components'] = {
+   MuiMenuItem: {
+      defaultProps: { dense: true },
+   },
+};
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });
 export default theme;
