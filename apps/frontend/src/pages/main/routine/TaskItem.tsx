@@ -25,7 +25,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
-   const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
+   const [tags] = useLocalStorage<T_Tag[]>(`tags`, []);
    const { palette } = useTheme();
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
    const depthLeftIndent: number[] = [0.5, 1.25, 2.5];

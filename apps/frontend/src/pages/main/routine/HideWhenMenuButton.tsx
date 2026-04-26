@@ -14,7 +14,6 @@ export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhe
    const [tags] = useLocalStorage<T_Tag[]>('tags', []);
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-   //const tagsExcludingShowWhen = tags.filter((tag) => !task.showWhenTags?.includes(tag.id));
 
    function handleToggle(tagId: T_Tag['id']): void {
       const updatedTask = { ...task };
