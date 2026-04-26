@@ -121,7 +121,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   direction={'row'}
                   justifyContent={'start'}
                   alignItems={'center'}
-                  sx={{ '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: depthBaseColors[indexes.length - 1] } }}
+                  sx={{ pt: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: depthBaseColors[indexes.length - 1] } }}
                >
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
