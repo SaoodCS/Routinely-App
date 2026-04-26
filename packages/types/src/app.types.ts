@@ -16,7 +16,7 @@ export interface T_Tag {
    color: string;
 }
 
-export interface T_Settings {
+export interface T_TaskSettings {
    inheritShowWhenTagsOnTaskCreation: boolean;
    inheritHideWhenTagsOnTaskCreation: boolean;
 }
