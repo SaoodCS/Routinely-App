@@ -103,11 +103,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   direction={'row'}
                   justifyContent={'start'}
                   alignItems={'center'}
-                  sx={{
-                     // scale it down according to depthIconScale but stop it from moving right as a result:
-                     scale: depthIconScale[indexes.length - 1],
-                     transformOrigin: 'left center',
-                  }}
+                  sx={{ scale: depthIconScale[indexes.length - 1], transformOrigin: 'left center' }}
                >
                   <ListItemIcon sx={{ minWidth: 20 }} {...dragElProps}>
                      <DragIndicatorOutlined sx={{ color: alpha(depthBaseColors[indexes.length - 1], 0.75) }} />
