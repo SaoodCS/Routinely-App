@@ -28,7 +28,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const { palette } = useTheme();
    const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
    const depthLeftIndent: number[] = [0.5, 1.25, 2.5];
-   const depthTypographyVariant: TypographyOwnProps['variant'][] = ['body1', 'subtitle2', 'body2'];
+   const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.85rem'];
 
    function addTaskBelow(indexes: T_TaskItemProps['indexes']): void {
       const updatedTasks = [...tasks];
@@ -140,12 +140,13 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
                   <Typography
                      component="span"
-                     variant={depthTypographyVariant[indexes.length - 1]}
                      contentEditable
                      suppressContentEditableWarning
                      onBlur={(event) => handleSaveLabelOnBlur(event, indexes)}
                      onKeyDown={handleBlurOnEnterClick}
-                     sx={{ outline: 'none', ...(task.isChecked ? { textDecoration: 'line-through' } : {}) }}
+                     fontSize={depthFontSize[indexes.length - 1]}
+                     color={task.isChecked ? 'textDisabled' : 'textPrimary'}
+                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none' }}
                   >
                      {task.label}
                   </Typography>
