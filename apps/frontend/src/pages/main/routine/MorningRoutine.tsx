@@ -27,7 +27,7 @@ export default function MorningRoutine(): React.JSX.Element {
                         setTasks(updatedTasks);
                      }}
                      renderItem={(subtask, dragElProps, j) => (
-                        <Box key={subtask.id} ml={2}>
+                        <Box key={subtask.id}>
                            <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section="morning" />
                            {subtask.children && (
                               <DragAndDropList
@@ -38,7 +38,7 @@ export default function MorningRoutine(): React.JSX.Element {
                                     setTasks(updatedTasks);
                                  }}
                                  renderItem={(subsubtask, dragElProps, k) => (
-                                    <Box key={subsubtask.id} ml={2}>
+                                    <Box key={subsubtask.id}>
                                        <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section="morning" />
                                     </Box>
                                  )}

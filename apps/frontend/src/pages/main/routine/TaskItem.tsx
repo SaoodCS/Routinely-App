@@ -1,7 +1,7 @@
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import type { FocusEvent, JSX } from 'react';
 import { useSearchParams } from 'react-router';
-import { Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography } from '@mui/material';
+import { Checkbox, Divider, IconButton, ListItem, ListItemIcon, Stack, Typography, type SxProps } from '@mui/material';
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { createNewTask } from '@repo/utils/app.helpers';
 import type DragAndDropList from '../../../components/DragAndDropList';
@@ -78,11 +78,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    function isTaskHidden(task: T_Task): boolean {
       return !(!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase()));
    }
+   const levelsAndStyles: { [key: number]: SxProps } = {
+      1: { pl: 0 },
+      2: { pl: 2, backgroundColor: '#42a4f50f' },
+      3: { pl: 4 },
+   };
 
    return !isTaskHidden(task) ? (
       <>
          <Divider />
-         <ListItem>
+         <ListItem sx={{ ...levelsAndStyles[indexes.length] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(indexes) }}
