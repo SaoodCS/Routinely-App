@@ -82,7 +82,13 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    return !isTaskHidden(task) ? (
       <>
          <Divider />
-         <ListItem sx={{}}>
+         <ListItem
+            sx={{
+               px: 0.5,
+               py: 0.5,
+               height: '100%',
+            }}
+         >
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(indexes) }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggleIsChecked(indexes) }}
@@ -102,7 +108,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                </Stack>
                <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                   <Stack direction={'row'} alignItems={'center'}>
-                     <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} />
+                     <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} sx={{ py: 0.5, px: 0.5 }} />
                      <Typography
                         component="span"
                         contentEditable
