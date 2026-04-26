@@ -37,7 +37,7 @@ export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhe
             onClose={() => setAnchorEl(null)}
             slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } }}
          >
-            <MenuItem disabled>Show Task When</MenuItem>
+            <MenuItem disabled>Hide Task When</MenuItem>
             {tags.length === 0 ? (
                <MenuItem disabled>No tags</MenuItem>
             ) : (
