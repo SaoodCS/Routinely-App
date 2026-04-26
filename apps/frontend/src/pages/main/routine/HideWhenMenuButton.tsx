@@ -52,6 +52,7 @@ export default function HideWhenMenuButton({ indexes, section, task }: T_HideWhe
                      >
                         <ListItemText>{tag.label}</ListItemText>
                         {task.hideWhenTags?.includes(tag.id) && <Check color="error" />}
+                        {task.showWhenTags?.includes(tag.id) && <Check color="success" />}
                      </MenuItem>
                   </span>
                ))
