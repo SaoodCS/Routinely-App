@@ -24,7 +24,7 @@ export function Login(): React.JSX.Element {
          alignItems="center"
          padding={2}
          sx={{
-            background: '#020617',
+            background: '#071018',
             backgroundImage: `
         linear-gradient(to right, #42a4f51d 1px, transparent 1px),
         linear-gradient(to bottom, #42a4f51d 1px, transparent 1px),
