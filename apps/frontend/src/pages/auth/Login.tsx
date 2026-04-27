@@ -1,5 +1,5 @@
 import GoogleIcon from '@mui/icons-material/Google';
-import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase/config';
@@ -7,6 +7,7 @@ import { auth } from '../../firebase/config';
 export function Login(): React.JSX.Element {
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const { palette } = useTheme();
 
    function login(): void {
       setIsLoading(true);
@@ -24,7 +25,7 @@ export function Login(): React.JSX.Element {
          alignItems="center"
          padding={2}
          sx={{
-            background: '#071018',
+            background: palette.background.default,
             backgroundImage: `
         linear-gradient(to right, #42a4f51d 1px, transparent 1px),
         linear-gradient(to bottom, #42a4f51d 1px, transparent 1px),
