@@ -10,12 +10,10 @@ export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: T_User
    const { isLoading, isAuthenticated, userRole } = useAuth();
    if (isLoading) return <SpinnerLoader fullPage />;
    if (!isAuthenticated) return <Navigate to={ROUTE_PATHS.auth_login} replace state={{ from: location }} />;
-   //TODO: If app doesn't have user role, replace remaining lines in the function with: return <Outlet />
    if (userRole && (allowedRoles === 'all' || allowedRoles.includes(userRole))) return <Outlet />;
    return <Navigate to={ROUTE_PATHS.forbidden} replace state={{ from: location }} />;
 }
 
-// TODO: set the default fallbackRoute for if a user's logged in and tried to visit a public only route
 export function PublicOnlyRoute({ fallbackRoute = ROUTE_PATHS.main }: { fallbackRoute?: T_Route_Path }): JSX.Element {
    const location = useLocation() as Location<{ from?: Location } | null>;
    const { isLoading, isAuthenticated } = useAuth();

@@ -1,4 +1,4 @@
-import { DeleteOutlineOutlined, RestartAltOutlined } from '@mui/icons-material';
+import { DeleteOutlineOutlined, LogoutOutlined, RestartAltOutlined } from '@mui/icons-material';
 import { Divider, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack } from '@mui/material';
 import type React from 'react';
 
@@ -6,6 +6,10 @@ export default function Settings(): React.JSX.Element {
    function resetAllData(): void {
       localStorage.clear();
    }
+
+   function deleteAccount(): void {}
+
+   function logout(): void {}
 
    return (
       <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem" gap="1rem">
@@ -18,11 +22,17 @@ export default function Settings(): React.JSX.Element {
                   <ListItemText>Reset All Data</ListItemText>
                </MenuItem>
                <Divider />
-               <MenuItem>
+               <MenuItem onClick={resetAllData}>
                   <ListItemIcon>
                      <DeleteOutlineOutlined />
                   </ListItemIcon>
                   <ListItemText>Delete Account</ListItemText>
+               </MenuItem>
+               <MenuItem onClick={logout}>
+                  <ListItemIcon>
+                     <LogoutOutlined />
+                  </ListItemIcon>
+                  <ListItemText>Logout</ListItemText>
                </MenuItem>
             </MenuList>
          </Paper>
