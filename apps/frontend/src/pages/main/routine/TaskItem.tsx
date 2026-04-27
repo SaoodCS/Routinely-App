@@ -3,8 +3,7 @@ import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
-import { filter, intersection, map } from 'lodash';
-import type { FocusEvent, JSX } from 'react';
+import { useMemo, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
@@ -12,14 +11,12 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
 import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
 
-// CONSTS:
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
    1: { indent: 1, color: ['primary', 'main'], fontSize: '1rem' },
    2: { indent: 2, color: ['secondary', 'dark'], fontSize: '0.9rem' },
    3: { indent: 3, color: ['secondary', 'main'], fontSize: '0.825rem' },
 };
 
-// COMPONENT:
 interface T_TaskItemProps {
    task: T_Task;
    dragElProps: Parameters<Parameters<typeof DragAndDropList<T_Task>>[0]['renderItem']>[1];
@@ -27,14 +24,24 @@ interface T_TaskItemProps {
    section: T_Routine_Section;
 }
 
-export default function TaskItem(props: T_TaskItemProps): JSX.Element {
+export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section } = props;
    const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search');
+   const searchQuery = searchParams.get('search')?.toLowerCase();
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [tags] = useLocalStorage<T_Tag[]>(`tags`, []);
    const { palette } = useTheme();
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
+   const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
+
+   function updateTask(updatedTasks: T_Task[], update: (task: T_Task) => T_Task): void {
+      if (indexes.length === 1) updatedTasks[indexes[0]] = update(updatedTasks[indexes[0]]);
+      else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = update(updatedTasks[indexes[0]].children![indexes[1]]);
+      else
+         updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = update(
+            updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]],
+         );
+   }
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
@@ -71,7 +78,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
       setTasks(updatedTasks);
    }
 
-   function handleBlurOnEnterClick(event: React.KeyboardEvent<HTMLSpanElement>): void {
+   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
       if (event.key !== 'Enter') return;
       event.preventDefault();
       event.currentTarget.blur();
@@ -89,16 +96,14 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    }
 
    function isTaskVisibleViaTag(task: T_Task): boolean {
-      const enabledTagIds: T_Tag['id'][] = map(filter(tags, 'isEnabled'), 'id');
       const taskHideWhenTags: T_Task['hideWhenTags'] = task.hideWhenTags ?? [];
-      if (intersection(enabledTagIds, taskHideWhenTags).length > 0) return false;
+      if (taskHideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
       if (!task.showWhenTags || task.showWhenTags.length === 0) return true;
-      const taskShowWhenTags: T_Task['showWhenTags'] = task.showWhenTags ?? [];
-      return intersection(enabledTagIds, taskShowWhenTags).length > 0;
+      return task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
    }
 
    function isTaskVisible(): boolean {
-      if (searchQuery && !task.label.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (searchQuery && !task.label.toLowerCase().includes(searchQuery)) return false;
       if (!isTaskVisibleViaTag(task)) return false;
       if (indexes.length === 2 || indexes.length === 3) {
          const parentTask = tasks[indexes[0]];
@@ -153,7 +158,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                      component="span"
                      contentEditable
                      suppressContentEditableWarning
-                     onBlur={(event) => handleSaveLabelOnBlur(event)}
+                     onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={taskDepthStyle.fontSize}
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
@@ -165,7 +170,5 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
             </SwipeActionWrapper>
          </ListItem>
       </Grow>
-   ) : (
-      <></>
-   );
+   ) : null;
 }
