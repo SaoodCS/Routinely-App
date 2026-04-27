@@ -34,15 +34,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
-   function updateTask(updatedTasks: T_Task[], update: (task: T_Task) => T_Task): void {
-      if (indexes.length === 1) updatedTasks[indexes[0]] = update(updatedTasks[indexes[0]]);
-      else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = update(updatedTasks[indexes[0]].children![indexes[1]]);
-      else
-         updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = update(
-            updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]],
-         );
-   }
-
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
       const newTask = createNewTask();
