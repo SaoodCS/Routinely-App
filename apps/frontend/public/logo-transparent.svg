@@ -24,7 +24,7 @@
     </filter>
   </defs>
 
-  <rect width="1024" height="1024" rx="228" fill="url(#bgGlow)" />
+  <rect width="1024" height="1024" rx="228" fill="none" />
   <circle cx="512" cy="512" r="372" fill="#42a5f5" opacity="0.035" />
   <circle cx="754" cy="286" r="92" fill="#42a5f5" opacity="0.06" />
 
@@ -46,7 +46,7 @@
     </g>
 
     <g filter="url(#blueGlow)">
-      <circle cx="686" cy="692" r="151" fill="#121212" stroke="url(#accent)" stroke-width="38" />
+      <circle cx="686" cy="692" r="151" fill="#071018" stroke="url(#accent)" stroke-width="38" />
       <path d="M616 690L671 745L767 638" stroke="url(#accent)" stroke-width="44" stroke-linecap="round"
         stroke-linejoin="round" />
     </g>
