@@ -25,7 +25,10 @@ export function Login(): React.JSX.Element {
          padding={2}
          sx={{ background: 'linear-gradient(135deg, #121212 0%, #0c0e1c 50%, #121212 100%)' }}
       >
-         <Paper elevation={0} sx={{ maxWidth: 390, boxShadow: '0 24px 80px rgba(0, 0, 0, 0.35)', background: 'transparent' }}>
+         <Paper
+            elevation={0}
+            sx={{ maxWidth: 390, boxShadow: '0 24px 80px rgba(0, 0, 0, 0.35)', background: '#3b3b3b26', backdropFilter: 'blur(10px)' }}
+         >
             <Stack gap={3} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: { xs: 3, sm: 4 } }}>
                <Stack direction="row" alignItems="center" gap={1.5}>
                   <Box component="img" src="/logo.svg" alt="Routinely" sx={{ width: 50, height: 50, mixBlendMode: 'lighten' }} />
@@ -42,16 +45,7 @@ export function Login(): React.JSX.Element {
                   Welcome back
                </Typography>
                {error && <Alert severity="error">{error}</Alert>}
-               <Button
-                  fullWidth
-                  size="large"
-                  variant="contained"
-                  startIcon={<GoogleIcon />}
-                  onClick={login}
-                  loading={isLoading}
-                  disabled={isLoading}
-                  sx={{ fontWeight: 700, textTransform: 'none' }}
-               >
+               <Button fullWidth variant="contained" startIcon={<GoogleIcon />} onClick={login} loading={isLoading} sx={{ textTransform: 'none' }}>
                   Continue with Google
                </Button>
                <Typography variant="caption" color="text.secondary" textAlign="center">
