@@ -1,14 +1,13 @@
 import { Box } from '@mui/material';
-import type { T_Task } from '@repo/types/app.types';
 import DragAndDropList from '../../../components/DragAndDropList';
-import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import { useDatabase } from '../../../database/useDatabase';
 import TaskItem from './TaskItem';
 import CreateTaskButton from './CreateTaskButton';
 
 export default function EveningRoutine(): React.JSX.Element {
    const { ref } = useScrollSaver('evening-routine-scroll');
-   const [tasks, setTasks] = useLocalStorage<T_Task[]>(`evening-routine-tasks`, []);
+   const { eveningTasks: tasks, setEveningTasks: setTasks } = useDatabase();
 
    return (
       <>

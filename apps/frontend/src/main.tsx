@@ -8,6 +8,7 @@ import { RouterProvider } from 'react-router';
 import { router } from './routes/router.tsx';
 import theme from './theme/theme.ts';
 import { AuthProvider } from './auth/useAuth.tsx';
+import { DatabaseProvider } from './database/useDatabase.tsx';
 
 registerSW({ immediate: true });
 
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
          <CssBaseline />
          <Box sx={{ height: '100dvh', width: '100dvw', boxSizing: 'border-box', position: 'relative' }}>
             <AuthProvider>
-               <RouterProvider router={router} />
+               <DatabaseProvider>
+                  <RouterProvider router={router} />
+               </DatabaseProvider>
             </AuthProvider>
          </Box>
       </ThemeProvider>

@@ -1,14 +1,16 @@
 import { IconButton } from '@mui/material';
 import { RotateLeftOutlined } from '@mui/icons-material';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import { useDatabase } from '../../../database/useDatabase';
 
 interface T_ResetCheckedMenuButtonProps {
    section: T_Routine_Section;
 }
 
 export default function ResetCheckedMenuButton({ section }: T_ResetCheckedMenuButtonProps): React.JSX.Element {
-   const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks } = useDatabase();
+   const tasks = section === 'morning' ? morningTasks : eveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
    function handleResetTasksCheckedState(): void {
       const resetChecked = (tasks: T_Task[]): T_Task[] =>

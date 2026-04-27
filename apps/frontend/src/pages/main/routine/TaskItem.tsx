@@ -1,14 +1,14 @@
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
-import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
+import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import useLocalStorage from '../../../hooks/useLocalStorage';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
+import { useDatabase } from '../../../database/useDatabase';
 import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
@@ -28,8 +28,9 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section } = props;
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase();
-   const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
-   const [tags] = useLocalStorage<T_Tag[]>(`tags`, []);
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useDatabase();
+   const tasks = section === 'morning' ? morningTasks : eveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { palette } = useTheme();
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);

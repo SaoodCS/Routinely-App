@@ -2,7 +2,7 @@ import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import { useDatabase } from '../../../database/useDatabase';
 
 interface T_ShowHideWhenMenuButtonProps {
    section: T_Routine_Section;
@@ -13,8 +13,9 @@ interface T_ShowHideWhenMenuButtonProps {
 type T_WhenTagType = 'showWhenTags' | 'hideWhenTags';
 
 export default function ShowHideWhenMenuButton({ indexes, section, task }: T_ShowHideWhenMenuButtonProps): JSX.Element {
-   const [tags] = useLocalStorage<T_Tag[]>('tags', []);
-   const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useDatabase();
+   const tasks = section === 'morning' ? morningTasks : eveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    function handleToggle(tagId: T_Tag['id'], tagType: T_WhenTagType): void {

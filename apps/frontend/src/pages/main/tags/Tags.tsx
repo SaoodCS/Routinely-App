@@ -1,24 +1,25 @@
 import { DragIndicatorOutlined } from '@mui/icons-material';
 import { Box, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
-import type { T_Tag } from '@repo/types/app.types';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import { useDatabase } from '../../../database/useDatabase';
 import CreateTagButton from './CreateTagButton';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
    const { ref } = useScrollSaver('tags-scroll');
-   const [tags, setTags] = useLocalStorage<T_Tag[]>(`tags`, []);
+   const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useDatabase();
 
    function handleDelete(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags.splice(tagIndex, 1);
       setTags(updatedTags);
+      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) })));
+      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) })));
    }
 
    function handleToggle(tagIndex: number): void {

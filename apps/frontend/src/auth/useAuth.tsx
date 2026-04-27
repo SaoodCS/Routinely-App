@@ -11,7 +11,6 @@ export function AuthProvider({ children }: { children: ReactNode }): ReactNode {
    const [isAuthenticated, setIsAuthenticated] = useState<T_Auth_Context['isAuthenticated']>(false);
    const [user, setUser] = useState<T_Auth_Context['user']>(null);
    const [userRole, setUserRole] = useState<T_Auth_Context['userRole']>(undefined);
-
    const [isLoading, setIsLoading] = useState<T_Auth_Context['isLoading']>(true);
 
    useEffect(() => {
