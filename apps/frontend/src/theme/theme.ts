@@ -1,4 +1,4 @@
-import type { ThemeOptions } from '@mui/material/styles';
+import type { Palette, PaletteColor, ThemeOptions } from '@mui/material/styles';
 import { createTheme } from '@mui/material/styles';
 
 const palette: ThemeOptions['palette'] = {
@@ -48,3 +48,5 @@ const components: ThemeOptions['components'] = {
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });
 export default theme;
+export type PaletteColorName = { [K in keyof Palette]: Palette[K] extends PaletteColor ? K : never }[keyof Palette];
+export type PaletteColorShade = keyof PaletteColor;

@@ -1,5 +1,4 @@
 import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
-import type { TypographyOwnProps } from '@mui/material';
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
@@ -10,8 +9,18 @@ import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import type { PaletteColorName, PaletteColorShade } from '../../../theme/theme';
 import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
 
+// CONSTS:
+const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteColorName, PaletteColorShade]; fontSize: string }> =
+   {
+      1: { indent: 1, color: ['primary', 'main'], fontSize: '1rem' },
+      2: { indent: 2, color: ['secondary', 'dark'], fontSize: '0.9rem' },
+      3: { indent: 3, color: ['secondary', 'main'], fontSize: '0.825rem' },
+   };
+
+// COMPONENT:
 interface T_TaskItemProps {
    task: T_Task;
    dragElProps: Parameters<Parameters<typeof DragAndDropList<T_Task>>[0]['renderItem']>[1];
@@ -26,11 +35,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [tags] = useLocalStorage<T_Tag[]>(`tags`, []);
    const { palette } = useTheme();
-   const depthStyles = {
-      colors: [palette.primary.main, palette.secondary.dark, palette.secondary.main] satisfies string[],
-      indent: [1, 2, 3] satisfies number[],
-      fontSize: ['1rem', '0.9rem', '0.825rem'] satisfies TypographyOwnProps['fontSize'][],
-   };
+   const taskDepthStyle = DEPTH_STYLES[indexes.length];
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
@@ -109,14 +114,20 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
 
    return isTaskVisible() ? (
       <Grow in timeout={500}>
-         <ListItem sx={{ py: 0.5, px: 1, pl: depthStyles.indent[indexes.length - 1] }}>
+         <ListItem
+            sx={{
+               py: 0.5,
+               px: 1,
+               pl: taskDepthStyle.indent,
+            }}
+         >
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleIsChecked }}
                style={{
                   borderRadius: '5px',
-                  borderLeft: `4px solid ${depthStyles.colors[indexes.length - 1]}`,
-                  backgroundColor: alpha(depthStyles.colors[indexes.length - 1], 0.15),
+                  borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
+                  backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
                   opacity: task.isChecked ? 0.5 : 1,
                }}
             >
@@ -124,7 +135,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   direction={'row'}
                   justifyContent={'start'}
                   alignItems={'center'}
-                  sx={{ pt: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: depthStyles.colors[indexes.length - 1] } }}
+                  sx={{
+                     pt: 0.5,
+                     '& > :last-child': { ml: 'auto' },
+                     '& button': { p: 0, color: palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]] },
+                  }}
                >
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
@@ -147,7 +162,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                      suppressContentEditableWarning
                      onBlur={(event) => handleSaveLabelOnBlur(event)}
                      onKeyDown={handleBlurOnEnterClick}
-                     fontSize={depthStyles.fontSize[indexes.length - 1]}
+                     fontSize={taskDepthStyle.fontSize}
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none' }}
                   >
