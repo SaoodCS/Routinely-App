@@ -61,39 +61,37 @@ export default function Tags(): React.JSX.Element {
             onDrop={(newOrderedItems) => setTags(newOrderedItems)}
             renderItem={(tag, dragElProps, i) =>
                !isTagHidden(tag.label) && (
-                  <Box>
-                     <Grow in>
-                        <ListItem sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
-                           <SwipeActionWrapper
-                              rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                              leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  <Grow in timeout={500}>
+                     <ListItem sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
+                        <SwipeActionWrapper
+                           rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
+                           leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
+                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                        >
+                           <IconButton {...dragElProps} size="small">
+                              <DragIndicatorOutlined />
+                           </IconButton>
+                           <Typography
+                              component="span"
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                              onKeyDown={handleBlurOnEnterClick}
+                              sx={{ outline: 'none', width: '60%' }}
                            >
-                              <IconButton {...dragElProps} size="small">
-                                 <DragIndicatorOutlined />
-                              </IconButton>
-                              <Typography
-                                 component="span"
-                                 contentEditable
-                                 suppressContentEditableWarning
-                                 onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                                 onKeyDown={handleBlurOnEnterClick}
-                                 sx={{ outline: 'none', width: '60%' }}
-                              >
-                                 {tag.label}
-                              </Typography>
-                              <Box
-                                 component="input"
-                                 type="color"
-                                 value={tag.color}
-                                 onChange={(event) => handleColorChange(event, i)}
-                                 sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
-                              />
-                              <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                           </SwipeActionWrapper>
-                        </ListItem>
-                     </Grow>
-                  </Box>
+                              {tag.label}
+                           </Typography>
+                           <Box
+                              component="input"
+                              type="color"
+                              value={tag.color}
+                              onChange={(event) => handleColorChange(event, i)}
+                              sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
+                           />
+                           <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                        </SwipeActionWrapper>
+                     </ListItem>
+                  </Grow>
                )
             }
          />

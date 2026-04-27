@@ -106,7 +106,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    }
 
    return isTaskVisible() ? (
-      <Grow in>
+      <Grow in timeout={500}>
          <ListItem sx={{ py: 0.5, px: 1, pl: depthLeftIndent[indexes.length - 1] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
