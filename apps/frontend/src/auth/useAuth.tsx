@@ -1,26 +1,30 @@
-import type { T_User_Role } from '@repo/types/user';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import type { T_User_Role } from '@repo/types/user';
+import { auth } from '../firebase/config';
 
-type T_Auth_Context = { isLoading: boolean; isAuthenticated: boolean; userRole?: T_User_Role };
+type T_Auth_Context = { isLoading: boolean; isAuthenticated: boolean; user: User | null; userRole?: T_User_Role };
 
-const AuthContext = createContext<T_Auth_Context>({ isLoading: true, isAuthenticated: false, userRole: undefined });
+const AuthContext = createContext<T_Auth_Context>({ isLoading: true, isAuthenticated: false, user: null });
 
 export function AuthProvider({ children }: { children: ReactNode }): ReactNode {
    const [isAuthenticated, setIsAuthenticated] = useState<T_Auth_Context['isAuthenticated']>(false);
+   const [user, setUser] = useState<T_Auth_Context['user']>(null);
    const [userRole, setUserRole] = useState<T_Auth_Context['userRole']>(undefined);
+
    const [isLoading, setIsLoading] = useState<T_Auth_Context['isLoading']>(true);
 
    useEffect(() => {
-      //TODO: add authentication state listener here -> then set isAuthenticated and isLoading once it responds
-      const unsubscribe = (): void => {
-         setIsAuthenticated(true);
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+         setUser(currentUser);
+         setUserRole('user');
+         setIsAuthenticated(Boolean(currentUser));
          setIsLoading(false);
-         setUserRole('admin');
-      };
+      });
       return unsubscribe;
    }, []);
 
-   return <AuthContext value={{ isAuthenticated, isLoading, userRole }}>{children}</AuthContext>;
+   return <AuthContext value={{ isAuthenticated, isLoading, user, userRole }}>{children}</AuthContext>;
 }
 
 export const useAuth = (): T_Auth_Context => useContext(AuthContext);
