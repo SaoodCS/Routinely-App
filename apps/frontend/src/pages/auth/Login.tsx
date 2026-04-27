@@ -11,9 +11,8 @@ export function Login(): React.JSX.Element {
    function login(): void {
       setIsLoading(true);
       setError(null);
-      const provider = new GoogleAuthProvider();
       setPersistence(auth, browserLocalPersistence)
-         .then(() => signInWithPopup(auth, provider))
+         .then(() => signInWithPopup(auth, new GoogleAuthProvider()))
          .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
          .finally(() => setIsLoading(false));
    }
