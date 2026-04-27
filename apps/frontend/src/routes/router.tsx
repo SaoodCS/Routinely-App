@@ -9,7 +9,6 @@ import MorningRoutine from '../pages/main/routine/MorningRoutine';
 import ResetCheckedMenuButton from '../pages/main/routine/ResetCheckedMenuButton';
 import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
-import ToggleAllTagsMenuButton from '../pages/main/routine/ToggleAllTagsMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
 import SortTagsButton from '../pages/main/tags/SortTagsButton';
@@ -79,7 +78,6 @@ export const router = createBrowserRouter(
                                  title: 'Morning',
                                  RightElement: () => (
                                     <>
-                                       <ToggleAllTagsMenuButton />
                                        <ResetCheckedMenuButton section="morning" />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
@@ -97,7 +95,6 @@ export const router = createBrowserRouter(
                                  title: 'Evening',
                                  RightElement: () => (
                                     <>
-                                       <ToggleAllTagsMenuButton />
                                        <ResetCheckedMenuButton section="evening" />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
