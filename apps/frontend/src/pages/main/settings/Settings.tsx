@@ -46,6 +46,7 @@ export default function Settings(): React.JSX.Element {
                   </ListItemIcon>
                   <ListItemText>Delete Account</ListItemText>
                </MenuItem>
+               <Divider />
                <MenuItem onClick={logout}>
                   <ListItemIcon>
                      <LogoutOutlined />
