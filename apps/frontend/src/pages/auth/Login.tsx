@@ -19,26 +19,44 @@ export function Login(): React.JSX.Element {
 
    return (
       <Stack
-         height="100%"
+         minHeight="100%"
          justifyContent="center"
          alignItems="center"
-         padding="1rem"
-         sx={{ background: 'radial-gradient(circle at top, rgba(144, 202, 249, 0.18), transparent 38%)' }}
+         padding={2}
+         sx={{ background: 'linear-gradient(135deg, #121212 0%, #0c0e1c 50%, #121212 100%)' }}
       >
-         <Paper sx={{ width: '100%', maxWidth: 380, borderRadius: '1rem', border: '1px solid', borderColor: 'divider', p: 3.5, boxShadow: 8 }}>
-            <Stack gap={2} alignItems="center">
-               <Box component="img" src="/logo.svg" alt="Routinely" sx={{ width: 88, height: 88, mixBlendMode: 'lighten' }} />
-               <Typography variant="h5" component="h1">
+         <Paper elevation={0} sx={{ maxWidth: 390, boxShadow: '0 24px 80px rgba(0, 0, 0, 0.35)', background: 'transparent' }}>
+            <Stack gap={3} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: { xs: 3, sm: 4 } }}>
+               <Stack direction="row" alignItems="center" gap={1.5}>
+                  <Box component="img" src="/logo.svg" alt="Routinely" sx={{ width: 50, height: 50, mixBlendMode: 'lighten' }} />
+                  <Box>
+                     <Typography color="primary" fontWeight={700}>
+                        Routinely
+                     </Typography>
+                     <Typography variant="caption" color="text.secondary">
+                        Daily routines, kept simple
+                     </Typography>
+                  </Box>
+               </Stack>
+               <Typography variant="h4" component="h1" sx={{ fontWeight: 700, lineHeight: 1.12 }}>
                   Welcome back
                </Typography>
-               {error && (
-                  <Alert severity="error" sx={{ width: '100%' }}>
-                     {error}
-                  </Alert>
-               )}
-               <Button fullWidth variant="contained" startIcon={<GoogleIcon />} onClick={login} loading={isLoading} disabled={isLoading}>
+               {error && <Alert severity="error">{error}</Alert>}
+               <Button
+                  fullWidth
+                  size="large"
+                  variant="contained"
+                  startIcon={<GoogleIcon />}
+                  onClick={login}
+                  loading={isLoading}
+                  disabled={isLoading}
+                  sx={{ fontWeight: 700, textTransform: 'none' }}
+               >
                   Continue with Google
                </Button>
+               <Typography variant="caption" color="text.secondary" textAlign="center">
+                  Use the same Google account each time to keep your data available.
+               </Typography>
             </Stack>
          </Paper>
       </Stack>
