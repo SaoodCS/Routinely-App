@@ -9,16 +9,15 @@ import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import type { PaletteColorName, PaletteColorShade } from '../../../theme/theme';
+import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
 import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
 
 // CONSTS:
-const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteColorName, PaletteColorShade]; fontSize: string }> =
-   {
-      1: { indent: 1, color: ['primary', 'main'], fontSize: '1rem' },
-      2: { indent: 2, color: ['secondary', 'dark'], fontSize: '0.9rem' },
-      3: { indent: 3, color: ['secondary', 'main'], fontSize: '0.825rem' },
-   };
+const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
+   1: { indent: 1, color: ['primary', 'main'], fontSize: '1rem' },
+   2: { indent: 2, color: ['secondary', 'dark'], fontSize: '0.9rem' },
+   3: { indent: 3, color: ['secondary', 'main'], fontSize: '0.825rem' },
+};
 
 // COMPONENT:
 interface T_TaskItemProps {

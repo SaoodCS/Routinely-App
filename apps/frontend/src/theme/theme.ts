@@ -48,5 +48,5 @@ const components: ThemeOptions['components'] = {
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });
 export default theme;
-export type PaletteColorName = { [K in keyof Palette]: Palette[K] extends PaletteColor ? K : never }[keyof Palette];
-export type PaletteColorShade = keyof PaletteColor;
+export type PaletteFirstKey = { [K in keyof Palette]: Palette[K] extends PaletteColor ? K : never }[keyof Palette];
+export type PaletteSecondKey = keyof PaletteColor;
