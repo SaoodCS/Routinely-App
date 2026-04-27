@@ -113,13 +113,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
 
    return isTaskVisible() ? (
       <Grow in timeout={500}>
-         <ListItem
-            sx={{
-               py: 0.5,
-               px: 1,
-               pl: taskDepthStyle.indent,
-            }}
-         >
+         <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleIsChecked }}
