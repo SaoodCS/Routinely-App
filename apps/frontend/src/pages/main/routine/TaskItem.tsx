@@ -86,24 +86,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function isTaskVisibleViaTag(task: T_Task): boolean {
-      const taskHideWhenTags: T_Task['hideWhenTags'] = task.hideWhenTags ?? [];
-      if (taskHideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
-      if (!task.showWhenTags || task.showWhenTags.length === 0) return true;
-      return task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
-   }
-
    function isTaskVisible(): boolean {
+      const isVisibleViaTag = (task: T_Task): boolean => {
+         if (task.hideWhenTags?.some((tagId) => enabledTagIds.has(tagId))) return false;
+         return !task.showWhenTags?.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
+      };
       if (searchQuery && !task.label.toLowerCase().includes(searchQuery)) return false;
-      if (!isTaskVisibleViaTag(task)) return false;
-      if (indexes.length === 2 || indexes.length === 3) {
-         const parentTask = tasks[indexes[0]];
-         if (!isTaskVisibleViaTag(parentTask)) return false;
-      }
-      if (indexes.length === 3) {
-         const parentTask = tasks[indexes[0]].children![indexes[1]];
-         if (!isTaskVisibleViaTag(parentTask)) return false;
-      }
+      if (!isVisibleViaTag(task)) return false;
+      const parentTask = tasks[indexes[0]];
+      if ((indexes.length === 2 || indexes.length === 3) && !isVisibleViaTag(parentTask)) return false;
+      if (indexes.length === 3 && !isVisibleViaTag(parentTask.children![indexes[1]])) return false;
       return true;
    }
 
