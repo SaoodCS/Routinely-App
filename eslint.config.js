@@ -43,7 +43,7 @@ const commonRules = {
    'no-param-reassign': 'error',
    'unused-imports/no-unused-imports': 'warn',
    'unused-imports/no-unused-vars': ['warn', { vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_' }],
-   'no-console': 'warn',
+   'no-console': ['warn', { allow: ['error'] }],
    'prefer-const': 'warn',
    'no-await-in-loop': 'error',
    'prefer-template': 'error',

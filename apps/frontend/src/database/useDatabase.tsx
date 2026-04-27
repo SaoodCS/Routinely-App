@@ -1,6 +1,11 @@
 import type { T_Tag, T_Task } from '@repo/types/app.types';
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
+const FIRESTORE_PATHS = {
+   morningRoutine: ['routines', 'morning'],
+   eveningRoutine: ['routines', 'evening'],
+   tags: ['tags'],
+} as const;
 
 type T_Database_Context = {
    isLoading: boolean;
