@@ -23,15 +23,23 @@ export function Login(): React.JSX.Element {
          justifyContent="center"
          alignItems="center"
          padding={2}
-         sx={{ background: 'linear-gradient(135deg, #121212 0%, #0c0e1c 50%, #121212 100%)' }}
+         sx={{
+            background: '#020617',
+            backgroundImage: `
+        linear-gradient(to right, #42a4f51d 1px, transparent 1px),
+        linear-gradient(to bottom, #42a4f51d 1px, transparent 1px),
+        radial-gradient(circle at 50% 50%, #42a4f519 0%, transparent 70%)
+      `,
+            backgroundSize: '85px 85px, 85px 85px, 100% 100%',
+         }}
       >
          <Paper
             elevation={0}
-            sx={{ maxWidth: 390, boxShadow: '0 24px 80px rgba(0, 0, 0, 0.35)', background: '#3b3b3b26', backdropFilter: 'blur(10px)' }}
+            sx={{ maxWidth: 390, boxShadow: '0 24px 80px rgba(0, 0, 0, 0.5)', background: '#ffffff05', backdropFilter: 'blur(3px)' }}
          >
             <Stack gap={3} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: { xs: 3, sm: 4 } }}>
                <Stack direction="row" alignItems="center" gap={1.5}>
-                  <Box component="img" src="/logo.svg" alt="Routinely" sx={{ width: 50, height: 50, mixBlendMode: 'lighten' }} />
+                  <Box component="img" src="/logo-transparent.svg" alt="Routinely" sx={{ width: 50, height: 50 }} />
                   <Box>
                      <Typography color="primary" fontWeight={700}>
                         Routinely
