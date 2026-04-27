@@ -26,9 +26,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
    const [tasks, setTasks] = useLocalStorage<T_Task[]>(`${section}-routine-tasks`, []);
    const [tags] = useLocalStorage<T_Tag[]>(`tags`, []);
    const { palette } = useTheme();
-   const depthBaseColors: string[] = [palette.primary.main, palette.secondary.dark, palette.secondary.main];
-   const depthLeftIndent: number[] = [1, 2, 3];
-   const depthFontSize: TypographyOwnProps['fontSize'][] = ['1rem', '0.9rem', '0.825rem'];
+   const depthStyles = {
+      colors: [palette.primary.main, palette.secondary.dark, palette.secondary.main] satisfies string[],
+      indent: [1, 2, 3] satisfies number[],
+      fontSize: ['1rem', '0.9rem', '0.825rem'] satisfies TypographyOwnProps['fontSize'][],
+   };
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
@@ -107,14 +109,14 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
 
    return isTaskVisible() ? (
       <Grow in timeout={500}>
-         <ListItem sx={{ py: 0.5, px: 1, pl: depthLeftIndent[indexes.length - 1] }}>
+         <ListItem sx={{ py: 0.5, px: 1, pl: depthStyles.indent[indexes.length - 1] }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleIsChecked }}
                style={{
                   borderRadius: '5px',
-                  borderLeft: `4px solid ${depthBaseColors[indexes.length - 1]}`,
-                  backgroundColor: alpha(depthBaseColors[indexes.length - 1], 0.15),
+                  borderLeft: `4px solid ${depthStyles.colors[indexes.length - 1]}`,
+                  backgroundColor: alpha(depthStyles.colors[indexes.length - 1], 0.15),
                   opacity: task.isChecked ? 0.5 : 1,
                }}
             >
@@ -122,7 +124,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                   direction={'row'}
                   justifyContent={'start'}
                   alignItems={'center'}
-                  sx={{ pt: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: depthBaseColors[indexes.length - 1] } }}
+                  sx={{ pt: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: depthStyles.colors[indexes.length - 1] } }}
                >
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
@@ -145,7 +147,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element {
                      suppressContentEditableWarning
                      onBlur={(event) => handleSaveLabelOnBlur(event)}
                      onKeyDown={handleBlurOnEnterClick}
-                     fontSize={depthFontSize[indexes.length - 1]}
+                     fontSize={depthStyles.fontSize[indexes.length - 1]}
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none' }}
                   >
