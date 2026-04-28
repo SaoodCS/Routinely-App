@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 import { Navigate, Outlet, useLocation, type Location } from 'react-router';
 import { useAuthContext } from '../auth/useAuthContext';
 import SpinnerLoader from '../components/SpinnerLoader';
-import { ROUTE_PATHS, type T_Route_Path } from './router';
+import { ROUTE_PATHS, type T_Route_Path } from '../routes/router';
 
 export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: T_User_Role[] | 'all' }): JSX.Element {
    const location = useLocation();
