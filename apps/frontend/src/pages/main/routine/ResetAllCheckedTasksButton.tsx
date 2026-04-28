@@ -3,11 +3,11 @@ import { IconButton } from '@mui/material';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 
-interface T_ResetCheckedTasksButtonProps {
+interface T_ResetAllCheckedTasksButtonProps {
    section: T_Routine_Section;
 }
 
-export default function ResetCheckedTasksButton({ section }: T_ResetCheckedTasksButtonProps): React.JSX.Element {
+export default function ResetAllCheckedTasksButton({ section }: T_ResetAllCheckedTasksButtonProps): React.JSX.Element {
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks } = useLocalStorageContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;

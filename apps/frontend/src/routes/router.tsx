@@ -5,7 +5,7 @@ import { Logout } from '../pages/auth/Logout';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import ResetCheckedTasksButton from '../pages/main/routine/ResetCheckedTasksButton';
+import ResetAllCheckedTasksButton from '../pages/main/routine/ResetAllCheckedTasksButton';
 import Routine from '../pages/main/routine/Routine';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
@@ -75,7 +75,7 @@ export const router = createBrowserRouter(
                               title: 'Morning',
                               RightElement: () => (
                                  <>
-                                    <ResetCheckedTasksButton section="morning" />
+                                    <ResetAllCheckedTasksButton section="morning" />
                                     <TagToggleMenuButton />
                                     <SearchQueryMenuButton />
                                  </>
@@ -92,7 +92,7 @@ export const router = createBrowserRouter(
                               title: 'Evening',
                               RightElement: () => (
                                  <>
-                                    <ResetCheckedTasksButton section="evening" />
+                                    <ResetAllCheckedTasksButton section="evening" />
                                     <TagToggleMenuButton />
                                     <SearchQueryMenuButton />
                                  </>
