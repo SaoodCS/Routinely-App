@@ -22,9 +22,10 @@ const FirebaseErrorCodeToMessage: Record<string, string> = {
    unavailable: 'Service is unavailable.',
 };
 
-export function getErrorMsg(err: unknown): string | void {
+export function getErrorMsg(err: unknown, defaultMsg: string): string {
    if (typeof err === 'object' && err !== null && 'code' in err) {
       const error = err as { code: string; message: string };
       if (error.code in FirebaseErrorCodeToMessage) return FirebaseErrorCodeToMessage[error.code];
    }
+   return defaultMsg;
 }
