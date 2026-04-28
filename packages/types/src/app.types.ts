@@ -16,8 +16,12 @@ export interface T_Tag {
    color: string;
 }
 
-export interface T_TaskSettings {
-   inheritShowWhenTagsOnTaskCreation: boolean;
-   inheritHideWhenTagsOnTaskCreation: boolean;
-   showAllTasksWhileDragging: boolean;
+export interface T_Settings {
+   inheritTagsFromSource: boolean;
+}
+
+export interface T_Firestore_Paths {
+   morning_routine: 'routine/{uid}/morning';
+   evening_routine: 'routine/{uid}/evening';
+   tags: 'users/{uid}/tags';
 }

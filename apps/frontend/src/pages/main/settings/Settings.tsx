@@ -1,5 +1,5 @@
-import { DeleteOutlineOutlined, LogoutOutlined, RestartAltOutlined } from '@mui/icons-material';
-import { Divider, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack } from '@mui/material';
+import { DeleteOutlineOutlined, LocalOfferOutlined, LogoutOutlined, RestartAltOutlined } from '@mui/icons-material';
+import { Divider, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Stack, Switch, Typography } from '@mui/material';
 import type React from 'react';
 import { useNavigate } from 'react-router';
 import { FirebaseError } from 'firebase/app';
@@ -29,29 +29,46 @@ export default function Settings(): React.JSX.Element {
       signOut(auth).catch((err) => window.alert(err instanceof Error ? err.message : 'Could not log out.'));
    }
 
+   function inheritTagsFromSource(): void {
+      //TODO: implement this - when enabled: when a user creates a task, it will inherit the tags from the source task they created it from
+   }
+
    return (
       <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem" gap="1rem">
+         <Typography variant="h6">App Settings</Typography>
+         <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
+            <MenuList>
+               <MenuItem onClick={inheritTagsFromSource}>
+                  <ListItemIcon>
+                     <LocalOfferOutlined color="secondary" />
+                  </ListItemIcon>
+                  <ListItemText>Inherit Tags From Source Task</ListItemText>
+                  <Switch />
+               </MenuItem>
+            </MenuList>
+         </Paper>
+         <Typography variant="h6">Account Settings</Typography>
          <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
             <MenuList>
                <MenuItem onClick={resetAllData}>
                   <ListItemIcon>
-                     <RestartAltOutlined />
+                     <RestartAltOutlined color="warning" />
                   </ListItemIcon>
                   <ListItemText>Reset All Data</ListItemText>
                </MenuItem>
                <Divider />
-               <MenuItem onClick={deleteAccount}>
-                  <ListItemIcon>
-                     <DeleteOutlineOutlined />
-                  </ListItemIcon>
-                  <ListItemText>Delete Account</ListItemText>
-               </MenuItem>
-               <Divider />
                <MenuItem onClick={logout}>
                   <ListItemIcon>
-                     <LogoutOutlined />
+                     <LogoutOutlined color="warning" />
                   </ListItemIcon>
                   <ListItemText>Logout</ListItemText>
+               </MenuItem>
+               <Divider />
+               <MenuItem onClick={deleteAccount}>
+                  <ListItemIcon>
+                     <DeleteOutlineOutlined color="error" />
+                  </ListItemIcon>
+                  <ListItemText>Delete Account</ListItemText>
                </MenuItem>
             </MenuList>
          </Paper>
