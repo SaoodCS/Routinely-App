@@ -1,20 +1,49 @@
 import GoogleIcon from '@mui/icons-material/Google';
-import { Alert, Box, Button, Paper, Stack, Typography, useTheme } from '@mui/material';
+import { Alert, Box, Button, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithRedirect } from 'firebase/auth';
+import {
+   browserLocalPersistence,
+   createUserWithEmailAndPassword,
+   GoogleAuthProvider,
+   setPersistence,
+   signInWithEmailAndPassword,
+   signInWithRedirect,
+} from 'firebase/auth';
+import { LoginSharp } from '@mui/icons-material';
+import { FirebaseError } from 'firebase/app';
 import { auth } from '../../firebase/config';
 
 export function Login(): React.JSX.Element {
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const [email, setEmail] = useState('');
+   const [password, setPassword] = useState('');
    const { palette } = useTheme();
 
-   function login(): void {
+   function loginViaGoogle(): void {
       setIsLoading(true);
       setError(null);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithRedirect(auth, new GoogleAuthProvider()))
          .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
+         .finally(() => setIsLoading(false));
+   }
+
+   function regUserViaEmailPwd(): void {
+      createUserWithEmailAndPassword(auth, email, password)
+         .then(() => void signInWithEmailAndPassword(auth, email, password))
+         .catch((err) => setError(err instanceof Error ? err.message : 'Registration failed.'));
+   }
+
+   function loginViaEmailPwd(): void {
+      setIsLoading(true);
+      setError(null);
+      setPersistence(auth, browserLocalPersistence)
+         .then(() => signInWithEmailAndPassword(auth, email, password))
+         .catch((err) => {
+            if (err instanceof FirebaseError && err.code === 'auth/user-not-found') regUserViaEmailPwd();
+            else setError(err instanceof Error ? err.message : 'Login failed.');
+         })
          .finally(() => setIsLoading(false));
    }
 
@@ -54,7 +83,22 @@ export function Login(): React.JSX.Element {
                   Welcome back
                </Typography>
                {error && <Alert severity="error">{error}</Alert>}
-               <Button fullWidth variant="contained" startIcon={<GoogleIcon />} onClick={login} loading={isLoading} sx={{ textTransform: 'none' }}>
+               <Stack component={'form'} gap={2} onSubmit={loginViaEmailPwd}>
+                  <TextField label="Email" variant="outlined" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <TextField label="Password" variant="outlined" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <Button startIcon={<LoginSharp />} fullWidth variant="contained" type="submit" loading={isLoading}>
+                     Login | Register
+                  </Button>
+               </Stack>
+
+               <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<GoogleIcon />}
+                  onClick={loginViaGoogle}
+                  loading={isLoading}
+                  sx={{ textTransform: 'none' }}
+               >
                   Continue with Google
                </Button>
                <Typography variant="caption" color="text.secondary" textAlign="center">
