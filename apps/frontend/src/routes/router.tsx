@@ -8,7 +8,6 @@ import MainLayout from '../pages/main/MainLayout';
 import EveningRoutine from '../pages/main/routine/EveningRoutine';
 import MorningRoutine from '../pages/main/routine/MorningRoutine';
 import ResetCheckedButton from '../pages/main/routine/ResetCheckedButton';
-import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
@@ -69,42 +68,40 @@ export const router = createBrowserRouter(
                   {/* Main/Routine Routes */}
                   <Route path={ROUTE_PATHS.main_routine}>
                      <Route index element={<Navigate to={ROUTE_PATHS.main_routine_morning} replace />} />
-                     <Route element={<RoutineLayout />}>
-                        <Route
-                           path={ROUTE_PATHS.main_routine_morning}
-                           element={<MorningRoutine />}
-                           handle={{
-                              header: {
-                                 title: 'Morning',
-                                 RightElement: () => (
-                                    <>
-                                       <ResetCheckedButton section="morning" />
-                                       <TagToggleMenuButton />
-                                       <SearchQueryMenuButton />
-                                    </>
-                                 ),
-                              },
-                              nav: { inBottomNav: true },
-                           }}
-                        />
-                        <Route
-                           path={ROUTE_PATHS.main_routine_evening}
-                           element={<EveningRoutine />}
-                           handle={{
-                              header: {
-                                 title: 'Evening',
-                                 RightElement: () => (
-                                    <>
-                                       <ResetCheckedButton section="evening" />
-                                       <TagToggleMenuButton />
-                                       <SearchQueryMenuButton />
-                                    </>
-                                 ),
-                              },
-                              nav: { inBottomNav: true },
-                           }}
-                        />
-                     </Route>
+                     <Route
+                        path={ROUTE_PATHS.main_routine_morning}
+                        element={<MorningRoutine />}
+                        handle={{
+                           header: {
+                              title: 'Morning',
+                              RightElement: () => (
+                                 <>
+                                    <ResetCheckedButton section="morning" />
+                                    <TagToggleMenuButton />
+                                    <SearchQueryMenuButton />
+                                 </>
+                              ),
+                           },
+                           nav: { inBottomNav: true },
+                        }}
+                     />
+                     <Route
+                        path={ROUTE_PATHS.main_routine_evening}
+                        element={<EveningRoutine />}
+                        handle={{
+                           header: {
+                              title: 'Evening',
+                              RightElement: () => (
+                                 <>
+                                    <ResetCheckedButton section="evening" />
+                                    <TagToggleMenuButton />
+                                    <SearchQueryMenuButton />
+                                 </>
+                              ),
+                           },
+                           nav: { inBottomNav: true },
+                        }}
+                     />
                   </Route>
                   <Route
                      path={ROUTE_PATHS.main_tags}
