@@ -6,7 +6,7 @@ import { initializeFirestore, CACHE_SIZE_UNLIMITED, persistentLocalCache, persis
 
 const firebaseConfig: FirebaseOptions = {
    apiKey: 'AIzaSyCw1NGuWWpiZ1J46PFmTmQjqakTshTORlo',
-   authDomain: 'routinely-app-d7d9c.firebaseapp.com',
+   authDomain: 'routinely-app-d7d9c.web.app',
    projectId: 'routinely-app-d7d9c',
    storageBucket: 'routinely-app-d7d9c.firebasestorage.app',
    messagingSenderId: '1018422638689',

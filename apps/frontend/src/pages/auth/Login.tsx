@@ -1,7 +1,7 @@
 import GoogleIcon from '@mui/icons-material/Google';
 import { Alert, Box, Button, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithPopup } from 'firebase/auth';
+import { browserLocalPersistence, GoogleAuthProvider, setPersistence, signInWithRedirect } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 
 export function Login(): React.JSX.Element {
@@ -13,7 +13,7 @@ export function Login(): React.JSX.Element {
       setIsLoading(true);
       setError(null);
       setPersistence(auth, browserLocalPersistence)
-         .then(() => signInWithPopup(auth, new GoogleAuthProvider()))
+         .then(() => signInWithRedirect(auth, new GoogleAuthProvider()))
          .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
          .finally(() => setIsLoading(false));
    }

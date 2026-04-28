@@ -10,7 +10,8 @@ export default defineConfig({
       react(),
       VitePWA({
          registerType: 'autoUpdate',
-         devOptions: { enabled: true },
+         workbox: { navigateFallbackDenylist: [/^\/__\//] }, // needed to allow firebase's signInWithGoogle redirect
+         devOptions: { enabled: true, navigateFallbackAllowlist: [/^\/(?!__\/).*/] },
          manifest: {
             name: 'Routinely',
             short_name: 'Routinely', // this is the name seen when the app is installed as a PWA on iOS
