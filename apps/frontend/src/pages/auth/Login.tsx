@@ -1,11 +1,12 @@
 import GoogleIcon from '@mui/icons-material/Google';
-import { Alert, Box, Button, Divider, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
+import { Alert, Box, Button, Divider, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import {
    browserLocalPersistence,
    createUserWithEmailAndPassword,
    GoogleAuthProvider,
    setPersistence,
+   signInAnonymously,
    signInWithEmailAndPassword,
    signInWithRedirect,
 } from 'firebase/auth';
@@ -22,9 +23,9 @@ export function Login(): React.JSX.Element {
 
    function regViaEmailPwd(e: React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
-      setIsLoading(true);
       setError(null);
       if (!validForm()) return setError('Enter a valid email and a password > 6 characters.');
+      setIsLoading(true);
       createUserWithEmailAndPassword(auth, email, password)
          .then(() => loginViaEmailPwd(e))
          .catch((err) => setError(err instanceof Error ? err.message : 'Registration failed.'))
@@ -33,9 +34,9 @@ export function Login(): React.JSX.Element {
 
    function loginViaEmailPwd(e: React.SubmitEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
-      setIsLoading(true);
       setError(null);
       if (!validForm()) return setError('Enter a valid email and a password > 6 characters.');
+      setIsLoading(true);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithEmailAndPassword(auth, email, password))
          .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
@@ -52,6 +53,16 @@ export function Login(): React.JSX.Element {
          .finally(() => setIsLoading(false));
    }
 
+   function loginAnonymously(e: React.MouseEvent<HTMLButtonElement>): void {
+      e.preventDefault();
+      setIsLoading(true);
+      setError(null);
+      setPersistence(auth, browserLocalPersistence)
+         .then(() => signInAnonymously(auth))
+         .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
+         .finally(() => setIsLoading(false));
+   }
+
    return (
       <Stack
          minHeight="100%"
@@ -60,58 +71,56 @@ export function Login(): React.JSX.Element {
          padding={2}
          sx={{
             background: palette.background.default,
-            backgroundImage: `
-        linear-gradient(to right, #42a4f51d 1px, transparent 1px),
-        linear-gradient(to bottom, #42a4f51d 1px, transparent 1px),
-        radial-gradient(circle at 50% 50%, #42a4f519 0%, transparent 70%)
-      `,
+            backgroundImage: `linear-gradient(to right, #42a4f51d 1px, transparent 1px),linear-gradient(to bottom, #42a4f51d 1px, transparent 1px),radial-gradient(circle at 50% 50%, #42a4f519 0%, transparent 70%)`,
             backgroundSize: '85px 85px, 85px 85px, 100% 100%',
          }}
       >
-         <Paper
-            elevation={0}
-            sx={{ maxWidth: 400, boxShadow: '0 24px 80px rgba(0, 0, 0, 0.5)', background: '#ffffff05', backdropFilter: 'blur(3px)' }}
+         <Stack
+            gap={3}
+            boxShadow={'0 24px 80px #00000080'}
+            bgcolor={'#ffffff05'}
+            sx={{ p: { xs: 3, sm: 4 }, backdropFilter: 'blur(3px)', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}
          >
-            <Stack gap={3} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: { xs: 3, sm: 4 } }}>
-               <Stack direction="row" alignItems="center" gap={1.5}>
-                  <Box component="img" src="/logo-transparent.svg" alt="Routinely" sx={{ width: 50, height: 50 }} />
-                  <Box>
-                     <Typography color="primary" fontWeight={700}>
-                        Routinely
-                     </Typography>
-                     <Typography variant="caption" color="text.secondary">
-                        Daily routines, kept simple
-                     </Typography>
-                  </Box>
-               </Stack>
-               <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.12 }}>
-                  Welcome back
-               </Typography>
-               {error && <Alert severity="error">{error}</Alert>}
-               <Stack component={'form'} gap={2} onSubmit={loginViaEmailPwd}>
-                  <TextField size="small" label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                  <TextField size="small" label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                  <Button startIcon={<LoginSharp />} name="login" variant="contained" type="submit" loading={isLoading}>
+            <Stack direction="row" alignItems="center" gap={1.5}>
+               <Box component="img" src="/logo-transparent.svg" alt="Routinely" sx={{ width: 50, height: 50 }} />
+               <Box>
+                  <Typography color="primary" fontWeight={700}>
+                     Routinely
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                     Daily routines, kept simple
+                  </Typography>
+               </Box>
+            </Stack>
+            <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1.12 }}>
+               Welcome back
+            </Typography>
+            {error && <Alert severity="error">{error}</Alert>}
+            <Stack component={'form'} gap={2} onSubmit={loginViaEmailPwd}>
+               <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+               <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+               <Stack direction="row" alignItems={'center'} justifyContent={'center'} gap={2}>
+                  <Button startIcon={<LoginSharp />} variant="contained" type="submit" loading={isLoading} fullWidth>
                      Login
                   </Button>
-                  <Button startIcon={<AppRegistration />} variant="contained" loading={isLoading} onClick={regViaEmailPwd}>
+                  <Button startIcon={<AppRegistration />} variant="contained" loading={isLoading} onClick={regViaEmailPwd} fullWidth>
                      Register
                   </Button>
                </Stack>
-               <Divider>or</Divider>
-               <Stack gap={2}>
-                  <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading} onClick={loginViaGoogle}>
-                     Continue with Google
-                  </Button>
-                  <Button fullWidth variant="outlined" startIcon={<Person />} loading={isLoading} onClick={loginViaGoogle}>
-                     Continue Anonymously
-                  </Button>
-               </Stack>
-               <Typography variant="caption" color="text.secondary" textAlign="center">
-                  Anonymous account are automatically deleted after 30 days.
-               </Typography>
             </Stack>
-         </Paper>
+            <Divider>or</Divider>
+            <Stack gap={2}>
+               <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading} onClick={loginViaGoogle}>
+                  Continue with Google
+               </Button>
+               <Button fullWidth variant="outlined" startIcon={<Person />} loading={isLoading} onClick={loginAnonymously}>
+                  Continue Anonymously
+               </Button>
+            </Stack>
+            <Typography variant="caption" color="text.secondary" textAlign="center">
+               Anonymous accounts are automatically deleted after 30 days.
+            </Typography>
+         </Stack>
       </Stack>
    );
 }
