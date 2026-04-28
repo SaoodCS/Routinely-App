@@ -31,6 +31,7 @@ export default function Settings(): React.JSX.Element {
 
    function inheritTagsFromSource(): void {
       //TODO: implement this - when enabled: when a user creates a task, it will inherit the tags from the source task they created it from
+      //TODO: this option is disabled for anonymous users
    }
 
    return (
