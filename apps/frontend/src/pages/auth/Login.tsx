@@ -93,7 +93,7 @@ export function Login(): React.JSX.Element {
                </Box>
             </Stack>
             <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1.12 }}>
-               Welcome back
+               Get started
             </Typography>
             {error && <Alert severity="error">{error}</Alert>}
             <Stack component={'form'} gap={2} onSubmit={loginViaEmailPwd}>
