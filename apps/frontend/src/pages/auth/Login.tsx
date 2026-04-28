@@ -9,8 +9,7 @@ import {
    signInWithEmailAndPassword,
    signInWithRedirect,
 } from 'firebase/auth';
-import { LoginSharp } from '@mui/icons-material';
-import { FirebaseError } from 'firebase/app';
+import { AppRegistration, LoginSharp } from '@mui/icons-material';
 import { auth } from '../../firebase/config';
 
 export function Login(): React.JSX.Element {
@@ -20,30 +19,33 @@ export function Login(): React.JSX.Element {
    const [password, setPassword] = useState('');
    const { palette } = useTheme();
 
-   function loginViaGoogle(): void {
+   function regViaEmailPwd(e: React.SubmitEvent<HTMLButtonElement>): void {
+      e.preventDefault();
+      setIsLoading(true);
+      setError(null);
+      createUserWithEmailAndPassword(auth, email, password)
+         .then(() => loginViaEmailPwd(e))
+         .catch((err) => setError(err instanceof Error ? err.message : 'Registration failed.'))
+         .finally(() => setIsLoading(false));
+   }
+
+   function loginViaEmailPwd(e: React.SubmitEvent<HTMLButtonElement>): void {
+      e.preventDefault();
+      setIsLoading(true);
+      setError(null);
+      setPersistence(auth, browserLocalPersistence)
+         .then(() => signInWithEmailAndPassword(auth, email, password))
+         .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
+         .finally(() => setIsLoading(false));
+   }
+
+   function loginViaGoogle(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+      e.preventDefault();
       setIsLoading(true);
       setError(null);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithRedirect(auth, new GoogleAuthProvider()))
          .catch((err) => setError(err instanceof Error ? err.message : 'Login failed.'))
-         .finally(() => setIsLoading(false));
-   }
-
-   function regUserViaEmailPwd(): void {
-      createUserWithEmailAndPassword(auth, email, password)
-         .then(() => void signInWithEmailAndPassword(auth, email, password))
-         .catch((err) => setError(err instanceof Error ? err.message : 'Registration failed.'));
-   }
-
-   function loginViaEmailPwd(): void {
-      setIsLoading(true);
-      setError(null);
-      setPersistence(auth, browserLocalPersistence)
-         .then(() => signInWithEmailAndPassword(auth, email, password))
-         .catch((err) => {
-            if (err instanceof FirebaseError && err.code === 'auth/user-not-found') regUserViaEmailPwd();
-            else setError(err instanceof Error ? err.message : 'Login failed.');
-         })
          .finally(() => setIsLoading(false));
    }
 
@@ -83,22 +85,18 @@ export function Login(): React.JSX.Element {
                   Welcome back
                </Typography>
                {error && <Alert severity="error">{error}</Alert>}
-               <Stack component={'form'} gap={2} onSubmit={loginViaEmailPwd}>
+               <Stack component={'form'} gap={2}>
                   <TextField label="Email" variant="outlined" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                   <TextField label="Password" variant="outlined" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                  <Button startIcon={<LoginSharp />} fullWidth variant="contained" type="submit" loading={isLoading}>
-                     Login | Register
+                  <Button startIcon={<LoginSharp />} variant="contained" type="submit" loading={isLoading} onSubmit={loginViaEmailPwd}>
+                     Login
+                  </Button>
+                  <Button startIcon={<AppRegistration />} variant="contained" type="submit" loading={isLoading} onSubmit={regViaEmailPwd}>
+                     Register
                   </Button>
                </Stack>
 
-               <Button
-                  fullWidth
-                  variant="contained"
-                  startIcon={<GoogleIcon />}
-                  onClick={loginViaGoogle}
-                  loading={isLoading}
-                  sx={{ textTransform: 'none' }}
-               >
+               <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading} onClick={loginViaGoogle}>
                   Continue with Google
                </Button>
                <Typography variant="caption" color="text.secondary" textAlign="center">

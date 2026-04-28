@@ -41,9 +41,8 @@ const components_layout: ThemeOptions['components'] = {
 };
 
 const components: ThemeOptions['components'] = {
-   MuiMenuItem: {
-      defaultProps: { dense: true },
-   },
+   MuiMenuItem: { defaultProps: { dense: true } },
+   MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },
 };
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });
