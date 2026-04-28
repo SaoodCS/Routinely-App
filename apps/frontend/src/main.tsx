@@ -9,6 +9,7 @@ import { AuthProvider } from './auth/useAuthContext.tsx';
 import { LocalStorageProvider } from './database/useLocalStorageContext.tsx';
 import { router } from './routes/router.tsx';
 import theme from './theme/theme.ts';
+import { FirestoreProvider } from './database/useFirestoreContext.tsx';
 
 registerSW({ immediate: true });
 
@@ -19,7 +20,9 @@ createRoot(document.getElementById('root')!).render(
          <Box sx={{ height: '100dvh', width: '100dvw', boxSizing: 'border-box', position: 'relative' }}>
             <AuthProvider>
                <LocalStorageProvider>
-                  <RouterProvider router={router} />
+                  <FirestoreProvider>
+                     <RouterProvider router={router} />
+                  </FirestoreProvider>
                </LocalStorageProvider>
             </AuthProvider>
          </Box>

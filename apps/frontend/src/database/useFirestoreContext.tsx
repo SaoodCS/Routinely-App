@@ -12,7 +12,7 @@ type T_FirestoreContext = {
    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const LocalStorageContext = createContext<T_FirestoreContext>({
+const FirestoreContext = createContext<T_FirestoreContext>({
    isLoading: true,
    morningTasks: [],
    eveningTasks: [],
@@ -23,7 +23,7 @@ const LocalStorageContext = createContext<T_FirestoreContext>({
    setIsLoading: () => {},
 });
 
-export function LocalStorageProvider({ children }: { children: ReactNode }): ReactNode {
+export function FirestoreProvider({ children }: { children: ReactNode }): ReactNode {
    const [isLoading, setIsLoading] = useState<T_FirestoreContext['isLoading']>(true);
    const [morningTasks, setMorningTasksState] = useState<T_FirestoreContext['morningTasks']>([]);
    const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
@@ -40,7 +40,7 @@ export function LocalStorageProvider({ children }: { children: ReactNode }): Rea
    }
 
    const value = { isLoading, morningTasks, eveningTasks, tags, setMorningTasks, setEveningTasks, setTags, setIsLoading };
-   return <LocalStorageContext value={value}>{children}</LocalStorageContext>;
+   return <FirestoreContext value={value}>{children}</FirestoreContext>;
 }
 
-export const useLocalStorageContext = (): T_FirestoreContext => useContext(LocalStorageContext);
+export const useFirestoreContext = (): T_FirestoreContext => useContext(FirestoreContext);
