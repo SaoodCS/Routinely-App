@@ -5,7 +5,7 @@ import { auth } from '../../firebase/config';
 
 export function Logout(): React.JSX.Element {
    useEffect(() => {
-      void signOut(auth);
+      signOut(auth).catch((err) => window.alert(err instanceof Error ? err.message : 'Could not log out.'));
    }, []);
    return <SpinnerLoader fullPage transluscent />;
 }
