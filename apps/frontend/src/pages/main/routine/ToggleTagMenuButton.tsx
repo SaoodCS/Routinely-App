@@ -3,7 +3,7 @@ import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/
 import { useState } from 'react';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 
-export default function TagToggleMenuButton(): React.JSX.Element {
+export default function ToggleTagMenuButton(): React.JSX.Element {
    const { tags, setTags } = useLocalStorageContext();
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 

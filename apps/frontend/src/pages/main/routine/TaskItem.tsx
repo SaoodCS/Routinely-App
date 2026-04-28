@@ -9,7 +9,7 @@ import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
-import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
+import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
    1: { indent: 1, color: ['primary', 'main'], fontSize: '1rem' },
@@ -135,7 +135,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         <KeyboardDoubleArrowRight fontSize="small" />
                      </IconButton>
                   )}
-                  <ShowHideWhenMenuButton section={section} indexes={indexes} task={task} />
+                  <ToggleTaskShowWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 0.75, pb: 0.5 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" sx={{ p: 0 }} /> */}

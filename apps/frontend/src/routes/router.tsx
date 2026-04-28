@@ -7,7 +7,7 @@ import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
 import ResetAllCheckedTasksButton from '../pages/main/routine/ResetAllCheckedTasksButton';
 import Routine from '../pages/main/routine/Routine';
-import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
+import ToggleTagMenuButton from '../pages/main/routine/ToggleTagMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
 import SortTagsButton from '../pages/main/tags/SortTagsButton';
@@ -76,7 +76,7 @@ export const router = createBrowserRouter(
                               RightElement: () => (
                                  <>
                                     <ResetAllCheckedTasksButton section="morning" />
-                                    <TagToggleMenuButton />
+                                    <ToggleTagMenuButton />
                                     <SearchQueryMenuButton />
                                  </>
                               ),
@@ -93,7 +93,7 @@ export const router = createBrowserRouter(
                               RightElement: () => (
                                  <>
                                     <ResetAllCheckedTasksButton section="evening" />
-                                    <TagToggleMenuButton />
+                                    <ToggleTagMenuButton />
                                     <SearchQueryMenuButton />
                                  </>
                               ),

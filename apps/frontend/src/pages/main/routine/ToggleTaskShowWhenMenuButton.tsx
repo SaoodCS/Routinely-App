@@ -4,13 +4,13 @@ import type { T_Routine_Section, T_Tag, T_Task, T_Task_TagKeys } from '@repo/typ
 import { useState, type JSX } from 'react';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 
-interface T_ShowHideWhenMenuButtonProps {
+interface T_ToggleTaskShowWhenMenuButtonProps {
    section: T_Routine_Section;
    indexes: [number] | [number, number] | [number, number, number];
    task: T_Task;
 }
 
-export default function ShowHideWhenMenuButton({ indexes, section, task }: T_ShowHideWhenMenuButtonProps): JSX.Element {
+export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }: T_ToggleTaskShowWhenMenuButtonProps): JSX.Element {
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useLocalStorageContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
