@@ -32,10 +32,10 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
    async function setMorningTasks(value: T_FirestoreContext['morningTasks']): Promise<void> {
       setMorningTasksState(value);
    }
-   async function setEveningTasks(value: T_FirestoreContext['morningTasks']): Promise<void> {
+   async function setEveningTasks(value: T_FirestoreContext['eveningTasks']): Promise<void> {
       setMorningTasksState(value);
    }
-   async function setTags(value: T_FirestoreContext['morningTasks']): Promise<void> {
+   async function setTags(value: T_FirestoreContext['tags']): Promise<void> {
       setMorningTasksState(value);
    }
 
