@@ -1,13 +1,13 @@
+import type { T_User_Role } from '@repo/types/user';
 import type { JSX } from 'react';
 import { Navigate, Outlet, useLocation, type Location } from 'react-router';
-import type { T_User_Role } from '@repo/types/user';
-import { useAuth } from '../auth/useAuth';
+import { useAuthContext } from '../auth/useAuthContext';
 import SpinnerLoader from '../components/SpinnerLoader';
 import { ROUTE_PATHS, type T_Route_Path } from './router';
 
 export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: T_User_Role[] | 'all' }): JSX.Element {
    const location = useLocation();
-   const { isLoading, isAuthenticated, userRole } = useAuth();
+   const { isLoading, isAuthenticated, userRole } = useAuthContext();
    if (isLoading) return <SpinnerLoader fullPage />;
    if (!isAuthenticated) return <Navigate to={ROUTE_PATHS.auth_login} replace state={{ from: location }} />;
    if (userRole && (allowedRoles === 'all' || allowedRoles.includes(userRole))) return <Outlet />;
@@ -16,7 +16,7 @@ export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: T_User
 
 export function PublicOnlyRoute({ fallbackRoute = ROUTE_PATHS.main }: { fallbackRoute?: T_Route_Path }): JSX.Element {
    const location = useLocation() as Location<{ from?: Location } | null>;
-   const { isLoading, isAuthenticated } = useAuth();
+   const { isLoading, isAuthenticated } = useAuthContext();
    if (isLoading) return <SpinnerLoader fullPage />;
    if (!isAuthenticated) return <Outlet />;
    return <Navigate to={location?.state?.from ?? fallbackRoute} replace state={{ from: location }} />;

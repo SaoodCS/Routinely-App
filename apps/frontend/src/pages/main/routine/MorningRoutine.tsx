@@ -1,13 +1,13 @@
 import { Box } from '@mui/material';
 import DragAndDropList from '../../../components/DragAndDropList';
+import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import { useDatabase } from '../../../database/useDatabase';
-import TaskItem from './TaskItem';
 import CreateTaskButton from './CreateTaskButton';
+import TaskItem from './TaskItem';
 
 export default function MorningRoutine(): React.JSX.Element {
    const { ref } = useScrollSaver('morning-routine-scroll');
-   const { morningTasks: tasks, setMorningTasks: setTasks } = useDatabase();
+   const { morningTasks: tasks, setMorningTasks: setTasks } = useLocalStorageContext();
 
    return (
       <>

@@ -7,8 +7,8 @@ import { useMemo, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
+import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
-import { useDatabase } from '../../../database/useDatabase';
 import ShowHideWhenMenuButton from './ShowHideWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
@@ -28,7 +28,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section } = props;
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase();
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useDatabase();
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useLocalStorageContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { palette } = useTheme();

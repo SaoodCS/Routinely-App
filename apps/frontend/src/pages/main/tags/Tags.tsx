@@ -4,15 +4,15 @@ import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
+import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import { useDatabase } from '../../../database/useDatabase';
 import CreateTagButton from './CreateTagButton';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
    const { ref } = useScrollSaver('tags-scroll');
-   const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useDatabase();
+   const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useLocalStorageContext();
 
    function handleDelete(tagIndex: number): void {
       const updatedTags = [...tags];

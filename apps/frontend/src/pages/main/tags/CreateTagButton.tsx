@@ -1,10 +1,10 @@
-import { createNewTag } from '@repo/utils/app.helpers';
-import { Fab } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useDatabase } from '../../../database/useDatabase';
+import { Fab } from '@mui/material';
+import { createNewTag } from '@repo/utils/app.helpers';
+import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 
 export default function CreateTagButton(): React.JSX.Element {
-   const { tags, setTags } = useDatabase();
+   const { tags, setTags } = useLocalStorageContext();
 
    function handleCreateTagButton(): void {
       const newTag = createNewTag();

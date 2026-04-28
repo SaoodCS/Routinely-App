@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
 import type { T_User_Role } from '@repo/types/user';
+import { onAuthStateChanged, type User } from 'firebase/auth';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { auth } from '../firebase/config';
 
 type T_Auth_Context = { isLoading: boolean; isAuthenticated: boolean; user: User | null; userRole?: T_User_Role };
@@ -26,4 +26,4 @@ export function AuthProvider({ children }: { children: ReactNode }): ReactNode {
    return <AuthContext value={{ isAuthenticated, isLoading, user, userRole }}>{children}</AuthContext>;
 }
 
-export const useAuth = (): T_Auth_Context => useContext(AuthContext);
+export const useAuthContext = (): T_Auth_Context => useContext(AuthContext);

@@ -1,10 +1,10 @@
 import { SortByAlphaOutlined } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { isEqual, orderBy } from 'lodash';
-import { useDatabase } from '../../../database/useDatabase';
+import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 
 export default function SortTagsButton(): React.JSX.Element {
-   const { tags, setTags } = useDatabase();
+   const { tags, setTags } = useLocalStorageContext();
 
    function handleSortTagsButton(): void {
       const sortedTags = orderBy(tags, ['label'], ['asc']);
