@@ -1,6 +1,6 @@
 import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
-import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
+import type { T_Routine_Section, T_Tag, T_Task, T_Task_TagKeys } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 
@@ -16,10 +16,10 @@ export default function ShowHideWhenMenuButton({ indexes, section, task }: T_Sho
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-   function handleToggle(tagId: T_Tag['id'], tagType: 'showWhenTags' | 'hideWhenTags'): void {
+   function handleToggle(tagId: T_Tag['id'], taskTagKey: T_Task_TagKeys): void {
       const updatedTask = { ...task };
-      if (updatedTask[tagType]?.includes(tagId)) updatedTask[tagType] = updatedTask[tagType].filter((id) => id !== tagId);
-      else updatedTask[tagType] = [...(updatedTask[tagType] ?? []), tagId];
+      if (updatedTask[taskTagKey]?.includes(tagId)) updatedTask[taskTagKey] = updatedTask[taskTagKey].filter((id) => id !== tagId);
+      else updatedTask[taskTagKey] = [...(updatedTask[taskTagKey] ?? []), tagId];
       const updatedTasks = [...tasks];
       if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
       else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;

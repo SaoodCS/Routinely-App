@@ -5,5 +5,5 @@ export function createNewTask(): T_Task {
 }
 
 export function createNewTag(): T_Tag {
-   return { id: `${Date.now()}-tag`, label: 'New Tag', isEnabled: true, color: '#5c0000' };
+   return { id: `${Date.now()}-tag`, label: 'New Tag', isEnabled: true, color: '#848484' };
 }
