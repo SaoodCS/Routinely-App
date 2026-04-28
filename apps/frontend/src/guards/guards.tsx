@@ -1,4 +1,4 @@
-import type { T_User_Role } from '@repo/types/user';
+import type { T_User_Role } from '@repo/types/user.types';
 import type { JSX } from 'react';
 import { Navigate, Outlet, useLocation, type Location } from 'react-router';
 import { useAuthContext } from '../auth/useAuthContext';

@@ -1,4 +1,4 @@
-import type { T_User_Role } from '@repo/types/user';
+import type { T_User_Role } from '@repo/types/user.types';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { auth } from '../firebase/config';
