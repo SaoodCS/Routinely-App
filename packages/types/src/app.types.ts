@@ -15,7 +15,7 @@ export interface T_Tag {
 }
 
 export interface T_Settings {
-   inheritTagsFromSource: boolean;
+   inheritTagsFromSource?: boolean;
 }
 
 export type T_Routine_Section = 'morning' | 'evening';
