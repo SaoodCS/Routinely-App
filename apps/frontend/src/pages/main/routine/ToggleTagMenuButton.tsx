@@ -1,22 +1,22 @@
 import { FilterListOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
 import { useState } from 'react';
-import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 export default function ToggleTagMenuButton(): React.JSX.Element {
-   const { tags, setTags } = useLocalStorageContext();
+   const { tags, setTags } = useFirestoreContext();
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    function handleToggleTag(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
-      setTags(updatedTags);
+      setTags(updatedTags).catch(console.error);
    }
 
    function handleToggleAllTags(): void {
       const areAllTagsEnabled = tags.every((tag) => tag.isEnabled);
       const updatedTags = tags.map((tag) => ({ ...tag, isEnabled: !areAllTagsEnabled }));
-      setTags(updatedTags);
+      setTags(updatedTags).catch(console.error);
    }
 
    return (

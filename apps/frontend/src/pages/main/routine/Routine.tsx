@@ -5,8 +5,8 @@ import { createNewTask } from '@repo/utils/app.helpers';
 import type { JSX } from 'react';
 import { useLocation } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
-import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import TaskItem from './TaskItem';
 
 interface T_RoutineProps {
@@ -14,7 +14,7 @@ interface T_RoutineProps {
 }
 
 export default function Routine({ section }: T_RoutineProps): JSX.Element {
-   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks } = useLocalStorageContext();
+   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks } = useFirestoreContext();
    const { pathname } = useLocation();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
@@ -22,7 +22,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    function handleCreateTask(): void {
       const newTask = createNewTask();
-      setTasks([...tasks, newTask]);
+      setTasks([...tasks, newTask]).catch(console.error);
    }
 
    return (
@@ -33,7 +33,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
          <DragAndDropList
             ref={ref}
             items={tasks}
-            onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
+            onDrop={(newOrderedItems) => void setTasks(newOrderedItems).catch(console.error)}
             style={{ overflow: 'auto', maxHeight: '100%' }}
             renderItem={(task, dragElProps, i) => (
                <Box>
@@ -44,7 +44,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                         onDrop={(newOrderedItems) => {
                            const updatedTasks = [...tasks];
                            updatedTasks[i].children = newOrderedItems;
-                           setTasks(updatedTasks);
+                           void setTasks(updatedTasks).catch(console.error);
                         }}
                         renderItem={(subtask, dragElProps, j) => (
                            <Box key={subtask.id}>
@@ -55,7 +55,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                     onDrop={(newOrderedItems) => {
                                        const updatedTasks = [...tasks];
                                        updatedTasks[i].children![j].children = newOrderedItems;
-                                       setTasks(updatedTasks);
+                                       void setTasks(updatedTasks).catch(console.error);
                                     }}
                                     renderItem={(subsubtask, dragElProps, k) => (
                                        <Box key={subsubtask.id}>

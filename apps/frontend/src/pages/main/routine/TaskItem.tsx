@@ -7,8 +7,8 @@ import { useMemo, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
@@ -28,7 +28,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section } = props;
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase();
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useLocalStorageContext();
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { palette } = useTheme();
@@ -41,7 +41,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) updatedTasks.splice(indexes[0] + 1, 0, newTask);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1] + 1, 0, newTask);
       else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2] + 1, 0, newTask);
-      setTasks(updatedTasks);
+      setTasks(updatedTasks).catch(console.error);
    }
 
    function addSubTask(): void {
@@ -50,7 +50,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       let parentTask = updatedTasks[indexes[0]];
       if (indexes.length === 2) parentTask = parentTask.children![indexes[1]];
       parentTask.children = [newTask, ...(parentTask.children ?? [])];
-      setTasks(updatedTasks);
+      setTasks(updatedTasks).catch(console.error);
    }
 
    function handleDelete(): void {
@@ -58,7 +58,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) updatedTasks.splice(indexes[0], 1);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1], 1);
       else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2], 1);
-      setTasks(updatedTasks);
+      setTasks(updatedTasks).catch(console.error);
    }
 
    function handleToggleIsChecked(): void {
@@ -67,7 +67,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
       else if (indexes.length === 3) updatedTask = updatedTask.children![indexes[1]].children![indexes[2]];
       updatedTask.isChecked = !updatedTask.isChecked;
-      setTasks(updatedTasks);
+      setTasks(updatedTasks).catch(console.error);
    }
 
    function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
@@ -84,7 +84,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
       else if (indexes.length === 3) updatedTask = updatedTask.children![indexes[1]].children![indexes[2]];
       updatedTask.label = updatedLabel;
-      setTasks(updatedTasks);
+      setTasks(updatedTasks).catch(console.error);
    }
 
    function isTaskVisible(): boolean {

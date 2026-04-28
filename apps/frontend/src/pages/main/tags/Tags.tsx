@@ -5,33 +5,37 @@ import { useSearchParams } from 'react-router';
 import { createNewTag } from '@repo/utils/app.helpers';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search');
    const { ref } = useScrollSaver('tags-scroll');
-   const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useLocalStorageContext();
+   const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
 
    function handleDelete(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags.splice(tagIndex, 1);
-      setTags(updatedTags);
-      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) })));
-      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) })));
+      setTags(updatedTags).catch(console.error);
+      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) }))).catch(
+         console.error,
+      );
+      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) }))).catch(
+         console.error,
+      );
    }
 
    function handleToggle(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
-      setTags(updatedTags);
+      setTags(updatedTags).catch(console.error);
    }
 
    function handleColorChange(event: ChangeEvent<HTMLInputElement>, tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex] = { ...updatedTags[tagIndex], color: event.currentTarget.value };
-      setTags(updatedTags);
+      setTags(updatedTags).catch(console.error);
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
@@ -39,7 +43,7 @@ export default function Tags(): React.JSX.Element {
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = [...tags];
       updatedTags[tagIndex] = { ...updatedTags[tagIndex], label: updatedLabel };
-      setTags(updatedTags);
+      setTags(updatedTags).catch(console.error);
    }
 
    function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
@@ -54,7 +58,7 @@ export default function Tags(): React.JSX.Element {
 
    function handleCreateTag(): void {
       const newTag = createNewTag();
-      setTags([...tags, newTag]);
+      setTags([...tags, newTag]).catch(console.error);
    }
 
    return (
@@ -66,7 +70,7 @@ export default function Tags(): React.JSX.Element {
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}
             items={tags}
-            onDrop={(newOrderedItems) => setTags(newOrderedItems)}
+            onDrop={(newOrderedItems) => void setTags(newOrderedItems).catch(console.error)}
             renderItem={(tag, dragElProps, i) =>
                !isTagHidden(tag.label) && (
                   <Grow in timeout={500}>

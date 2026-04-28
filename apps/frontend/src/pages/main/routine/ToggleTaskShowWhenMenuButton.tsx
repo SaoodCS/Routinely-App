@@ -2,7 +2,7 @@ import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
 import type { T_Routine_Section, T_Tag, T_Task, T_Task_TagKeys } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
-import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 interface T_ToggleTaskShowWhenMenuButtonProps {
    section: T_Routine_Section;
@@ -11,7 +11,7 @@ interface T_ToggleTaskShowWhenMenuButtonProps {
 }
 
 export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }: T_ToggleTaskShowWhenMenuButtonProps): JSX.Element {
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useLocalStorageContext();
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -24,7 +24,7 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
       if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
       else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;
       else updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = updatedTask;
-      setTasks(updatedTasks);
+      setTasks(updatedTasks).catch(console.error);
    }
 
    return (
