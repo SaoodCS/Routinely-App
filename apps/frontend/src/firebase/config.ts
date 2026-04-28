@@ -2,7 +2,6 @@
 import { initializeApp, type FirebaseOptions } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, CACHE_SIZE_UNLIMITED, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 
 const firebaseConfig: FirebaseOptions = {
    apiKey: 'AIzaSyCw1NGuWWpiZ1J46PFmTmQjqakTshTORlo',
@@ -18,7 +17,3 @@ const firebaseConfig: FirebaseOptions = {
 export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const auth = getAuth(app);
-export const db = initializeFirestore(app, {
-   ignoreUndefinedProperties: true,
-   localCache: persistentLocalCache({ cacheSizeBytes: CACHE_SIZE_UNLIMITED, tabManager: persistentMultipleTabManager() }),
-});
