@@ -43,7 +43,7 @@ export default function Settings(): React.JSX.Element {
                      <LocalOfferOutlined color="secondary" />
                   </ListItemIcon>
                   <ListItemText>Inherit Tags From Source Task</ListItemText>
-                  <Switch />
+                  <Switch color="secondary" />
                </MenuItem>
             </MenuList>
          </Paper>
