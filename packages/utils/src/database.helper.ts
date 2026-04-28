@@ -11,7 +11,7 @@ export function getFirestorePathAndField(path: keyof typeof FIRESTORE_PATHS, uid
    return { path: pathStr.replace('{uid}', uid), field: fieldStr.replace(']', '') };
 }
 
-export const FirebaseErrorCodeToMessage: Record<string, string> = {
+const FirebaseErrorCodeToMessage: Record<string, string> = {
    'auth/user-not-found': 'User not found',
    'auth/wrong-password': 'Wrong password',
    'auth/email-already-in-use': 'Email already in use',
