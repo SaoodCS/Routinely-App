@@ -35,7 +35,7 @@ export default function Settings(): React.JSX.Element {
    }
 
    return (
-      <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem" gap="1rem">
+      <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem" gap={3}>
          <Typography variant="h6">App Settings</Typography>
          <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
             <MenuList>
