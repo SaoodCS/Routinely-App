@@ -7,7 +7,7 @@ import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
 import EveningRoutine from '../pages/main/routine/EveningRoutine';
 import MorningRoutine from '../pages/main/routine/MorningRoutine';
-import ResetCheckedMenuButton from '../pages/main/routine/ResetCheckedMenuButton';
+import ResetCheckedButton from '../pages/main/routine/ResetCheckedButton';
 import RoutineLayout from '../pages/main/routine/RoutineLayout';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
@@ -78,7 +78,7 @@ export const router = createBrowserRouter(
                                  title: 'Morning',
                                  RightElement: () => (
                                     <>
-                                       <ResetCheckedMenuButton section="morning" />
+                                       <ResetCheckedButton section="morning" />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
                                     </>
@@ -95,7 +95,7 @@ export const router = createBrowserRouter(
                                  title: 'Evening',
                                  RightElement: () => (
                                     <>
-                                       <ResetCheckedMenuButton section="evening" />
+                                       <ResetCheckedButton section="evening" />
                                        <TagToggleMenuButton />
                                        <SearchQueryMenuButton />
                                     </>
