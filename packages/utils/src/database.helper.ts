@@ -10,3 +10,21 @@ export function getFirestorePathAndField(path: keyof typeof FIRESTORE_PATHS, uid
    const [pathStr, fieldStr] = FIRESTORE_PATHS[path].split('[');
    return { path: pathStr.replace('{uid}', uid), field: fieldStr.replace(']', '') };
 }
+
+export const FirebaseErrorCodeToMessage: Record<string, string> = {
+   'auth/user-not-found': 'User not found',
+   'auth/wrong-password': 'Wrong password',
+   'auth/email-already-in-use': 'Email already in use',
+   'auth/weak-password': 'Weak password',
+   'auth/invalid-email': 'Invalid email',
+   'permission-denied': 'You do not have permission to perform this action.',
+   unauthenticated: 'You must be logged in to perform this action.',
+   unavailable: 'Service is unavailable.',
+};
+
+export function getErrorMsg(err: unknown): string | void {
+   if (typeof err === 'object' && err !== null && 'code' in err) {
+      const error = err as { code: string; message: string };
+      if (error.code in FirebaseErrorCodeToMessage) return FirebaseErrorCodeToMessage[error.code];
+   }
+}
