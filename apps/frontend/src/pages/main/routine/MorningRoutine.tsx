@@ -1,21 +1,29 @@
-import { Box } from '@mui/material';
+import { Box, Fab } from '@mui/material';
+import { createNewTask } from '@repo/utils/app.helpers';
+import { Add } from '@mui/icons-material';
 import DragAndDropList from '../../../components/DragAndDropList';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import CreateTaskButton from './CreateTaskButton';
 import TaskItem from './TaskItem';
 
 export default function MorningRoutine(): React.JSX.Element {
    const { ref } = useScrollSaver('morning-routine-scroll');
-   const { morningTasks: tasks, setMorningTasks: setTasks } = useLocalStorageContext();
+   const { morningTasks: morningTasks, setMorningTasks } = useLocalStorageContext();
+
+   function handleCreateTask(): void {
+      const newTask = createNewTask();
+      setMorningTasks([...morningTasks, newTask]);
+   }
 
    return (
       <>
-         <CreateTaskButton section="morning" />
+         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+            <Add onClick={handleCreateTask} />
+         </Fab>
          <DragAndDropList
             ref={ref}
-            items={tasks}
-            onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
+            items={morningTasks}
+            onDrop={(newOrderedItems) => setMorningTasks(newOrderedItems)}
             style={{ overflow: 'auto', maxHeight: '100%' }}
             renderItem={(task, dragElProps, i) => (
                <Box>
@@ -24,9 +32,9 @@ export default function MorningRoutine(): React.JSX.Element {
                      <DragAndDropList
                         items={task.children}
                         onDrop={(newOrderedItems) => {
-                           const updatedTasks = [...tasks];
+                           const updatedTasks = [...morningTasks];
                            updatedTasks[i].children = newOrderedItems;
-                           setTasks(updatedTasks);
+                           setMorningTasks(updatedTasks);
                         }}
                         renderItem={(subtask, dragElProps, j) => (
                            <Box key={subtask.id}>
@@ -35,9 +43,9 @@ export default function MorningRoutine(): React.JSX.Element {
                                  <DragAndDropList
                                     items={subtask.children}
                                     onDrop={(newOrderedItems) => {
-                                       const updatedTasks = [...tasks];
+                                       const updatedTasks = [...morningTasks];
                                        updatedTasks[i].children![j].children = newOrderedItems;
-                                       setTasks(updatedTasks);
+                                       setMorningTasks(updatedTasks);
                                     }}
                                     renderItem={(subsubtask, dragElProps, k) => (
                                        <Box key={subsubtask.id}>
