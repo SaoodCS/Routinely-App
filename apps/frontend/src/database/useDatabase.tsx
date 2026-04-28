@@ -1,5 +1,5 @@
 import type { T_Tag, T_Task } from '@repo/types/app.types';
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 type T_Database_Context = {
@@ -30,12 +30,11 @@ export function DatabaseProvider({ children }: { children: ReactNode }): ReactNo
    const [eveningTasks, setEveningTasks] = useLocalStorage<T_Database_Context['eveningTasks']>('evening-routine-tasks', []);
    const [tags, setTags] = useLocalStorage<T_Database_Context['tags']>('tags', []);
 
-   const value = useMemo(
-      () => ({ isLoading, morningTasks, eveningTasks, tags, setMorningTasks, setEveningTasks, setTags, setIsLoading }),
-      [isLoading, morningTasks, eveningTasks, tags, setMorningTasks, setEveningTasks, setTags, setIsLoading],
+   return (
+      <DatabaseContext value={{ isLoading, morningTasks, eveningTasks, tags, setMorningTasks, setEveningTasks, setTags, setIsLoading }}>
+         {children}
+      </DatabaseContext>
    );
-
-   return <DatabaseContext value={value}>{children}</DatabaseContext>;
 }
 
 export const useDatabase = (): T_Database_Context => useContext(DatabaseContext);
