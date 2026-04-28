@@ -5,9 +5,8 @@ import { Logout } from '../pages/auth/Logout';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import EveningRoutine from '../pages/main/routine/EveningRoutine';
-import MorningRoutine from '../pages/main/routine/MorningRoutine';
 import ResetCheckedButton from '../pages/main/routine/ResetCheckedButton';
+import Routine from '../pages/main/routine/Routine';
 import TagToggleMenuButton from '../pages/main/routine/TagToggleMenuButton';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
@@ -70,7 +69,7 @@ export const router = createBrowserRouter(
                      <Route index element={<Navigate to={ROUTE_PATHS.main_routine_morning} replace />} />
                      <Route
                         path={ROUTE_PATHS.main_routine_morning}
-                        element={<MorningRoutine />}
+                        element={<Routine section="morning" />}
                         handle={{
                            header: {
                               title: 'Morning',
@@ -87,7 +86,7 @@ export const router = createBrowserRouter(
                      />
                      <Route
                         path={ROUTE_PATHS.main_routine_evening}
-                        element={<EveningRoutine />}
+                        element={<Routine section="evening" />}
                         handle={{
                            header: {
                               title: 'Evening',

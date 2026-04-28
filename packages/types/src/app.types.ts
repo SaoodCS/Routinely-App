@@ -1,4 +1,6 @@
 export type T_Routine_Section = 'morning' | 'evening';
+// create a type dynamically for the names showWhenTags and hideWhenTags from T_Task:
+
 
 export interface T_Task {
    id: string;

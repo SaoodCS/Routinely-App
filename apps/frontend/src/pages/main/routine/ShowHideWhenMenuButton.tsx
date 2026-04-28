@@ -10,15 +10,13 @@ interface T_ShowHideWhenMenuButtonProps {
    task: T_Task;
 }
 
-type T_WhenTagType = 'showWhenTags' | 'hideWhenTags';
-
 export default function ShowHideWhenMenuButton({ indexes, section, task }: T_ShowHideWhenMenuButtonProps): JSX.Element {
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useLocalStorageContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-   function handleToggle(tagId: T_Tag['id'], tagType: T_WhenTagType): void {
+   function handleToggle(tagId: T_Tag['id'], tagType: 'showWhenTags' | 'hideWhenTags'): void {
       const updatedTask = { ...task };
       if (updatedTask[tagType]?.includes(tagId)) updatedTask[tagType] = updatedTask[tagType].filter((id) => id !== tagId);
       else updatedTask[tagType] = [...(updatedTask[tagType] ?? []), tagId];
