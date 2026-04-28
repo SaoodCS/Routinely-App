@@ -1,12 +1,12 @@
-import { DragIndicatorOutlined } from '@mui/icons-material';
-import { Box, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
+import { Add, DragIndicatorOutlined } from '@mui/icons-material';
+import { Box, Fab, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
 import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
+import { createNewTag } from '@repo/utils/app.helpers';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useLocalStorageContext } from '../../../database/useLocalStorageContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import CreateTagButton from './CreateTagButton';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -52,9 +52,16 @@ export default function Tags(): React.JSX.Element {
       return !(!searchQuery || tagLabel.toLowerCase().includes(searchQuery.toLowerCase()));
    }
 
+   function handleCreateTag(): void {
+      const newTag = createNewTag();
+      setTags([...tags, newTag]);
+   }
+
    return (
       <>
-         <CreateTagButton />
+         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+            <Add onClick={handleCreateTag} />
+         </Fab>
          <DragAndDropList
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}
