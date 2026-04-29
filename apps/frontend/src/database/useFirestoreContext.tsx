@@ -111,7 +111,6 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('routine_morning_tasks', uid);
          await setDoc(doc(db, path), { [field]: value }, { merge: true });
-         setMorningTasksState(value);
       },
       [uid],
    );
@@ -121,7 +120,6 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('routine_evening_tasks', uid);
          await setDoc(doc(db, path), { [field]: value }, { merge: true });
-         setEveningTasksState(value);
       },
       [uid],
    );
@@ -131,7 +129,6 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('tags_list_tags', uid);
          await setDoc(doc(db, path), { [field]: value }, { merge: true });
-         setTagsState(value);
       },
       [uid],
    );
@@ -141,7 +138,6 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('settings_app_settings', uid);
          await setDoc(doc(db, path), { [field]: value }, { merge: true });
-         setSettingsState(value);
       },
       [uid],
    );
