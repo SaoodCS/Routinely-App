@@ -24,7 +24,7 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
       if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
       else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;
       else updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = updatedTask;
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    return (

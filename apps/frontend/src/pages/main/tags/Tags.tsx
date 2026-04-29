@@ -17,25 +17,21 @@ export default function Tags(): React.JSX.Element {
    function handleDelete(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags.splice(tagIndex, 1);
-      setTags(updatedTags).catch(console.error);
-      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) }))).catch(
-         console.error,
-      );
-      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) }))).catch(
-         console.error,
-      );
+      setTags(updatedTags);
+      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) })));
+      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags?.filter((t) => t !== tags[tagIndex].label) })));
    }
 
    function handleToggle(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
-      setTags(updatedTags).catch(console.error);
+      setTags(updatedTags);
    }
 
    function handleColorChange(event: ChangeEvent<HTMLInputElement>, tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex] = { ...updatedTags[tagIndex], color: event.currentTarget.value };
-      setTags(updatedTags).catch(console.error);
+      setTags(updatedTags);
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
@@ -43,7 +39,7 @@ export default function Tags(): React.JSX.Element {
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = [...tags];
       updatedTags[tagIndex] = { ...updatedTags[tagIndex], label: updatedLabel };
-      setTags(updatedTags).catch(console.error);
+      setTags(updatedTags);
    }
 
    function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
@@ -58,7 +54,7 @@ export default function Tags(): React.JSX.Element {
 
    function handleCreateTag(): void {
       const newTag = createNewTag();
-      setTags([...tags, newTag]).catch(console.error);
+      setTags([...tags, newTag]);
    }
 
    return (
@@ -70,7 +66,7 @@ export default function Tags(): React.JSX.Element {
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}
             items={tags}
-            onDrop={(newOrderedItems) => void setTags(newOrderedItems).catch(console.error)}
+            onDrop={(newOrderedItems) => setTags(newOrderedItems)}
             renderItem={(tag, dragElProps, i) =>
                !isTagHidden(tag.label) && (
                   <Grow in timeout={500}>

@@ -12,10 +12,10 @@ type T_FirestoreContext = {
    eveningTasks: T_Task[];
    tags: T_Tag[];
    settings: T_Settings;
-   setMorningTasks: (value: T_FirestoreContext['morningTasks']) => Promise<void>;
-   setEveningTasks: (value: T_FirestoreContext['eveningTasks']) => Promise<void>;
-   setTags: (value: T_FirestoreContext['tags']) => Promise<void>;
-   setSettings: (value: T_FirestoreContext['settings']) => Promise<void>;
+   setMorningTasks: (value: T_FirestoreContext['morningTasks']) => void;
+   setEveningTasks: (value: T_FirestoreContext['eveningTasks']) => void;
+   setTags: (value: T_FirestoreContext['tags']) => void;
+   setSettings: (value: T_FirestoreContext['settings']) => void;
 };
 
 const FirestoreContext = createContext<T_FirestoreContext>({
@@ -23,10 +23,10 @@ const FirestoreContext = createContext<T_FirestoreContext>({
    eveningTasks: [],
    tags: [],
    settings: {},
-   setMorningTasks: async () => {},
-   setEveningTasks: async () => {},
-   setTags: async () => {},
-   setSettings: async () => {},
+   setMorningTasks: () => {},
+   setEveningTasks: () => {},
+   setTags: () => {},
+   setSettings: () => {},
 });
 
 function FirestoreContextProvider({ children }: { children: ReactNode }): ReactNode {
@@ -41,7 +41,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       tags_list_tags: false,
       settings_app_settings: false,
    });
-   const [snapshotError, setSnapshotError] = useState<string | undefined>(undefined);
+   const [error, setError] = useState<string | undefined>(undefined);
    const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
    useEffect(() => {
@@ -56,7 +56,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          (e) => {
             console.error(e);
             setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
-            setSnapshotError(e.message);
+            setError(e.message);
          },
       );
       const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', uid);
@@ -69,7 +69,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          (e) => {
             console.error(e);
             setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
-            setSnapshotError(e.message);
+            setError(e.message);
          },
       );
       const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
@@ -82,7 +82,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          (e) => {
             console.error(e);
             setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
-            setSnapshotError(e.message);
+            setError(e.message);
          },
       );
       const { path: settingsPath, field: settingsField } = getFirestorePathAndField('settings_app_settings', uid);
@@ -95,7 +95,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          (e) => {
             console.error(e);
             setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
-            setSnapshotError(e.message);
+            setError(e.message);
          },
       );
       return () => {
@@ -107,37 +107,49 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    }, [uid]);
 
    const setMorningTasks = useCallback(
-      async (value: T_FirestoreContext['morningTasks']): Promise<void> => {
+      (value: T_FirestoreContext['morningTasks']): void => {
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('routine_morning_tasks', uid);
-         await setDoc(doc(db, path), { [field]: value }, { merge: true });
+         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
+            setError(e instanceof Error ? e.message : `Error saving ${field}`);
+            console.error(e);
+         });
       },
       [uid],
    );
 
    const setEveningTasks = useCallback(
-      async (value: T_FirestoreContext['eveningTasks']): Promise<void> => {
+      (value: T_FirestoreContext['eveningTasks']): void => {
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('routine_evening_tasks', uid);
-         await setDoc(doc(db, path), { [field]: value }, { merge: true });
+         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
+            setError(e instanceof Error ? e.message : `Error saving ${field}`);
+            console.error(e);
+         });
       },
       [uid],
    );
 
    const setTags = useCallback(
-      async (value: T_FirestoreContext['tags']): Promise<void> => {
+      (value: T_FirestoreContext['tags']): void => {
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('tags_list_tags', uid);
-         await setDoc(doc(db, path), { [field]: value }, { merge: true });
+         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
+            setError(e instanceof Error ? e.message : `Error saving ${field}`);
+            console.error(e);
+         });
       },
       [uid],
    );
 
    const setSettings = useCallback(
-      async (value: T_FirestoreContext['settings']): Promise<void> => {
+      (value: T_FirestoreContext['settings']): void => {
          if (!uid) return;
          const { path, field } = getFirestorePathAndField('settings_app_settings', uid);
-         await setDoc(doc(db, path), { [field]: value }, { merge: true });
+         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
+            setError(e instanceof Error ? e.message : `Error saving ${field}`);
+            console.error(e);
+         });
       },
       [uid],
    );
@@ -158,9 +170,9 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    return (
       <>
          {isInitialFetchLoading && <LinearProgress sx={{ position: 'absolute', top: 0, width: '100%' }} />}
-         <Snackbar open={!!snapshotError} message={snapshotError} autoHideDuration={2000} onClose={() => setSnapshotError('')}>
+         <Snackbar open={!!error} autoHideDuration={2000} onClose={() => setError('')}>
             <Alert severity="error" sx={{ width: '100%' }}>
-               {snapshotError}
+               {error}
             </Alert>
          </Snackbar>
          <FirestoreContext value={value}>{children}</FirestoreContext>

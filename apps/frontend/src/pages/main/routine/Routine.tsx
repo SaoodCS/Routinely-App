@@ -22,7 +22,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    function handleCreateTask(): void {
       const newTask = createNewTask();
-      setTasks([...tasks, newTask]).catch(console.error);
+      setTasks([...tasks, newTask]);
    }
 
    return (
@@ -33,7 +33,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
          <DragAndDropList
             ref={ref}
             items={tasks}
-            onDrop={(newOrderedItems) => void setTasks(newOrderedItems).catch(console.error)}
+            onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             style={{ overflow: 'auto', maxHeight: '100%' }}
             renderItem={(task, dragElProps, i) => (
                <Box>
@@ -44,7 +44,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                         onDrop={(newOrderedItems) => {
                            const updatedTasks = [...tasks];
                            updatedTasks[i].children = newOrderedItems;
-                           void setTasks(updatedTasks).catch(console.error);
+                           setTasks(updatedTasks);
                         }}
                         renderItem={(subtask, dragElProps, j) => (
                            <Box key={subtask.id}>
@@ -55,7 +55,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                     onDrop={(newOrderedItems) => {
                                        const updatedTasks = [...tasks];
                                        updatedTasks[i].children![j].children = newOrderedItems;
-                                       void setTasks(updatedTasks).catch(console.error);
+                                       setTasks(updatedTasks);
                                     }}
                                     renderItem={(subsubtask, dragElProps, k) => (
                                        <Box key={subsubtask.id}>

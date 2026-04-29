@@ -10,13 +10,13 @@ export default function ToggleTagMenuButton(): React.JSX.Element {
    function handleToggleTag(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
-      setTags(updatedTags).catch(console.error);
+      setTags(updatedTags);
    }
 
    function handleToggleAllTags(): void {
       const areAllTagsEnabled = tags.every((tag) => tag.isEnabled);
       const updatedTags = tags.map((tag) => ({ ...tag, isEnabled: !areAllTagsEnabled }));
-      setTags(updatedTags).catch(console.error);
+      setTags(updatedTags);
    }
 
    return (

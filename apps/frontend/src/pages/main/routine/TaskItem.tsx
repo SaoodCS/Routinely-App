@@ -41,7 +41,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) updatedTasks.splice(indexes[0] + 1, 0, newTask);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1] + 1, 0, newTask);
       else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2] + 1, 0, newTask);
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    function addSubTask(): void {
@@ -50,7 +50,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       let parentTask = updatedTasks[indexes[0]];
       if (indexes.length === 2) parentTask = parentTask.children![indexes[1]];
       parentTask.children = [newTask, ...(parentTask.children ?? [])];
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    function handleDelete(): void {
@@ -58,7 +58,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) updatedTasks.splice(indexes[0], 1);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1], 1);
       else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2], 1);
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    function handleToggleIsChecked(): void {
@@ -67,7 +67,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
       else if (indexes.length === 3) updatedTask = updatedTask.children![indexes[1]].children![indexes[2]];
       updatedTask.isChecked = !updatedTask.isChecked;
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
@@ -84,7 +84,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 2) updatedTask = updatedTask.children![indexes[1]];
       else if (indexes.length === 3) updatedTask = updatedTask.children![indexes[1]].children![indexes[2]];
       updatedTask.label = updatedLabel;
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    function isTaskVisible(): boolean {

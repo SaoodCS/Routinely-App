@@ -9,7 +9,7 @@ export default function SortTagsButton(): React.JSX.Element {
    function handleSortTagsButton(): void {
       const sortedTags = orderBy(tags, ['label'], ['asc']);
       if (isEqual(tags, sortedTags)) sortedTags.reverse();
-      setTags(sortedTags).catch(console.error);
+      setTags(sortedTags);
    }
 
    return (

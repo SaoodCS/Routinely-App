@@ -20,7 +20,7 @@ export default function ResetAllCheckedTasksButton({ section }: T_ResetAllChecke
             children: task.children ? resetChecked(task.children) : undefined,
          }));
       const updatedTasks = resetChecked(tasks);
-      setTasks(updatedTasks).catch(console.error);
+      setTasks(updatedTasks);
    }
 
    return (
