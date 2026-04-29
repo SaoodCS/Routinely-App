@@ -6,6 +6,7 @@ import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
+// TODO: extract out logic for snapshot and useCallbacks
 
 type T_FirestoreContext = {
    morningTasks: T_Task[];

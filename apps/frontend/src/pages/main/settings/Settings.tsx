@@ -20,9 +20,11 @@ import { deleteUser, GoogleAuthProvider, reauthenticateWithPopup } from 'firebas
 import { useState } from 'react';
 import { auth } from '../../../firebase/config';
 import { ROUTE_PATHS } from '../../../routes/router';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 export default function Settings(): React.JSX.Element {
    const navigate = useNavigate();
+   const { setSettings, settings } = useFirestoreContext();
    const [snackbar, setSnackbar] = useState<{ msg: string; severity: AlertProps['severity'] }>();
 
    function resetAllData(): void {
@@ -47,9 +49,9 @@ export default function Settings(): React.JSX.Element {
       void navigate(ROUTE_PATHS.auth_logout, { replace: true });
    }
 
-   function inheritTagsFromSource(): void {
-      //TODO: implement this - when enabled: when a user creates a task, it will inherit the tags from the source task they created it from
-      //TODO: this option is disabled for anonymous users
+   function toggleInheritTagsFromSource(): void {
+      setSettings({ ...settings, inheritTagsFromSource: !settings.inheritTagsFromSource });
+      // TODO: implement inheritTagsFromSource in the createTask / createSubTask function of the app
    }
 
    return (
@@ -58,12 +60,12 @@ export default function Settings(): React.JSX.Element {
             <Typography variant="h6">App Settings</Typography>
             <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
                <MenuList>
-                  <MenuItem onClick={inheritTagsFromSource}>
+                  <MenuItem onClick={toggleInheritTagsFromSource}>
                      <ListItemIcon>
                         <LocalOfferOutlined color="secondary" />
                      </ListItemIcon>
                      <ListItemText>Inherit Tags From Source Task</ListItemText>
-                     <Switch color="secondary" />
+                     <Switch color="secondary" checked={settings.inheritTagsFromSource ?? false} />
                   </MenuItem>
                </MenuList>
             </Paper>
