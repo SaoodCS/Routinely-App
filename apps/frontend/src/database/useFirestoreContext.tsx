@@ -59,9 +59,9 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
          doc(db, eveningPath),
          (snapshot) => {
             setEveningTasksState((snapshot.data()?.[eveningField] as typeof eveningTasks | undefined) ?? []);
-            setInitiallyLoaded((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_morning_tasks: true }));
+            setInitiallyLoaded((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
          },
-         () => setInitiallyLoaded((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_morning_tasks: true })),
+         () => setInitiallyLoaded((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true })),
       );
       const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
       const unsubTags = onSnapshot(
