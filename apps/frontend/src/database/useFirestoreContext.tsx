@@ -30,7 +30,7 @@ const FirestoreContext = createContext<T_FirestoreContext>({
    setSettings: async () => {},
 });
 
-export function FirestoreProvider({ children }: { children: ReactNode }): ReactNode {
+function FirestoreContextProvider({ children }: { children: ReactNode }): ReactNode {
    const { uid } = useAuthContext().user ?? {};
    const [morningTasks, setMorningTasksState] = useState<T_FirestoreContext['morningTasks']>([]);
    const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
@@ -132,10 +132,10 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
    const value: T_FirestoreContext = useMemo(
       () => ({
          isInitialFetch: !!uid && !Object.values(initiallyLoaded).every(Boolean),
-         morningTasks: uid ? morningTasks : [],
-         eveningTasks: uid ? eveningTasks : [],
-         tags: uid ? tags : [],
-         settings: uid ? settings : {},
+         morningTasks,
+         eveningTasks,
+         tags,
+         settings,
          setMorningTasks,
          setEveningTasks,
          setTags,
@@ -144,6 +144,12 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
       [uid, initiallyLoaded, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
    return <FirestoreContext value={value}>{children}</FirestoreContext>;
+}
+
+// This is needed so that all states reset in FirestoreContextProvider when user's uid changes (prevents data leakage)
+export function FirestoreProvider({ children }: { children: ReactNode }): ReactNode {
+   const { uid } = useAuthContext().user ?? {};
+   return <FirestoreContextProvider key={uid ?? 'not-authenticated'}>{children}</FirestoreContextProvider>;
 }
 
 export const useFirestoreContext = (): T_FirestoreContext => useContext(FirestoreContext);
