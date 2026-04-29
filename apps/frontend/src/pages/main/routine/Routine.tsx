@@ -37,7 +37,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             style={{ overflow: 'auto', maxHeight: '100%' }}
             renderItem={(task, dragElProps, i) => (
                <Box>
-                  <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section="morning" />
+                  <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
                   {task.children && (
                      <DragAndDropList
                         items={task.children}
@@ -48,7 +48,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                         }}
                         renderItem={(subtask, dragElProps, j) => (
                            <Box key={subtask.id}>
-                              <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section="morning" />
+                              <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
                               {subtask.children && (
                                  <DragAndDropList
                                     items={subtask.children}
@@ -59,7 +59,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                     }}
                                     renderItem={(subsubtask, dragElProps, k) => (
                                        <Box key={subsubtask.id}>
-                                          <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section="morning" />
+                                          <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
                                        </Box>
                                     )}
                                  />
