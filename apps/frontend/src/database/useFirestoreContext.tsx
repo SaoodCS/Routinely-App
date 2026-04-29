@@ -42,7 +42,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       tags_list_tags: false,
       settings_app_settings: false,
    });
-   const isInitialFetch = useMemo(() => !!uid && Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
+   const isInitialFetch = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
    useEffect(() => {
       if (!uid) return;
