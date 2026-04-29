@@ -11,7 +11,7 @@ import {
    signInWithRedirect,
 } from 'firebase/auth';
 import { AppRegistration, LoginSharp, Person } from '@mui/icons-material';
-import { getErrorMsg } from '@repo/utils/database.helper';
+import { FirebaseError } from 'firebase/app';
 import { auth } from '../../firebase/config';
 
 export function Login(): React.JSX.Element {
@@ -29,7 +29,7 @@ export function Login(): React.JSX.Element {
       setIsLoading(true);
       createUserWithEmailAndPassword(auth, email, password)
          .then(() => loginViaEmailPwd(e))
-         .catch((err) => setError(getErrorMsg(err, 'Registration failed.')))
+         .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Registration failed.'))
          .finally(() => setIsLoading(false));
    }
 
@@ -40,7 +40,7 @@ export function Login(): React.JSX.Element {
       setIsLoading(true);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithEmailAndPassword(auth, email, password))
-         .catch((err) => setError(getErrorMsg(err, 'Login failed.')))
+         .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Login failed.'))
          .finally(() => setIsLoading(false));
    }
 
@@ -50,7 +50,7 @@ export function Login(): React.JSX.Element {
       setError(null);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithRedirect(auth, new GoogleAuthProvider()))
-         .catch((err) => setError(getErrorMsg(err, 'Login failed.')))
+         .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Login failed.'))
          .finally(() => setIsLoading(false));
    }
 
@@ -60,7 +60,7 @@ export function Login(): React.JSX.Element {
       setError(null);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInAnonymously(auth))
-         .catch((err) => setError(getErrorMsg(err, 'Login failed.')))
+         .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Login failed.'))
          .finally(() => setIsLoading(false));
    }
 
