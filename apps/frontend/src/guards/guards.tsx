@@ -19,5 +19,7 @@ export function PublicOnlyRoute({ fallbackRoute = ROUTE_PATHS.main }: { fallback
    const { isLoading, isAuthenticated } = useAuthContext();
    if (isLoading) return <SpinnerLoader fullPage />;
    if (!isAuthenticated) return <Outlet />;
-   return <Navigate to={location?.state?.from ?? fallbackRoute} replace state={{ from: location }} />;
+   const from = location.state?.from;
+   const redirectTo = from && from?.pathname !== ROUTE_PATHS.auth_logout ? from : fallbackRoute;
+   return <Navigate to={redirectTo} replace />;
 }
