@@ -1,7 +1,7 @@
 import type { T_Settings, T_Tag, T_Task } from '@repo/types/app.types';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { FIRESTORE_PATHS } from '@repo/utils/database.helper';
-import { getFirestorePathAndField } from '@repo/utils/database.helper';
+import type { FIRESTORE_PATHS } from '@repo/utils/firestore.helper';
+import { getFirestorePathAndField } from '@repo/utils/firestore.helper';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
 import { useAuthContext } from '../auth/useAuthContext';
