@@ -6,7 +6,6 @@ import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
 
 type T_FirestoreContext = {
-   isSnapshotLoading: boolean | undefined;
    morningTasks: T_Task[];
    eveningTasks: T_Task[];
    tags: T_Tag[];
@@ -18,7 +17,6 @@ type T_FirestoreContext = {
 };
 
 const FirestoreContext = createContext<T_FirestoreContext>({
-   isSnapshotLoading: undefined,
    morningTasks: [],
    eveningTasks: [],
    tags: [],
@@ -30,7 +28,6 @@ const FirestoreContext = createContext<T_FirestoreContext>({
 });
 
 export function FirestoreProvider({ children }: { children: ReactNode }): ReactNode {
-   const [isSnapshotLoading, setIsSnapshotLoading] = useState<T_FirestoreContext['isSnapshotLoading']>();
    const { uid } = useAuthContext().user ?? {};
    const [morningTasks, setMorningTasksState] = useState<T_FirestoreContext['morningTasks']>([]);
    const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
@@ -41,31 +38,23 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
       if (!uid) return;
       const { path: morningPath, field: morningField } = getFirestorePathAndField('routine_morning_tasks', uid);
       const unsubMorningRoutine = onSnapshot(doc(db, morningPath), (snapshot) => {
-         setIsSnapshotLoading(true);
          const data = snapshot.data()?.[morningField] as T_FirestoreContext['morningTasks'] | undefined;
          setMorningTasksState(data ?? []);
-         setIsSnapshotLoading(false);
       });
       const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', uid);
       const unsubEveningRoutine = onSnapshot(doc(db, eveningPath), (snapshot) => {
-         setIsSnapshotLoading(true);
          const data = snapshot.data()?.[eveningField] as T_FirestoreContext['eveningTasks'] | undefined;
          setEveningTasksState(data ?? []);
-         setIsSnapshotLoading(false);
       });
       const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
       const unsubTags = onSnapshot(doc(db, tagsPath), (snapshot) => {
-         setIsSnapshotLoading(true);
          const data = snapshot.data()?.[tagsField] as T_FirestoreContext['tags'] | undefined;
          setTagsState(data ?? []);
-         setIsSnapshotLoading(false);
       });
       const { path: settingsPath, field: settingsField } = getFirestorePathAndField('settings_app_settings', uid);
       const unsubSettings = onSnapshot(doc(db, settingsPath), (snapshot) => {
-         setIsSnapshotLoading(true);
          const data = snapshot.data()?.[settingsField] as T_FirestoreContext['settings'] | undefined;
          setSettingsState(data ?? {});
-         setIsSnapshotLoading(false);
       });
       return () => {
          unsubMorningRoutine();
@@ -117,7 +106,6 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
 
    const value: T_FirestoreContext = useMemo(
       () => ({
-         isSnapshotLoading: uid ? isSnapshotLoading : undefined,
          morningTasks: uid ? morningTasks : [],
          eveningTasks: uid ? eveningTasks : [],
          tags: uid ? tags : [],
@@ -127,7 +115,7 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
          setTags,
          setSettings,
       }),
-      [uid, isSnapshotLoading, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
+      [uid, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
    return <FirestoreContext value={value}>{children}</FirestoreContext>;
 }
