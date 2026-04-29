@@ -42,6 +42,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       tags_list_tags: false,
       settings_app_settings: false,
    });
+   const isInitialFetch = useMemo(() => !!uid && Object.values(initiallyLoaded).every(Boolean), [initiallyLoaded, uid]);
 
    useEffect(() => {
       if (!uid) return;
@@ -131,7 +132,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
 
    const value: T_FirestoreContext = useMemo(
       () => ({
-         isInitialFetch: !!uid && !Object.values(initiallyLoaded).every(Boolean),
+         isInitialFetch,
          morningTasks,
          eveningTasks,
          tags,
@@ -141,7 +142,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          setTags,
          setSettings,
       }),
-      [uid, initiallyLoaded, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
+      [isInitialFetch, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
    return <FirestoreContext value={value}>{children}</FirestoreContext>;
 }
