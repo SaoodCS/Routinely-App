@@ -106,7 +106,7 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
          setIsLoading('tags_list_tags');
          const { path, field } = getFirestorePathAndField('tags_list_tags', user.uid);
          await setDoc(doc(db, path), { [field]: value }, { merge: true });
-         setMorningTasksState(value);
+         setTagsState(value);
          setIsLoading(undefined);
       },
       [user],
