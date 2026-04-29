@@ -40,21 +40,21 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
 
    useEffect(() => {
       if (!user?.uid) return;
-      const { path: morningPath, field: morningField } = getFirestorePathAndField('settings_app_settings', user.uid);
+      const { path: morningPath, field: morningField } = getFirestorePathAndField('routine_morning_tasks', user.uid);
       const unsubMorningRoutine = onSnapshot(doc(db, morningPath), (snapshot) => {
          setIsLoading('routine_morning_tasks');
          const data = snapshot.data()?.[morningField] as T_FirestoreContext['morningTasks'] | undefined;
          if (data) setMorningTasksState(data);
          setIsLoading(undefined);
       });
-      const { path: eveningPath, field: eveningField } = getFirestorePathAndField('settings_app_settings', user.uid);
+      const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', user.uid);
       const unsubEveningRoutine = onSnapshot(doc(db, eveningPath), (snapshot) => {
          setIsLoading('routine_evening_tasks');
          const data = snapshot.data()?.[eveningField] as T_FirestoreContext['eveningTasks'] | undefined;
          if (data) setEveningTasksState(data);
          setIsLoading(undefined);
       });
-      const { path: tagsPath, field: tagsField } = getFirestorePathAndField('settings_app_settings', user.uid);
+      const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', user.uid);
       const unsubTags = onSnapshot(doc(db, tagsPath), (snapshot) => {
          setIsLoading('tags_list_tags');
          const data = snapshot.data()?.[tagsField] as T_FirestoreContext['tags'] | undefined;
