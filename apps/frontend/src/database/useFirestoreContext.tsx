@@ -3,11 +3,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { FIRESTORE_PATHS } from '@repo/utils/database.helper';
 import { getFirestorePathAndField } from '@repo/utils/database.helper';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { Alert, LinearProgress, Snackbar } from '@mui/material';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
 
 type T_FirestoreContext = {
-   isInitialFetch: boolean;
    morningTasks: T_Task[];
    eveningTasks: T_Task[];
    tags: T_Tag[];
@@ -19,7 +19,6 @@ type T_FirestoreContext = {
 };
 
 const FirestoreContext = createContext<T_FirestoreContext>({
-   isInitialFetch: true,
    morningTasks: [],
    eveningTasks: [],
    tags: [],
@@ -42,7 +41,8 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       tags_list_tags: false,
       settings_app_settings: false,
    });
-   const isInitialFetch = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
+   const [snapshotError, setSnapshotError] = useState<string | undefined>(undefined);
+   const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
    useEffect(() => {
       if (!uid) return;
@@ -53,7 +53,11 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
             setMorningTasksState((snapshot.data()?.[morningField] as typeof morningTasks) ?? []);
             setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
          },
-         () => setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true })),
+         (e) => {
+            console.error(e);
+            setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
+            setSnapshotError(e.message);
+         },
       );
       const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', uid);
       const unsubEveningRoutine = onSnapshot(
@@ -62,7 +66,11 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
             setEveningTasksState((snapshot.data()?.[eveningField] as typeof eveningTasks | undefined) ?? []);
             setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
          },
-         () => setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true })),
+         (e) => {
+            console.error(e);
+            setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
+            setSnapshotError(e.message);
+         },
       );
       const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
       const unsubTags = onSnapshot(
@@ -71,7 +79,11 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
             setTagsState((snapshot.data()?.[tagsField] as typeof tags | undefined) ?? []);
             setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
          },
-         () => setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true })),
+         (e) => {
+            console.error(e);
+            setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
+            setSnapshotError(e.message);
+         },
       );
       const { path: settingsPath, field: settingsField } = getFirestorePathAndField('settings_app_settings', uid);
       const unsubSettings = onSnapshot(
@@ -80,7 +92,11 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
             setSettingsState((snapshot.data()?.[settingsField] as typeof settings | undefined) ?? {});
             setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
          },
-         () => setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true })),
+         (e) => {
+            console.error(e);
+            setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
+            setSnapshotError(e.message);
+         },
       );
       return () => {
          unsubMorningRoutine();
@@ -132,7 +148,6 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
 
    const value: T_FirestoreContext = useMemo(
       () => ({
-         isInitialFetch,
          morningTasks,
          eveningTasks,
          tags,
@@ -142,9 +157,19 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          setTags,
          setSettings,
       }),
-      [isInitialFetch, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
+      [morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
-   return <FirestoreContext value={value}>{children}</FirestoreContext>;
+   return (
+      <>
+         {isInitialFetchLoading && <LinearProgress sx={{ position: 'absolute', top: 0, width: '100%' }} />}
+         <Snackbar open={!!snapshotError} message={snapshotError} autoHideDuration={2000} onClose={() => setSnapshotError('')}>
+            <Alert severity="error" sx={{ width: '100%' }}>
+               {snapshotError}
+            </Alert>
+         </Snackbar>
+         <FirestoreContext value={value}>{children}</FirestoreContext>
+      </>
+   );
 }
 
 // This is needed so that all states reset in FirestoreContextProvider when user's uid changes (prevents data leakage)
