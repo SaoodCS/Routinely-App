@@ -37,25 +37,29 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
    useEffect(() => {
       if (!uid) return;
       const { path: morningPath, field: morningField } = getFirestorePathAndField('routine_morning_tasks', uid);
-      const unsubMorningRoutine = onSnapshot(doc(db, morningPath), (snapshot) => {
-         const data = snapshot.data()?.[morningField] as T_FirestoreContext['morningTasks'] | undefined;
-         setMorningTasksState(data ?? []);
-      });
+      const unsubMorningRoutine = onSnapshot(
+         doc(db, morningPath),
+         (snapshot) => setMorningTasksState((snapshot.data()?.[morningField] as typeof morningTasks) ?? []),
+         console.error,
+      );
       const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', uid);
-      const unsubEveningRoutine = onSnapshot(doc(db, eveningPath), (snapshot) => {
-         const data = snapshot.data()?.[eveningField] as T_FirestoreContext['eveningTasks'] | undefined;
-         setEveningTasksState(data ?? []);
-      });
+      const unsubEveningRoutine = onSnapshot(
+         doc(db, eveningPath),
+         (snapshot) => setEveningTasksState((snapshot.data()?.[eveningField] as typeof eveningTasks | undefined) ?? []),
+         console.error,
+      );
       const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
-      const unsubTags = onSnapshot(doc(db, tagsPath), (snapshot) => {
-         const data = snapshot.data()?.[tagsField] as T_FirestoreContext['tags'] | undefined;
-         setTagsState(data ?? []);
-      });
+      const unsubTags = onSnapshot(
+         doc(db, tagsPath),
+         (snapshot) => setTagsState((snapshot.data()?.[tagsField] as typeof tags | undefined) ?? []),
+         console.error,
+      );
       const { path: settingsPath, field: settingsField } = getFirestorePathAndField('settings_app_settings', uid);
-      const unsubSettings = onSnapshot(doc(db, settingsPath), (snapshot) => {
-         const data = snapshot.data()?.[settingsField] as T_FirestoreContext['settings'] | undefined;
-         setSettingsState(data ?? {});
-      });
+      const unsubSettings = onSnapshot(
+         doc(db, settingsPath),
+         (snapshot) => setSettingsState((snapshot.data()?.[settingsField] as typeof settings | undefined) ?? {}),
+         console.error,
+      );
       return () => {
          unsubMorningRoutine();
          unsubEveningRoutine();
