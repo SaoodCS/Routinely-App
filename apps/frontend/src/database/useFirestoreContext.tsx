@@ -36,13 +36,13 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
    const [tags, setTagsState] = useState<T_FirestoreContext['tags']>([]);
    const [settings, setSettingsState] = useState<T_FirestoreContext['settings']>({});
-   const [initiallyLoaded, setInitiallyLoaded] = useState<Record<keyof typeof FIRESTORE_PATHS, boolean>>({
+   const [initialFetchDone, setInitialFetchDone] = useState<Record<keyof typeof FIRESTORE_PATHS, boolean>>({
       routine_morning_tasks: false,
       routine_evening_tasks: false,
       tags_list_tags: false,
       settings_app_settings: false,
    });
-   const isInitialFetch = useMemo(() => !!uid && Object.values(initiallyLoaded).every(Boolean), [initiallyLoaded, uid]);
+   const isInitialFetch = useMemo(() => !!uid && Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
    useEffect(() => {
       if (!uid) return;
@@ -51,36 +51,36 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          doc(db, morningPath),
          (snapshot) => {
             setMorningTasksState((snapshot.data()?.[morningField] as typeof morningTasks) ?? []);
-            setInitiallyLoaded((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
+            setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
          },
-         () => setInitiallyLoaded((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true })),
+         () => setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true })),
       );
       const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', uid);
       const unsubEveningRoutine = onSnapshot(
          doc(db, eveningPath),
          (snapshot) => {
             setEveningTasksState((snapshot.data()?.[eveningField] as typeof eveningTasks | undefined) ?? []);
-            setInitiallyLoaded((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
+            setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
          },
-         () => setInitiallyLoaded((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true })),
+         () => setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true })),
       );
       const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
       const unsubTags = onSnapshot(
          doc(db, tagsPath),
          (snapshot) => {
             setTagsState((snapshot.data()?.[tagsField] as typeof tags | undefined) ?? []);
-            setInitiallyLoaded((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
+            setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
          },
-         () => setInitiallyLoaded((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true })),
+         () => setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true })),
       );
       const { path: settingsPath, field: settingsField } = getFirestorePathAndField('settings_app_settings', uid);
       const unsubSettings = onSnapshot(
          doc(db, settingsPath),
          (snapshot) => {
             setSettingsState((snapshot.data()?.[settingsField] as typeof settings | undefined) ?? {});
-            setInitiallyLoaded((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
+            setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
          },
-         () => setInitiallyLoaded((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true })),
+         () => setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true })),
       );
       return () => {
          unsubMorningRoutine();
