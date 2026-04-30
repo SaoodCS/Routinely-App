@@ -5,7 +5,7 @@ import { createNewTask } from '@repo/utils/app.helpers';
 import type { JSX } from 'react';
 import { useLocation } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
-import useDisappearOnScroll from '../../../hooks/useToggleVisibilityOnScroll';
+import useToggleVisibilityOnScroll from '../../../hooks/useToggleVisibilityOnScroll';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import TaskItem from './TaskItem';
@@ -20,7 +20,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { ref: scrollRef } = useScrollSaver(`${pathname}-scroll`);
-   const { ref: toggleVisibilityOnScrollRef } = useDisappearOnScroll(scrollRef);
+   const { ref: toggleVisibilityOnScrollRef } = useToggleVisibilityOnScroll(scrollRef);
 
    function handleCreateTask(): void {
       const newTask = createNewTask();
@@ -33,7 +33,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Add onClick={handleCreateTask} />
          </Fab>
          <Stack ref={scrollRef} sx={{ overflow: 'auto', maxHeight: '100%' }}>
-            <Box ref={toggleVisibilityOnScrollRef} sx={{ position: 'sticky', top: 0, height: '1rem', backgroundColor: 'white', zIndex: 1 }}>
+            <Box ref={toggleVisibilityOnScrollRef} sx={{ position: 'sticky', top: 0,  backgroundColor: 'white', zIndex: 1 }}>
                Hello
             </Box>
             <DragAndDropList
