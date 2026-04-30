@@ -19,6 +19,7 @@ export default function useToggleVisibilityOnScroll(
       let previousScrollTop = scrollElement.scrollTop;
       let hiddenOffset = 0;
       let snapTimeout: number | null = null;
+      let lastScrollDelta = 0;
 
       function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
          const height = toggleElement.offsetHeight;
@@ -31,12 +32,14 @@ export default function useToggleVisibilityOnScroll(
 
       function toggleVisibility(): void {
          const currentScrollTop = scrollElement.scrollTop;
-         setHiddenOffset(hiddenOffset + currentScrollTop - previousScrollTop, false);
+         lastScrollDelta = currentScrollTop - previousScrollTop;
+         if (lastScrollDelta === 0) return;
+         setHiddenOffset(hiddenOffset + lastScrollDelta, false);
          previousScrollTop = currentScrollTop;
          if (snapTimeout) window.clearTimeout(snapTimeout);
          snapTimeout = window.setTimeout(() => {
             const height = toggleElement.offsetHeight;
-            setHiddenOffset(hiddenOffset >= height / 2 ? height : 0, true);
+            setHiddenOffset(lastScrollDelta < 0 || hiddenOffset < height / 2 ? 0 : height, true);
          }, 120);
       }
       scrollElement.addEventListener('scroll', toggleVisibility);
