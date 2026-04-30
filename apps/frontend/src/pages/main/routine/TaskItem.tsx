@@ -28,7 +28,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section } = props;
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase();
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { palette } = useTheme();
@@ -37,7 +37,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
-      const newTask = createNewTask();
+      const newTask = createNewTask({
+         hideWhenTags: settings.inheritTagsFromSource ? task.hideWhenTags : undefined,
+         showWhenTags: settings.inheritTagsFromSource ? task.showWhenTags : undefined,
+      });
       if (indexes.length === 1) updatedTasks.splice(indexes[0] + 1, 0, newTask);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1] + 1, 0, newTask);
       else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2] + 1, 0, newTask);
@@ -46,7 +49,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function addSubTask(): void {
       const updatedTasks = [...tasks];
-      const newTask = createNewTask();
+      const newTask = createNewTask({
+         hideWhenTags: settings.inheritTagsFromSource ? task.hideWhenTags : undefined,
+         showWhenTags: settings.inheritTagsFromSource ? task.showWhenTags : undefined,
+      });
       let parentTask = updatedTasks[indexes[0]];
       if (indexes.length === 2) parentTask = parentTask.children![indexes[1]];
       parentTask.children = [newTask, ...(parentTask.children ?? [])];

@@ -1,7 +1,14 @@
 import type { T_Tag, T_Task } from '@repo/types/app.types';
 
-export function createNewTask(): T_Task {
-   return { id: `${Date.now()}-task`, label: 'New Task', isChecked: false };
+export function createNewTask(taskPresets?: Partial<T_Task>): T_Task {
+   return {
+      id: taskPresets?.id ?? `${Date.now()}-task`,
+      label: taskPresets?.label ?? 'New Task',
+      isChecked: taskPresets?.isChecked ?? false,
+      children: taskPresets?.children ?? undefined,
+      showWhenTags: taskPresets?.showWhenTags ?? undefined,
+      hideWhenTags: taskPresets?.hideWhenTags ?? undefined,
+   };
 }
 
 export function createNewTag(): T_Tag {
