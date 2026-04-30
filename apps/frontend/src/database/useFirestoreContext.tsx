@@ -84,16 +84,13 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
 
    useEffect(() => {
       if (!uid) return;
-      const unsubMorningRoutine = createFSSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksState, [], uid);
-      const unsubEveningRoutine = createFSSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksState, [], uid);
-      const unsubTags = createFSSnapshot<typeof tags>('tags_list_tags', setTagsState, [], uid);
-      const unsubSettings = createFSSnapshot<typeof settings>('settings_app_settings', setSettingsState, {}, uid);
-      return () => {
-         unsubMorningRoutine();
-         unsubEveningRoutine();
-         unsubTags();
-         unsubSettings();
-      };
+      const unsubscribers = [
+         createFSSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksState, [], uid),
+         createFSSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksState, [], uid),
+         createFSSnapshot<typeof tags>('tags_list_tags', setTagsState, [], uid),
+         createFSSnapshot<typeof settings>('settings_app_settings', setSettingsState, {}, uid),
+      ];
+      return () => unsubscribers.forEach((unsub) => unsub());
    }, [uid, createFSSnapshot]);
 
    const value: T_FirestoreContext = useMemo(
