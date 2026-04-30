@@ -33,8 +33,8 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Add onClick={handleCreateTask} />
          </Fab>
          <Stack ref={scrollRef} sx={{ overflow: 'auto', maxHeight: '100%' }}>
-            <Box ref={toggleVisibilityOnScrollRef} sx={{ position: 'sticky', top: 0,  backgroundColor: 'white', zIndex: 1 }}>
-               Hello
+            <Box ref={toggleVisibilityOnScrollRef} sx={{ position: 'sticky', top: 0, backgroundColor: 'red', zIndex: 1 }}>
+               TOGGLE ON SCROLL HEADER
             </Box>
             <DragAndDropList
                items={tasks}
