@@ -18,9 +18,15 @@ export default function useToggleVisibilityOnScroll(
       if (height === 0) return;
       const style = element.style;
       const hideMultiplier = hideDirection === 'up' ? -1 : 1;
-      let previousScrollTop = scrollElement.scrollTop;
       let hiddenOffset = 0;
       let isDragging = false;
+
+      function getScrollTop(): number {
+         const maxScrollTop = Math.max(0, scrollElement.scrollHeight - scrollElement.clientHeight);
+         return Math.min(maxScrollTop, Math.max(0, scrollElement.scrollTop));
+      }
+
+      let previousScrollTop = getScrollTop();
 
       function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
          const nextHiddenOffset = Math.min(height, Math.max(0, offset));
@@ -49,7 +55,7 @@ export default function useToggleVisibilityOnScroll(
       }
 
       function toggleVisibility(): void {
-         const currentScrollTop = scrollElement.scrollTop;
+         const currentScrollTop = getScrollTop();
          const scrollDelta = currentScrollTop - previousScrollTop;
          if (scrollDelta === 0) return;
          setHiddenOffset(isDragging ? hiddenOffset + scrollDelta : scrollDelta > 0 ? height : 0, !isDragging);
