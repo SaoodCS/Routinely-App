@@ -5,9 +5,9 @@ import { createNewTask } from '@repo/utils/app.helpers';
 import type { ChangeEvent, JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
-import useToggleVisibilityOnScroll from '../../../hooks/useToggleVisibilityOnScroll';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import useHideOnScrolll from '../../../hooks/useHideOnScroll';
 import TaskItem from './TaskItem';
 
 interface T_RoutineProps {
@@ -21,8 +21,8 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const [searchParams, setSearchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
    const { pathname } = useLocation();
-   const { ref: scrollRef } = useScrollSaver(`${pathname}-scroll`);
-   const { ref: toggleVisibilityOnScrollRef } = useToggleVisibilityOnScroll(scrollRef);
+   const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
+   const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScrolll(saveOnScrollRef);
 
    function handleCreateTask(): void {
       const newTask = createNewTask();
@@ -43,7 +43,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Add onClick={handleCreateTask} />
          </Fab>
 
-         <Box ref={toggleVisibilityOnScrollRef} sx={{ zIndex: 999, position: 'absolute', top: 0, width: '100%', backgroundColor: 'black' }}>
+         <Box ref={hideOnScrollRef} sx={{ zIndex: 999, width: '100%', position: 'absolute', top: 0, backgroundColor: 'black' }}>
             <TextField
                autoFocus
                value={searchQuery}
@@ -55,8 +55,8 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             />
          </Box>
          <DragAndDropList
-            ref={scrollRef}
-            style={{ overflow: 'auto', maxHeight: '100%' }}
+            ref={saveOnScrollRef}
+            style={{ overflow: 'auto', maxHeight: '100%', paddingTop: hideOnScrollElHeight }}
             items={tasks}
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             renderItem={(task, dragElProps, i) => (

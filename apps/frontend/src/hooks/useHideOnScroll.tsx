@@ -1,21 +1,28 @@
-import { useLayoutEffect, useRef, type RefObject } from 'react';
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 
-interface T_ToggleVisibilityOnScrollReturn {
+interface T_HideOnScrolllReturn {
    ref: RefObject<HTMLDivElement | null>;
+   hideOnScrollElHeight: number;
 }
 
-export default function useToggleVisibilityOnScroll(
-   scrollElRef: RefObject<HTMLDivElement | null>,
-   hideDirection: 'up' | 'down' = 'up',
-): T_ToggleVisibilityOnScrollReturn {
+export default function useHideOnScrolll(scrollElRef: RefObject<HTMLDivElement | null>, hideDirection: 'up' | 'down' = 'up'): T_HideOnScrolllReturn {
    const ref = useRef<HTMLDivElement | null>(null);
+   const [height, setHeight] = useState(0);
 
    useLayoutEffect(() => {
-      if (!scrollElRef.current || !ref.current) return;
+      if (!ref.current) return;
+      const element = ref.current;
+      const updateHeight = (): void => setHeight(element.offsetHeight);
+      const resizeObserver = new ResizeObserver(updateHeight);
+      updateHeight();
+      resizeObserver.observe(element);
+      return () => resizeObserver.disconnect();
+   }, []);
+
+   useLayoutEffect(() => {
+      if (!scrollElRef.current || !ref.current || !height) return;
       const scrollEl = scrollElRef.current;
       const element = ref.current;
-      const height = element.offsetHeight;
-      if (!height) return;
       const style = element.style;
       const hideMultiplier = hideDirection === 'up' ? -1 : 1;
       let hiddenOffset = 0;
@@ -82,7 +89,7 @@ export default function useToggleVisibilityOnScroll(
          window.removeEventListener('touchcancel', handleDragEnd);
          window.removeEventListener('touchend', handleDragEnd);
       };
-   }, [hideDirection, scrollElRef]);
+   }, [height, hideDirection, scrollElRef]);
 
-   return { ref };
+   return { ref, hideOnScrollElHeight: height };
 }
