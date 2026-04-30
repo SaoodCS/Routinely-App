@@ -1,9 +1,9 @@
 import { Add } from '@mui/icons-material';
-import { Box, Fab } from '@mui/material';
+import { AppBar, Box, Fab, TextField } from '@mui/material';
 import type { T_Routine_Section } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
-import type { JSX } from 'react';
-import { useLocation } from 'react-router';
+import type { ChangeEvent, JSX } from 'react';
+import { useLocation, useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useToggleVisibilityOnScroll from '../../../hooks/useToggleVisibilityOnScroll';
 import useScrollSaver from '../../../hooks/useScrollSaver';
@@ -16,9 +16,11 @@ interface T_RoutineProps {
 
 export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks } = useFirestoreContext();
-   const { pathname } = useLocation();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
+   const [searchParams, setSearchParams] = useSearchParams();
+   const searchQuery = searchParams.get('search') ?? '';
+   const { pathname } = useLocation();
    const { ref: scrollRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: toggleVisibilityOnScrollRef } = useToggleVisibilityOnScroll(scrollRef);
 
@@ -27,15 +29,31 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTasks([...tasks, newTask]);
    }
 
+   function handleChangeSearchParam(event: ChangeEvent<HTMLInputElement>): void {
+      const newSearchParams = new URLSearchParams(searchParams);
+      const newQuery = event.currentTarget.value;
+      if (newQuery) newSearchParams.set('search', newQuery);
+      else newSearchParams.delete('search');
+      setSearchParams(newSearchParams, { replace: true });
+   }
+
    return (
       <>
          <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
             <Add onClick={handleCreateTask} />
          </Fab>
 
-         <Box ref={toggleVisibilityOnScrollRef} sx={{ backgroundColor: 'red', zIndex: 99, position: 'absolute', top: 0, width: '100%' }}>
-            TOGGLE ON SCROLL HEADER
-         </Box>
+         <AppBar component={'div'} ref={toggleVisibilityOnScrollRef} sx={{ zIndex: 999, position: 'absolute', top: 0, width: '100%' }}>
+            <TextField
+               autoFocus
+               value={searchQuery}
+               onChange={handleChangeSearchParam}
+               variant="standard"
+               placeholder="Search"
+               size="small"
+               sx={{ m: 1 }}
+            />
+         </AppBar>
          <DragAndDropList
             ref={scrollRef}
             style={{ overflow: 'auto', maxHeight: '100%' }}
