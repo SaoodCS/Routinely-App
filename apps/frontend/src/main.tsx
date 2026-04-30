@@ -10,6 +10,7 @@ import { LocalStorageProvider } from './database/useLocalStorageContext.tsx';
 import { router } from './routes/router.tsx';
 import theme from './theme/theme.ts';
 import { FirestoreProvider } from './database/useFirestoreContext.tsx';
+import PWADialog from './PWADialog.tsx';
 
 registerSW({ immediate: true });
 
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')!).render(
       <ThemeProvider theme={theme}>
          <CssBaseline />
          <Box sx={{ height: '100dvh', width: '100dvw', boxSizing: 'border-box', position: 'relative' }}>
+            <PWADialog />
             <AuthProvider>
                <LocalStorageProvider>
                   <FirestoreProvider>
