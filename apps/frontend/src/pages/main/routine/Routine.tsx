@@ -22,7 +22,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef, 'up');
    const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search');
+   const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
    const { checkedTasksCount, visibleTasks } = useMemo(() => {
@@ -33,7 +33,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             const hideWhenTagsEnabled = task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId));
             const showWhenTagsEnabled = task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
             if (hideWhenTagsEnabled || (task.showWhenTags.length > 0 && !showWhenTagsEnabled)) continue;
-            if (!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase())) {
+            if (task.label.toLowerCase().includes(searchQuery)) {
                visibleTasks.add(task);
                if (task.isChecked) checkedTasksCount += 1;
             }
