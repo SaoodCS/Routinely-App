@@ -1,7 +1,8 @@
 import type { T_Settings, T_Tag, T_Task } from '@repo/types/app.types';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { FIRESTORE_PATHS } from '@repo/utils/firestore.helper';
+import type { FIRESTORE_PATHS_AND_FIELDS } from '@repo/utils/firestore.helper';
 import { getFirestorePathAndField } from '@repo/utils/firestore.helper';
+
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
 import { useAuthContext } from '../auth/useAuthContext';
@@ -36,7 +37,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
    const [tags, setTagsState] = useState<T_FirestoreContext['tags']>([]);
    const [settings, setSettingsState] = useState<T_FirestoreContext['settings']>({});
-   const [initialFetchDone, setInitialFetchDone] = useState<Record<keyof typeof FIRESTORE_PATHS, boolean>>({
+   const [initialFetchDone, setInitialFetchDone] = useState<Record<keyof typeof FIRESTORE_PATHS_AND_FIELDS, boolean>>({
       routine_morning_tasks: false,
       routine_evening_tasks: false,
       tags_list_tags: false,
@@ -107,53 +108,23 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       };
    }, [uid]);
 
-   const setMorningTasks = useCallback(
-      (value: T_FirestoreContext['morningTasks']): void => {
-         if (!uid) return;
-         const { path, field } = getFirestorePathAndField('routine_morning_tasks', uid);
-         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
-            setError(e instanceof Error ? e.message : `Error saving ${field}`);
-            console.error(e);
-         });
-      },
+   const createFSSetter = useCallback(
+      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(path: keyof typeof FIRESTORE_PATHS_AND_FIELDS) =>
+         (value: T_Val): void => {
+            if (!uid) return;
+            const { path: pathStr, field } = getFirestorePathAndField(path, uid);
+            setDoc(doc(db, pathStr), { [field]: value }, { merge: true }).catch((e) => {
+               setError(e instanceof Error ? e.message : `Error saving ${field}`);
+               console.error(e);
+            });
+         },
       [uid],
    );
 
-   const setEveningTasks = useCallback(
-      (value: T_FirestoreContext['eveningTasks']): void => {
-         if (!uid) return;
-         const { path, field } = getFirestorePathAndField('routine_evening_tasks', uid);
-         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
-            setError(e instanceof Error ? e.message : `Error saving ${field}`);
-            console.error(e);
-         });
-      },
-      [uid],
-   );
-
-   const setTags = useCallback(
-      (value: T_FirestoreContext['tags']): void => {
-         if (!uid) return;
-         const { path, field } = getFirestorePathAndField('tags_list_tags', uid);
-         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
-            setError(e instanceof Error ? e.message : `Error saving ${field}`);
-            console.error(e);
-         });
-      },
-      [uid],
-   );
-
-   const setSettings = useCallback(
-      (value: T_FirestoreContext['settings']): void => {
-         if (!uid) return;
-         const { path, field } = getFirestorePathAndField('settings_app_settings', uid);
-         setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
-            setError(e instanceof Error ? e.message : `Error saving ${field}`);
-            console.error(e);
-         });
-      },
-      [uid],
-   );
+   const setMorningTasks = useMemo(() => createFSSetter<typeof morningTasks>('routine_morning_tasks'), [createFSSetter]);
+   const setEveningTasks = useMemo(() => createFSSetter<typeof eveningTasks>('routine_evening_tasks'), [createFSSetter]);
+   const setTags = useMemo(() => createFSSetter<typeof tags>('tags_list_tags'), [createFSSetter]);
+   const setSettings = useMemo(() => createFSSetter<typeof settings>('settings_app_settings'), [createFSSetter]);
 
    const value: T_FirestoreContext = useMemo(
       () => ({
@@ -180,11 +151,9 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       </>
    );
 }
-
 // This is needed so that all states reset in FirestoreContextProvider when user's uid changes (prevents data leakage)
 export function FirestoreProvider({ children }: { children: ReactNode }): ReactNode {
    const { uid } = useAuthContext().user ?? {};
    return <FirestoreContextProvider key={uid ?? 'not-authenticated'}>{children}</FirestoreContextProvider>;
 }
-
 export const useFirestoreContext = (): T_FirestoreContext => useContext(FirestoreContext);
