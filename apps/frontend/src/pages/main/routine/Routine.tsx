@@ -5,7 +5,7 @@ import { createNewTask } from '@repo/utils/app.helpers';
 import type { JSX } from 'react';
 import { useLocation } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
-import useDisappearOnScroll from '../../../hooks/useToggelVisibilityOnScroll';
+import useDisappearOnScroll from '../../../hooks/useToggleVisibilityOnScroll';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import TaskItem from './TaskItem';
