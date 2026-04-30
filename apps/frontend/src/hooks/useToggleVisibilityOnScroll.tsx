@@ -19,11 +19,11 @@ export default function useToggleVisibilityOnScroll(
       const height = element.offsetHeight;
       let previousScrollTop = scrollElement.scrollTop;
       let hiddenOffset = 0;
-      let snapTimeout: number | null = null;
+      let isDragging = false;
 
       function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
          const nextHiddenOffset = Math.min(height, Math.max(0, offset));
-         if (nextHiddenOffset === hiddenOffset && !shouldAnimate) return;
+         if (nextHiddenOffset === hiddenOffset) return;
          hiddenOffset = nextHiddenOffset;
          const translateY = hideDirection === 'up' ? -hiddenOffset : hiddenOffset;
          element.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
@@ -31,21 +31,39 @@ export default function useToggleVisibilityOnScroll(
          element.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
+      function snapVisibility(): void {
+         setHiddenOffset(height - hiddenOffset > 5 ? 0 : height, true);
+      }
+
+      function handlePointerUp(): void {
+         if (!isDragging) return;
+         isDragging = false;
+         snapVisibility();
+      }
+
+      function handlePointerDown(event: PointerEvent): void {
+         const scrollbarWidth = scrollElement.offsetWidth - scrollElement.clientWidth;
+         const isScrollbarClick = scrollbarWidth > 0 && event.clientX >= scrollElement.getBoundingClientRect().right - scrollbarWidth;
+         isDragging = event.pointerType !== 'mouse' || (event.button === 0 && isScrollbarClick);
+      }
+
       function toggleVisibility(): void {
          const currentScrollTop = scrollElement.scrollTop;
          const scrollDelta = currentScrollTop - previousScrollTop;
          if (scrollDelta === 0) return;
-         setHiddenOffset(hiddenOffset + scrollDelta, false);
+         setHiddenOffset(isDragging ? hiddenOffset + scrollDelta : scrollDelta > 0 ? height : 0, !isDragging);
          previousScrollTop = currentScrollTop;
-         if (snapTimeout) window.clearTimeout(snapTimeout);
-         snapTimeout = window.setTimeout(() => {
-            setHiddenOffset(scrollDelta < 0 || hiddenOffset < height / 2 ? 0 : height, true);
-         }, 120);
       }
+
       scrollElement.addEventListener('scroll', toggleVisibility, { passive: true });
+      scrollElement.addEventListener('pointerdown', handlePointerDown, { passive: true });
+      window.addEventListener('pointercancel', handlePointerUp);
+      window.addEventListener('pointerup', handlePointerUp);
       return () => {
-         if (snapTimeout) window.clearTimeout(snapTimeout);
          scrollElement.removeEventListener('scroll', toggleVisibility);
+         scrollElement.removeEventListener('pointerdown', handlePointerDown);
+         window.removeEventListener('pointercancel', handlePointerUp);
+         window.removeEventListener('pointerup', handlePointerUp);
       };
    }, [hideDirection, scrollElRef]);
 
