@@ -9,6 +9,7 @@ export default defineConfig({
    plugins: [
       react(),
       VitePWA({
+         // don't need to configure caching here as I've configured firebase to handle it
          registerType: 'autoUpdate',
          workbox: { navigateFallbackDenylist: [/^\/__\//] }, // needed to allow firebase's signInWithGoogle redirect
          devOptions: { enabled: true, navigateFallbackAllowlist: [/^\/(?!__\/).*/] },
