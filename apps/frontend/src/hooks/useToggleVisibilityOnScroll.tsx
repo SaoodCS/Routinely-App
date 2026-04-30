@@ -14,17 +14,10 @@ export default function useToggleVisibilityOnScroll(scrollElRef: RefObject<HTMLD
       const scrollElement: HTMLDivElement = scrollEl;
       const toggleElement: HTMLDivElement = element;
       let previousScrollTop = scrollElement.scrollTop;
-      let isHidden = false;
-      toggleElement.style.transition = 'transform 160ms ease';
-      toggleElement.style.willChange = 'transform';
-
       function toggleVisibility(): void {
          const currentScrollTop = scrollElement.scrollTop;
-         const nextIsHidden = currentScrollTop > previousScrollTop;
+         toggleElement.style.transform = currentScrollTop > previousScrollTop ? 'translateY(-100%)' : 'translateY(0)';
          previousScrollTop = currentScrollTop;
-         if (nextIsHidden === isHidden) return;
-         isHidden = nextIsHidden;
-         toggleElement.style.transform = isHidden ? 'translate3d(0, -100%, 0)' : 'translate3d(0, 0, 0)';
       }
       scrollElement.addEventListener('scroll', toggleVisibility);
       return () => scrollElement.removeEventListener('scroll', toggleVisibility);
