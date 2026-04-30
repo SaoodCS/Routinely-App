@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { AppBar, Box, Fab, Typography } from '@mui/material';
+import { AppBar, Fab, Typography } from '@mui/material';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type JSX } from 'react';
@@ -69,7 +69,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
                isTaskVisible(task) && (
-                  <Box key={task.id}>
+                  <>
                      <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
                      {task.children && (
                         <DragAndDropList
@@ -81,7 +81,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                            }}
                            renderItem={(subtask, dragElProps, j) =>
                               isTaskVisible(subtask) && (
-                                 <Box key={subtask.id}>
+                                 <>
                                     <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
                                     {subtask.children && (
                                        <DragAndDropList
@@ -93,19 +93,17 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                           }}
                                           renderItem={(subsubtask, dragElProps, k) =>
                                              isTaskVisible(subsubtask) && (
-                                                <Box key={subsubtask.id}>
-                                                   <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
-                                                </Box>
+                                                <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
                                              )
                                           }
                                        />
                                     )}
-                                 </Box>
+                                 </>
                               )
                            }
                         />
                      )}
-                  </Box>
+                  </>
                )
             }
          />
