@@ -52,6 +52,14 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    const checkedTasksCount = useMemo(() => visibleTasks.reduce((count, task) => count + (task.isChecked ? 1 : 0), 0), [visibleTasks]);
 
+   const isTaskVisible = (task: T_Task, indexes: number[]): boolean => {
+      let visibleTaskWithSameIndexes: T_Task = tasks[indexes[0]];
+      for (let i = 1; i < indexes.length; i++) {
+         visibleTaskWithSameIndexes = visibleTaskWithSameIndexes.children![indexes[i]];
+      }
+      return visibleTaskWithSameIndexes.id === task.id;
+   };
+
    function handleCreateTask(): void {
       const newTask = createNewTask();
       setTasks([...tasks, newTask]);
@@ -73,41 +81,47 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             style={{ overflow: 'auto', maxHeight: '100%', paddingTop: hideOnScrollElHeight }}
             items={tasks}
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
-            renderItem={(task, dragElProps, i) => (
-               <Box>
-                  <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
-                  {task.children && (
-                     <DragAndDropList
-                        items={task.children}
-                        onDrop={(newOrderedItems) => {
-                           const updatedTasks = [...tasks];
-                           updatedTasks[i].children = newOrderedItems;
-                           setTasks(updatedTasks);
-                        }}
-                        renderItem={(subtask, dragElProps, j) => (
-                           <Box key={subtask.id}>
-                              <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
-                              {subtask.children && (
-                                 <DragAndDropList
-                                    items={subtask.children}
-                                    onDrop={(newOrderedItems) => {
-                                       const updatedTasks = [...tasks];
-                                       updatedTasks[i].children![j].children = newOrderedItems;
-                                       setTasks(updatedTasks);
-                                    }}
-                                    renderItem={(subsubtask, dragElProps, k) => (
-                                       <Box key={subsubtask.id}>
-                                          <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
-                                       </Box>
+            renderItem={(task, dragElProps, i) =>
+               isTaskVisible(task, [i]) && (
+                  <Box>
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
+                     {task.children && (
+                        <DragAndDropList
+                           items={task.children}
+                           onDrop={(newOrderedItems) => {
+                              const updatedTasks = [...tasks];
+                              updatedTasks[i].children = newOrderedItems;
+                              setTasks(updatedTasks);
+                           }}
+                           renderItem={(subtask, dragElProps, j) =>
+                              isTaskVisible(subtask, [i, j]) && (
+                                 <Box key={subtask.id}>
+                                    <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
+                                    {subtask.children && (
+                                       <DragAndDropList
+                                          items={subtask.children}
+                                          onDrop={(newOrderedItems) => {
+                                             const updatedTasks = [...tasks];
+                                             updatedTasks[i].children![j].children = newOrderedItems;
+                                             setTasks(updatedTasks);
+                                          }}
+                                          renderItem={(subsubtask, dragElProps, k) =>
+                                             isTaskVisible(subsubtask, [i, j, k]) && (
+                                                <Box key={subsubtask.id}>
+                                                   <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
+                                                </Box>
+                                             )
+                                          }
+                                       />
                                     )}
-                                 />
-                              )}
-                           </Box>
-                        )}
-                     />
-                  )}
-               </Box>
-            )}
+                                 </Box>
+                              )
+                           }
+                        />
+                     )}
+                  </Box>
+               )
+            }
          />
       </>
    );

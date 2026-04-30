@@ -3,8 +3,7 @@ import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
-import { useMemo, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
-import { useSearchParams } from 'react-router';
+import { type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
@@ -26,14 +25,11 @@ interface T_TaskItemProps {
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section } = props;
-   const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search')?.toLowerCase();
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags, settings } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { palette } = useTheme();
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
-   const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
@@ -87,20 +83,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function isTaskVisible(): boolean {
-      const isVisibleViaTag = (task: T_Task): boolean => {
-         if (task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
-         return !task.showWhenTags.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
-      };
-      if (searchQuery && !task.label.toLowerCase().includes(searchQuery)) return false;
-      if (!isVisibleViaTag(task)) return false;
-      const parentTask = tasks[indexes[0]];
-      if ((indexes.length === 2 || indexes.length === 3) && !isVisibleViaTag(parentTask)) return false;
-      if (indexes.length === 3 && !isVisibleViaTag(parentTask.children![indexes[1]])) return false;
-      return true;
-   }
-
-   if (!isTaskVisible()) return null;
    return (
       <Grow in timeout={500}>
          <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent }}>
