@@ -4,7 +4,10 @@ interface T_ToggleVisibilityOnScrollReturn {
    ref: RefObject<HTMLDivElement | null>;
 }
 
-export default function useToggleVisibilityOnScroll(scrollElRef: RefObject<HTMLDivElement | null>): T_ToggleVisibilityOnScrollReturn {
+export default function useToggleVisibilityOnScroll(
+   scrollElRef: RefObject<HTMLDivElement | null>,
+   hideDirection: 'up' | 'down' = 'up',
+): T_ToggleVisibilityOnScrollReturn {
    const ref = useRef<HTMLDivElement | null>(null);
 
    useLayoutEffect(() => {
@@ -20,8 +23,9 @@ export default function useToggleVisibilityOnScroll(scrollElRef: RefObject<HTMLD
       function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
          const height = toggleElement.offsetHeight;
          hiddenOffset = Math.min(height, Math.max(0, offset));
+         const translateY = hideDirection === 'up' ? -hiddenOffset : hiddenOffset;
          toggleElement.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
-         toggleElement.style.transform = `translate3d(0, -${hiddenOffset}px, 0)`;
+         toggleElement.style.transform = `translate3d(0, ${translateY}px, 0)`;
          toggleElement.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
@@ -40,7 +44,7 @@ export default function useToggleVisibilityOnScroll(scrollElRef: RefObject<HTMLD
          if (snapTimeout) window.clearTimeout(snapTimeout);
          scrollElement.removeEventListener('scroll', toggleVisibility);
       };
-   }, [scrollElRef]);
+   }, [hideDirection, scrollElRef]);
 
    return { ref };
 }

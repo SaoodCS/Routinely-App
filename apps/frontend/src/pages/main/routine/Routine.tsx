@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { Box, Fab, Stack } from '@mui/material';
+import { Box, Fab } from '@mui/material';
 import type { T_Routine_Section } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import type { JSX } from 'react';
@@ -32,50 +32,51 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
          <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
             <Add onClick={handleCreateTask} />
          </Fab>
-         <Stack ref={scrollRef} sx={{ overflow: 'auto', maxHeight: '100%' }}>
-            <Box ref={toggleVisibilityOnScrollRef} sx={{ backgroundColor: 'red', zIndex: 1, position: 'absolute', top: 0, width: '100%' }}>
-               TOGGLE ON SCROLL HEADER
-            </Box>
-            <DragAndDropList
-               items={tasks}
-               onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
-               renderItem={(task, dragElProps, i) => (
-                  <Box>
-                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
-                     {task.children && (
-                        <DragAndDropList
-                           items={task.children}
-                           onDrop={(newOrderedItems) => {
-                              const updatedTasks = [...tasks];
-                              updatedTasks[i].children = newOrderedItems;
-                              setTasks(updatedTasks);
-                           }}
-                           renderItem={(subtask, dragElProps, j) => (
-                              <Box key={subtask.id}>
-                                 <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
-                                 {subtask.children && (
-                                    <DragAndDropList
-                                       items={subtask.children}
-                                       onDrop={(newOrderedItems) => {
-                                          const updatedTasks = [...tasks];
-                                          updatedTasks[i].children![j].children = newOrderedItems;
-                                          setTasks(updatedTasks);
-                                       }}
-                                       renderItem={(subsubtask, dragElProps, k) => (
-                                          <Box key={subsubtask.id}>
-                                             <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
-                                          </Box>
-                                       )}
-                                    />
-                                 )}
-                              </Box>
-                           )}
-                        />
-                     )}
-                  </Box>
-               )}
-            />
-         </Stack>
+
+         <Box ref={toggleVisibilityOnScrollRef} sx={{ backgroundColor: 'red', zIndex: 99, position: 'absolute', top: 0, width: '100%' }}>
+            TOGGLE ON SCROLL HEADER
+         </Box>
+         <DragAndDropList
+            ref={scrollRef}
+            style={{ overflow: 'auto', maxHeight: '100%' }}
+            items={tasks}
+            onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
+            renderItem={(task, dragElProps, i) => (
+               <Box>
+                  <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
+                  {task.children && (
+                     <DragAndDropList
+                        items={task.children}
+                        onDrop={(newOrderedItems) => {
+                           const updatedTasks = [...tasks];
+                           updatedTasks[i].children = newOrderedItems;
+                           setTasks(updatedTasks);
+                        }}
+                        renderItem={(subtask, dragElProps, j) => (
+                           <Box key={subtask.id}>
+                              <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
+                              {subtask.children && (
+                                 <DragAndDropList
+                                    items={subtask.children}
+                                    onDrop={(newOrderedItems) => {
+                                       const updatedTasks = [...tasks];
+                                       updatedTasks[i].children![j].children = newOrderedItems;
+                                       setTasks(updatedTasks);
+                                    }}
+                                    renderItem={(subsubtask, dragElProps, k) => (
+                                       <Box key={subsubtask.id}>
+                                          <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
+                                       </Box>
+                                    )}
+                                 />
+                              )}
+                           </Box>
+                        )}
+                     />
+                  )}
+               </Box>
+            )}
+         />
       </>
    );
 }
