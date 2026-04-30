@@ -37,10 +37,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
-      const newTask = createNewTask({
-         hideWhenTags: settings.inheritTagsFromSource ? task.hideWhenTags : undefined,
-         showWhenTags: settings.inheritTagsFromSource ? task.showWhenTags : undefined,
-      });
+      const newTask = createNewTask(settings.inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       if (indexes.length === 1) updatedTasks.splice(indexes[0] + 1, 0, newTask);
       else if (indexes.length === 2) updatedTasks[indexes[0]].children!.splice(indexes[1] + 1, 0, newTask);
       else updatedTasks[indexes[0]].children![indexes[1]].children!.splice(indexes[2] + 1, 0, newTask);
@@ -49,10 +46,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function addSubTask(): void {
       const updatedTasks = [...tasks];
-      const newTask = createNewTask({
-         hideWhenTags: settings.inheritTagsFromSource ? task.hideWhenTags : undefined,
-         showWhenTags: settings.inheritTagsFromSource ? task.showWhenTags : undefined,
-      });
+      const newTask = createNewTask(settings.inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       let parentTask = updatedTasks[indexes[0]];
       if (indexes.length === 2) parentTask = parentTask.children![indexes[1]];
       parentTask.children = [newTask, ...(parentTask.children ?? [])];
