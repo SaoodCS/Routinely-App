@@ -21,9 +21,9 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { pathname } = useLocation();
    const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef, 'up');
-   const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase();
+   const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
    const { checkedTasksCount, visibleTasks } = useMemo(() => {
       const visibleTasks = new Set<T_Task>();
