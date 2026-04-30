@@ -27,14 +27,19 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    const visibleTasks = useMemo(() => {
       const visibleTasks = new Set<T_Task>();
-      const addVisibleTasks = (tasks: T_Task[], depth = 1): void => {
+      const addVisibleTasks = (tasks: T_Task[], depth = 1): boolean => {
+         let hasVisibleTasks = false;
          for (const task of tasks) {
             const hideWhenTagsEnabled = task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId));
             const showWhenTagsEnabled = task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
             if (hideWhenTagsEnabled || (task.showWhenTags.length > 0 && !showWhenTagsEnabled)) continue;
-            if (task.label.toLowerCase().includes(searchQuery)) visibleTasks.add(task);
-            if (depth < 3 && task.children) addVisibleTasks(task.children, depth + 1);
+            const hasVisibleChildren = Boolean(depth < 3 && task.children && addVisibleTasks(task.children, depth + 1));
+            if (task.label.toLowerCase().includes(searchQuery) || hasVisibleChildren) {
+               visibleTasks.add(task);
+               hasVisibleTasks = true;
+            }
          }
+         return hasVisibleTasks;
       };
       addVisibleTasks(tasks);
       return visibleTasks;
