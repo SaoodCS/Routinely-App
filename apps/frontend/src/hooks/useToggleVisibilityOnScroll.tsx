@@ -14,13 +14,31 @@ export default function useToggleVisibilityOnScroll(scrollElRef: RefObject<HTMLD
       const scrollElement: HTMLDivElement = scrollEl;
       const toggleElement: HTMLDivElement = element;
       let previousScrollTop = scrollElement.scrollTop;
+      let hiddenOffset = 0;
+      let snapTimeout: number | null = null;
+
+      function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
+         const height = toggleElement.offsetHeight;
+         hiddenOffset = Math.min(height, Math.max(0, offset));
+         toggleElement.style.transition = shouldAnimate ? 'transform 160ms ease' : 'none';
+         toggleElement.style.transform = `translate3d(0, -${hiddenOffset}px, 0)`;
+      }
+
       function toggleVisibility(): void {
          const currentScrollTop = scrollElement.scrollTop;
-         toggleElement.style.transform = currentScrollTop > previousScrollTop ? 'translateY(-100%)' : 'translateY(0)';
+         setHiddenOffset(hiddenOffset + currentScrollTop - previousScrollTop, false);
          previousScrollTop = currentScrollTop;
+         if (snapTimeout) window.clearTimeout(snapTimeout);
+         snapTimeout = window.setTimeout(() => {
+            const height = toggleElement.offsetHeight;
+            setHiddenOffset(hiddenOffset >= height / 2 ? height : 0, true);
+         }, 120);
       }
       scrollElement.addEventListener('scroll', toggleVisibility);
-      return () => scrollElement.removeEventListener('scroll', toggleVisibility);
+      return () => {
+         if (snapTimeout) window.clearTimeout(snapTimeout);
+         scrollElement.removeEventListener('scroll', toggleVisibility);
+      };
    }, [scrollElRef]);
 
    return { ref };
