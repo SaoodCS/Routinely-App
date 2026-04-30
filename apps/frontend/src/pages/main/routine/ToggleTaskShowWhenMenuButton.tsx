@@ -51,15 +51,15 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
                      <ListItemText>{tag.label}</ListItemText>
                      <Switch
                         color="success"
-                        checked={task.showWhenTags?.includes(tag.id) ?? false}
-                        disabled={task.hideWhenTags?.includes(tag.id)}
+                        checked={task.showWhenTags.includes(tag.id) ?? false}
+                        disabled={task.hideWhenTags.includes(tag.id)}
                         onChange={() => handleToggle(tag.id, 'showWhenTags')}
                         size="small"
                      />
                      <Switch
                         color="error"
-                        checked={task.hideWhenTags?.includes(tag.id) ?? false}
-                        disabled={task.showWhenTags?.includes(tag.id)}
+                        checked={task.hideWhenTags.includes(tag.id) ?? false}
+                        disabled={task.showWhenTags.includes(tag.id)}
                         onChange={() => handleToggle(tag.id, 'hideWhenTags')}
                         size="small"
                      />

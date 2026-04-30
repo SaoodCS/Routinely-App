@@ -89,8 +89,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function isTaskVisible(): boolean {
       const isVisibleViaTag = (task: T_Task): boolean => {
-         if (task.hideWhenTags?.some((tagId) => enabledTagIds.has(tagId))) return false;
-         return !task.showWhenTags?.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
+         if (task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
+         return !task.showWhenTags.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
       };
       if (searchQuery && !task.label.toLowerCase().includes(searchQuery)) return false;
       if (!isVisibleViaTag(task)) return false;
