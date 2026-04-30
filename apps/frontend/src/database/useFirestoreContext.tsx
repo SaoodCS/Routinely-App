@@ -44,22 +44,13 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       tags_list_tags: false,
       settings_app_settings: false,
    });
+   const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
-   const createFSSetter = useCallback(
-      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: keyof typeof FIRESTORE_PATHS_AND_FIELDS) => {
-         return (value: T_Val): void => {
-            if (!uid) return;
-            const { path, field } = getFirestorePathAndField(pathField, uid);
-            setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) =>
-               setError(e instanceof Error ? e.message : `Error saving ${field}`),
-            );
-         };
-      },
-      [uid],
-   );
+   // useEffect for getting Firestore data via snapshot listeners
+   useEffect(() => {
+      if (!uid) return;
 
-   const createFSSnapshot = useCallback(
-      <T_Val,>(path: keyof typeof FIRESTORE_PATHS_AND_FIELDS, setState: (val: T_Val) => void, fallbackValue: T_Val, uid: string) => {
+      const createOnSnapshot = <T_Val,>(path: keyof typeof FIRESTORE_PATHS_AND_FIELDS, setState: (val: T_Val) => void, fallbackValue: T_Val) => {
          const { path: pathStr, field } = getFirestorePathAndField(path, uid);
          return onSnapshot(
             doc(db, pathStr),
@@ -72,31 +63,42 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
                setError(e instanceof Error ? e.message : `Error fetching ${field}`);
             },
          );
-      },
-      [],
-   );
+      };
 
-   const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
-   const setMorningTasks = useMemo(() => createFSSetter<typeof morningTasks>('routine_morning_tasks'), [createFSSetter]);
-   const setEveningTasks = useMemo(() => createFSSetter<typeof eveningTasks>('routine_evening_tasks'), [createFSSetter]);
-   const setTags = useMemo(() => createFSSetter<typeof tags>('tags_list_tags'), [createFSSetter]);
-   const setSettings = useMemo(() => createFSSetter<typeof settings>('settings_app_settings'), [createFSSetter]);
-
-   useEffect(() => {
-      if (!uid) return;
       const unsubscribers = [
-         createFSSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksState, [], uid),
-         createFSSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksState, [], uid),
-         createFSSnapshot<typeof tags>('tags_list_tags', setTagsState, [], uid),
-         createFSSnapshot<typeof settings>('settings_app_settings', setSettingsState, {}, uid),
+         createOnSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksState, []),
+         createOnSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksState, []),
+         createOnSnapshot<typeof tags>('tags_list_tags', setTagsState, []),
+         createOnSnapshot<typeof settings>('settings_app_settings', setSettingsState, {}),
       ];
-      return () => unsubscribers.forEach((unsub) => unsub());
-   }, [uid, createFSSnapshot]);
 
+      return () => unsubscribers.forEach((unsub) => unsub());
+   }, [uid]);
+
+   // functions for setting Firestore data via setDoc
+   const createDocSetter = useCallback(
+      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: keyof typeof FIRESTORE_PATHS_AND_FIELDS) => {
+         return (value: T_Val): void => {
+            if (!uid) return;
+            const { path, field } = getFirestorePathAndField(pathField, uid);
+            setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) =>
+               setError(e instanceof Error ? e.message : `Error saving ${field}`),
+            );
+         };
+      },
+      [uid],
+   );
+   const setMorningTasks = useMemo(() => createDocSetter<typeof morningTasks>('routine_morning_tasks'), [createDocSetter]);
+   const setEveningTasks = useMemo(() => createDocSetter<typeof eveningTasks>('routine_evening_tasks'), [createDocSetter]);
+   const setTags = useMemo(() => createDocSetter<typeof tags>('tags_list_tags'), [createDocSetter]);
+   const setSettings = useMemo(() => createDocSetter<typeof settings>('settings_app_settings'), [createDocSetter]);
+
+   // memoize context values to prevent unnecessary re-renders
    const value: T_FirestoreContext = useMemo(
       () => ({ morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings }),
       [morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
+
    return (
       <>
          {isInitialFetchLoading && <LinearProgress sx={{ position: 'absolute', top: 0, width: '100%' }} />}
@@ -109,9 +111,10 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       </>
    );
 }
-// This is needed so that all states reset in FirestoreContextProvider when user's uid changes (prevents data leakage)
+
 export function FirestoreProvider({ children }: { children: ReactNode }): ReactNode {
    const { uid } = useAuthContext().user ?? {};
+   // set the key to uid to ensure context resets when user signs out / new user signs in
    return <FirestoreContextProvider key={uid ?? 'not-authenticated'}>{children}</FirestoreContextProvider>;
 }
 
