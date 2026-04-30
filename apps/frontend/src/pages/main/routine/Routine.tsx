@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { AppBar, Box, Fab, TextField } from '@mui/material';
+import { Box, Fab, TextField } from '@mui/material';
 import type { T_Routine_Section } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import type { ChangeEvent, JSX } from 'react';
@@ -43,7 +43,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Add onClick={handleCreateTask} />
          </Fab>
 
-         <AppBar component={'div'} ref={toggleVisibilityOnScrollRef} sx={{ zIndex: 999, position: 'absolute', top: 0, width: '100%' }}>
+         <Box ref={toggleVisibilityOnScrollRef} sx={{ zIndex: 999, position: 'absolute', top: 0, width: '100%', backgroundColor: 'black' }}>
             <TextField
                autoFocus
                value={searchQuery}
@@ -53,7 +53,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                size="small"
                sx={{ m: 1 }}
             />
-         </AppBar>
+         </Box>
          <DragAndDropList
             ref={scrollRef}
             style={{ overflow: 'auto', maxHeight: '100%' }}
