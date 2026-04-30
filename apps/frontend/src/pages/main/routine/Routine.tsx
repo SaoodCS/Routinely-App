@@ -53,11 +53,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const checkedTasksCount = useMemo(() => visibleTasks.reduce((count, task) => count + (task.isChecked ? 1 : 0), 0), [visibleTasks]);
 
    const isTaskVisible = (task: T_Task, indexes: number[]): boolean => {
-      let visibleTaskWithSameIndexes: T_Task = tasks[indexes[0]];
-      for (let i = 1; i < indexes.length; i++) {
-         visibleTaskWithSameIndexes = visibleTaskWithSameIndexes.children![indexes[i]];
-      }
-      return visibleTaskWithSameIndexes.id === task.id;
+      // fix isTaskVisible
    };
 
    function handleCreateTask(): void {
