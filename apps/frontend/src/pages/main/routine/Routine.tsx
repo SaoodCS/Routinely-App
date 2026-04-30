@@ -22,32 +22,25 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef, 'up');
    const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search')?.toLowerCase();
+   const searchQuery = searchParams.get('search');
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
    const { checkedTasksCount, visibleTasks } = useMemo(() => {
       const visibleTasks = new Set<T_Task>();
       let checkedTasksCount = 0;
-      const isVisibleViaTag = (task: T_Task): boolean => {
-         if (task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
-         return !task.showWhenTags.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
-      };
-      const addVisibleTask = (task: T_Task, taskTagsVisible: boolean): void => {
-         if (!taskTagsVisible || (searchQuery && !task.label.toLowerCase().includes(searchQuery))) return;
-         visibleTasks.add(task);
-         if (task.isChecked) checkedTasksCount += 1;
-      };
-      for (const task of tasks) {
-         const taskTagsVisible = isVisibleViaTag(task);
-         addVisibleTask(task, taskTagsVisible);
-         if (!taskTagsVisible || !task.children) continue;
-         for (const subtask of task.children) {
-            const subtaskTagsVisible = isVisibleViaTag(subtask);
-            addVisibleTask(subtask, subtaskTagsVisible);
-            if (!subtaskTagsVisible || !subtask.children) continue;
-            for (const subsubtask of subtask.children) addVisibleTask(subsubtask, isVisibleViaTag(subsubtask));
+      const addVisibleTasks = (tasks: T_Task[], depth = 1): void => {
+         for (const task of tasks) {
+            const hideWhenTagsEnabled = task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId));
+            const showWhenTagsEnabled = task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
+            if (hideWhenTagsEnabled || (task.showWhenTags.length > 0 && !showWhenTagsEnabled)) continue;
+            if (!searchQuery || task.label.toLowerCase().includes(searchQuery.toLowerCase())) {
+               visibleTasks.add(task);
+               if (task.isChecked) checkedTasksCount += 1;
+            }
+            if (depth < 3 && task.children) addVisibleTasks(task.children, depth + 1);
          }
-      }
+      };
+      addVisibleTasks(tasks);
       return { checkedTasksCount, visibleTasks };
    }, [tasks, searchQuery, enabledTagIds]);
 
