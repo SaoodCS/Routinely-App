@@ -20,8 +20,9 @@ export default function useToggleVisibilityOnScroll(scrollElRef: RefObject<HTMLD
       function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
          const height = toggleElement.offsetHeight;
          hiddenOffset = Math.min(height, Math.max(0, offset));
-         toggleElement.style.transition = shouldAnimate ? 'transform 160ms ease' : 'none';
+         toggleElement.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
          toggleElement.style.transform = `translate3d(0, -${hiddenOffset}px, 0)`;
+         toggleElement.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
       function toggleVisibility(): void {
