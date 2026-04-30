@@ -46,6 +46,8 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [error, setError] = useState<string | undefined>(undefined);
    const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
+   const createFSSnapshotListener = useCallback(() => {}, []);
+
    useEffect(() => {
       if (!uid) return;
       const { path: morningPath, field: morningField } = getFirestorePathAndField('routine_morning_tasks', uid);
@@ -109,11 +111,11 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    }, [uid]);
 
    const createFSSetter = useCallback(
-      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(path: keyof typeof FIRESTORE_PATHS_AND_FIELDS) =>
+      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: keyof typeof FIRESTORE_PATHS_AND_FIELDS) =>
          (value: T_Val): void => {
             if (!uid) return;
-            const { path: pathStr, field } = getFirestorePathAndField(path, uid);
-            setDoc(doc(db, pathStr), { [field]: value }, { merge: true }).catch((e) => {
+            const { path: path, field } = getFirestorePathAndField(pathField, uid);
+            setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
                setError(e instanceof Error ? e.message : `Error saving ${field}`);
                console.error(e);
             });
