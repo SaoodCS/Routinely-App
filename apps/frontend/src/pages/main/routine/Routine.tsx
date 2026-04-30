@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { AppBar, Box, Fab, Typography } from '@mui/material';
+import { AppBar, Box, Fab, Stack, Typography } from '@mui/material';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type JSX } from 'react';
@@ -64,9 +64,11 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Add onClick={handleCreateTask} />
          </Fab>
          <AppBar ref={hideOnScrollRef} component="div" position="absolute" sx={{ bottom: 0, height: 'fit-content', p: 1, border: 'none' }}>
-            <Typography variant="body2" align="center">
-               {checkedTasksCount}/{visibleTasks.size}
-            </Typography>
+            <Stack direction={'row'} gap={1}>
+               <Typography variant="body2" color={checkedTasksCount === visibleTasks.size ? 'success' : 'textSecondary'} fontWeight={500}>
+                  {checkedTasksCount}/{visibleTasks.size}
+               </Typography>
+            </Stack>
          </AppBar>
 
          <DragAndDropList
