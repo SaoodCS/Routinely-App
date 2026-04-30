@@ -11,11 +11,9 @@ export default function useToggleVisibilityOnScroll(
    const ref = useRef<HTMLDivElement | null>(null);
 
    useLayoutEffect(() => {
-      const scrollEl = scrollElRef.current;
-      const toggleElement = ref.current;
-      if (!scrollEl || !toggleElement) return;
-      const scrollElement = scrollEl;
-      const element = toggleElement;
+      if (!scrollElRef.current || !ref.current) return;
+      const scrollElement = scrollElRef.current;
+      const element = ref.current;
       const height = element.offsetHeight;
       const hideMultiplier = hideDirection === 'up' ? -1 : 1;
       let previousScrollTop = scrollElement.scrollTop;
@@ -31,14 +29,10 @@ export default function useToggleVisibilityOnScroll(
          element.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
-      function snapVisibility(): void {
-         setHiddenOffset(hiddenOffset <= height / 2 ? 0 : height, true);
-      }
-
       function handlePointerUp(): void {
          if (!isDragging) return;
          isDragging = false;
-         snapVisibility();
+         setHiddenOffset(hiddenOffset <= height / 2 ? 0 : height, true);
       }
 
       function handlePointerDown(event: PointerEvent): void {
