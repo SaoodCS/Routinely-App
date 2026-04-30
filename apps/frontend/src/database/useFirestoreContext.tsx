@@ -5,6 +5,7 @@ import { getFirestorePathAndField } from '@repo/utils/firestore.helper';
 
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
+import type { Unsubscribe } from 'firebase/auth';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
 
@@ -49,7 +50,11 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    useEffect(() => {
       if (!uid) return;
 
-      const createOnSnapshot = <T_Val,>(path: keyof typeof FIRESTORE_PATHS_AND_FIELDS, setState: (val: T_Val) => void, fallbackValue: T_Val) => {
+      const createOnSnapshot = <T_Val,>(
+         path: keyof typeof FIRESTORE_PATHS_AND_FIELDS,
+         setState: (val: T_Val) => void,
+         fallbackValue: T_Val,
+      ): Unsubscribe => {
          const { path: pathStr, field } = getFirestorePathAndField(path, uid);
          return onSnapshot(
             doc(db, pathStr),
