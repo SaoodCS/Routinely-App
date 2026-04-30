@@ -15,7 +15,7 @@ import { FirebaseError } from 'firebase/app';
 import { auth } from '../../firebase/config';
 
 export function Login(): React.JSX.Element {
-   const [isLoading, setIsLoading] = useState(false);
+   const [isLoading, setIsLoading] = useState<'reg' | 'email-pwd' | 'google' | 'anonymous'>();
    const [error, setError] = useState<string | null>(null);
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
@@ -26,42 +26,42 @@ export function Login(): React.JSX.Element {
       e.preventDefault();
       setError(null);
       if (!validForm()) return setError('Enter a valid email and a password > 6 characters.');
-      setIsLoading(true);
+      setIsLoading('reg');
       createUserWithEmailAndPassword(auth, email, password)
          .then(() => loginViaEmailPwd(e))
          .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Registration failed.'))
-         .finally(() => setIsLoading(false));
+         .finally(() => setIsLoading(undefined));
    }
 
    function loginViaEmailPwd(e: React.SubmitEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
       setError(null);
       if (!validForm()) return setError('Enter a valid email and a password > 6 characters.');
-      setIsLoading(true);
+      setIsLoading('email-pwd');
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithEmailAndPassword(auth, email, password))
          .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Login failed.'))
-         .finally(() => setIsLoading(false));
+         .finally(() => setIsLoading(undefined));
    }
 
    function loginViaGoogle(e: React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
-      setIsLoading(true);
+      setIsLoading('google');
       setError(null);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInWithRedirect(auth, new GoogleAuthProvider()))
          .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Login failed.'))
-         .finally(() => setIsLoading(false));
+         .finally(() => setIsLoading(undefined));
    }
 
    function loginAnonymously(e: React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
-      setIsLoading(true);
+      setIsLoading('anonymous');
       setError(null);
       setPersistence(auth, browserLocalPersistence)
          .then(() => signInAnonymously(auth))
          .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Login failed.'))
-         .finally(() => setIsLoading(false));
+         .finally(() => setIsLoading(undefined));
    }
 
    return (
@@ -101,20 +101,20 @@ export function Login(): React.JSX.Element {
                <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                <Stack direction="row" alignItems={'center'} justifyContent={'center'} gap={2}>
-                  <Button startIcon={<LoginSharp />} variant="contained" type="submit" loading={isLoading} fullWidth>
+                  <Button startIcon={<LoginSharp />} variant="contained" type="submit" loading={isLoading === 'email-pwd'} fullWidth>
                      Login
                   </Button>
-                  <Button startIcon={<AppRegistration />} variant="contained" loading={isLoading} onClick={regViaEmailPwd} fullWidth>
+                  <Button startIcon={<AppRegistration />} variant="contained" loading={isLoading === 'reg'} onClick={regViaEmailPwd} fullWidth>
                      Register
                   </Button>
                </Stack>
             </Stack>
             <Divider>or</Divider>
             <Stack gap={2}>
-               <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading} onClick={loginViaGoogle}>
+               <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading === 'google'} onClick={loginViaGoogle}>
                   Continue with Google
                </Button>
-               <Button fullWidth variant="outlined" startIcon={<Person />} loading={isLoading} onClick={loginAnonymously}>
+               <Button fullWidth variant="outlined" startIcon={<Person />} loading={isLoading === 'anonymous'} onClick={loginAnonymously}>
                   Continue Anonymously
                </Button>
             </Stack>
