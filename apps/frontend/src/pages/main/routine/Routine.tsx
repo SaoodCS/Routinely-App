@@ -7,7 +7,7 @@ import { useLocation, useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
-import useHideOnScrolll from '../../../hooks/useHideOnScroll';
+import useHideOnScroll from '../../../hooks/useHideOnScroll';
 import TaskItem from './TaskItem';
 
 interface T_RoutineProps {
@@ -22,7 +22,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const searchQuery = searchParams.get('search') ?? '';
    const { pathname } = useLocation();
    const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
-   const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScrolll(saveOnScrollRef);
+   const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef);
 
    function handleCreateTask(): void {
       const newTask = createNewTask();

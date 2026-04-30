@@ -1,34 +1,30 @@
 import { useLayoutEffect, useRef, useState, type RefObject } from 'react';
 
-interface T_HideOnScrolllReturn {
+interface T_HideOnScrollReturn {
    ref: RefObject<HTMLDivElement | null>;
    hideOnScrollElHeight: number;
 }
 
-export default function useHideOnScrolll(scrollElRef: RefObject<HTMLDivElement | null>, hideDirection: 'up' | 'down' = 'up'): T_HideOnScrolllReturn {
+export default function useHideOnScroll(scrollElRef: RefObject<HTMLDivElement | null>, hideDirection: 'up' | 'down' = 'up'): T_HideOnScrollReturn {
    const ref = useRef<HTMLDivElement | null>(null);
-   const [height, setHeight] = useState(0);
+   const [hideOnScrollElHeight, setHideOnScrollElHeight] = useState(0);
 
    useLayoutEffect(() => {
-      if (!ref.current) return;
-      const element = ref.current;
-      const updateHeight = (): void => setHeight(element.offsetHeight);
-      const resizeObserver = new ResizeObserver(updateHeight);
-      updateHeight();
-      resizeObserver.observe(element);
-      return () => resizeObserver.disconnect();
-   }, []);
-
-   useLayoutEffect(() => {
-      if (!scrollElRef.current || !ref.current || !height) return;
+      if (!scrollElRef.current || !ref.current) return;
       const scrollEl = scrollElRef.current;
       const element = ref.current;
       const style = element.style;
       const hideMultiplier = hideDirection === 'up' ? -1 : 1;
+      let height = element.offsetHeight;
       let hiddenOffset = 0;
       let isDragging = false;
       let shouldSnapAfterScroll = false;
       let snapTimeout: number | undefined;
+      const updateHeight = (): void => {
+         height = element.offsetHeight;
+         setHideOnScrollElHeight(height);
+      };
+      const resizeObserver = new ResizeObserver(updateHeight);
       const getScrollTop = (): number => Math.min(Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight), Math.max(0, scrollEl.scrollTop));
       let previousScrollTop = getScrollTop();
       function handleDragStart(): void {
@@ -77,6 +73,8 @@ export default function useHideOnScrolll(scrollElRef: RefObject<HTMLDivElement |
       scrollEl.addEventListener('scroll', toggleVisibility, { passive: true });
       scrollEl.addEventListener('mousedown', handleMouseDown);
       scrollEl.addEventListener('touchstart', handleDragStart, { passive: true });
+      resizeObserver.observe(element);
+      updateHeight();
       window.addEventListener('mouseup', handleDragEnd);
       window.addEventListener('touchcancel', handleDragEnd);
       window.addEventListener('touchend', handleDragEnd);
@@ -85,11 +83,12 @@ export default function useHideOnScrolll(scrollElRef: RefObject<HTMLDivElement |
          scrollEl.removeEventListener('mousedown', handleMouseDown);
          scrollEl.removeEventListener('touchstart', handleDragStart);
          window.clearTimeout(snapTimeout);
+         resizeObserver.disconnect();
          window.removeEventListener('mouseup', handleDragEnd);
          window.removeEventListener('touchcancel', handleDragEnd);
          window.removeEventListener('touchend', handleDragEnd);
       };
-   }, [height, hideDirection, scrollElRef]);
+   }, [hideDirection, scrollElRef]);
 
-   return { ref, hideOnScrollElHeight: height };
+   return { ref, hideOnScrollElHeight };
 }
