@@ -12,37 +12,37 @@ export default function useToggleVisibilityOnScroll(
 
    useLayoutEffect(() => {
       const scrollEl = scrollElRef.current;
-      const element = ref.current;
-      if (!scrollEl || !element) return;
+      const toggleElement = ref.current;
+      if (!scrollEl || !toggleElement) return;
       const scrollElement: HTMLDivElement = scrollEl;
-      const toggleElement: HTMLDivElement = element;
+      const element: HTMLDivElement = toggleElement;
+      const height = element.offsetHeight;
       let previousScrollTop = scrollElement.scrollTop;
       let hiddenOffset = 0;
       let snapTimeout: number | null = null;
-      let lastScrollDelta = 0;
 
       function setHiddenOffset(offset: number, shouldAnimate: boolean): void {
-         const height = toggleElement.offsetHeight;
-         hiddenOffset = Math.min(height, Math.max(0, offset));
+         const nextHiddenOffset = Math.min(height, Math.max(0, offset));
+         if (nextHiddenOffset === hiddenOffset && !shouldAnimate) return;
+         hiddenOffset = nextHiddenOffset;
          const translateY = hideDirection === 'up' ? -hiddenOffset : hiddenOffset;
-         toggleElement.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
-         toggleElement.style.transform = `translate3d(0, ${translateY}px, 0)`;
-         toggleElement.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
+         element.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
+         element.style.transform = `translate3d(0, ${translateY}px, 0)`;
+         element.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
       function toggleVisibility(): void {
          const currentScrollTop = scrollElement.scrollTop;
-         lastScrollDelta = currentScrollTop - previousScrollTop;
-         if (lastScrollDelta === 0) return;
-         setHiddenOffset(hiddenOffset + lastScrollDelta, false);
+         const scrollDelta = currentScrollTop - previousScrollTop;
+         if (scrollDelta === 0) return;
+         setHiddenOffset(hiddenOffset + scrollDelta, false);
          previousScrollTop = currentScrollTop;
          if (snapTimeout) window.clearTimeout(snapTimeout);
          snapTimeout = window.setTimeout(() => {
-            const height = toggleElement.offsetHeight;
-            setHiddenOffset(lastScrollDelta < 0 || hiddenOffset < height / 2 ? 0 : height, true);
+            setHiddenOffset(scrollDelta < 0 || hiddenOffset < height / 2 ? 0 : height, true);
          }, 120);
       }
-      scrollElement.addEventListener('scroll', toggleVisibility);
+      scrollElement.addEventListener('scroll', toggleVisibility, { passive: true });
       return () => {
          if (snapTimeout) window.clearTimeout(snapTimeout);
          scrollElement.removeEventListener('scroll', toggleVisibility);
