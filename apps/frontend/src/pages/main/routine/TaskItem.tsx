@@ -135,7 +135,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none' }}
                   >
-                     <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.divider} />
+                     <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
                   </Typography>
                </Stack>
             </SwipeActionWrapper>
