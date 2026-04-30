@@ -6,8 +6,8 @@ export function createNewTask(taskPresets?: Partial<T_Task>): T_Task {
       label: taskPresets?.label ?? 'New Task',
       isChecked: taskPresets?.isChecked ?? false,
       children: taskPresets?.children ?? undefined,
-      showWhenTags: taskPresets?.showWhenTags ?? undefined,
-      hideWhenTags: taskPresets?.hideWhenTags ?? undefined,
+      showWhenTags: taskPresets?.showWhenTags ?? [],
+      hideWhenTags: taskPresets?.hideWhenTags ?? [],
    };
 }
 
