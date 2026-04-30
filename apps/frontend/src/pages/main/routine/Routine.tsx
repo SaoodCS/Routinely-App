@@ -1,6 +1,6 @@
 import { Add } from '@mui/icons-material';
-import { AppBar, Box, Fab, Stack, Typography } from '@mui/material';
-import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
+import { AppBar, Box, Chip, Fab, Stack } from '@mui/material';
+import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
@@ -15,12 +15,13 @@ interface T_RoutineProps {
 }
 
 export default function Routine({ section }: T_RoutineProps): JSX.Element {
-   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks, tags } = useFirestoreContext();
+   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks, tags, setTags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { pathname } = useLocation();
    const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
-   const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef, 'up');
+   const { ref: hideOnScrollHeaderRef, hideOnScrollElHeight: hideOnScrollHeaderHeight } = useHideOnScroll(saveOnScrollRef, 'up');
+   const { ref: hideOnScrollCheckedRef } = useHideOnScroll(saveOnScrollRef, 'down');
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
@@ -58,22 +59,38 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTasks([...tasks, newTask]);
    }
 
+   function handleToggleTag(tag: T_Tag): void {
+      const newTags = [...tags];
+      const tagIndex = newTags.findIndex(({ id }) => id === tag.id);
+      newTags[tagIndex] = { ...tag, isEnabled: !tag.isEnabled };
+      setTags(newTags);
+   }
+
    return (
       <>
-         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
-            <Add onClick={handleCreateTask} />
-         </Fab>
-         <AppBar ref={hideOnScrollRef} component="div" position="absolute" sx={{ bottom: 0, height: 'fit-content', p: 1, border: 'none' }}>
-            <Stack direction={'row'} gap={1}>
-               <Typography variant="body2" color={checkedTasksCount === visibleTasks.size ? 'success' : 'textSecondary'} fontWeight={500}>
-                  {checkedTasksCount}/{visibleTasks.size}
-               </Typography>
+         {/* <Typography variant="body2" color={checkedTasksCount === visibleTasks.size ? 'success' : 'textPrimary'} fontWeight={600}>
+               {checkedTasksCount}/{visibleTasks.size}
+            </Typography> */}
+         <Stack ref={hideOnScrollCheckedRef} position={'absolute'} bottom={0} right={0} p={2}>
+            <Fab color="primary">
+               <Add onClick={handleCreateTask} />
+            </Fab>
+         </Stack>
+         <AppBar ref={hideOnScrollHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
+            <Stack spacing={1} direction={'row'} overflow={'auto'} p={1}>
+               {tags.map((tag) => (
+                  <Chip
+                     key={tag.id}
+                     label={tag.label}
+                     onClick={() => handleToggleTag(tag)}
+                     sx={{ bgcolor: tag.isEnabled ? tag.color : 'grey', opacity: tag.isEnabled ? 1 : 0.25 }}
+                  />
+               ))}
             </Stack>
          </AppBar>
-
          <DragAndDropList
             ref={saveOnScrollRef}
-            style={{ overflow: 'auto', maxHeight: '100%', paddingTop: hideOnScrollElHeight }}
+            style={{ overflow: 'auto', maxHeight: '100%', paddingTop: hideOnScrollHeaderHeight }}
             items={tasks}
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>

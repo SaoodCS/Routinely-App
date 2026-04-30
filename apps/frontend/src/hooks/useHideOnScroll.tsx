@@ -14,7 +14,7 @@ export default function useHideOnScroll(scrollElRef: RefObject<HTMLDivElement | 
       const scrollEl = scrollElRef.current;
       const element = ref.current;
       const style = element.style;
-      const hideMultiplier = hideDirection === 'up' ? -1 : 1;
+      const hideMultiplier = hideDirection === 'up' ? -1.2 : 1.2;
       let height = element.offsetHeight;
       let hiddenOffset = 0;
       let isDragging = false;
