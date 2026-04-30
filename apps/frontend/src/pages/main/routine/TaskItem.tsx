@@ -4,7 +4,9 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { type FocusEvent, type JSX, type KeyboardEvent } from 'react';
+import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
+import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
@@ -30,6 +32,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { palette } = useTheme();
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
+   const [searchParams] = useSearchParams();
+   const searchQuery = searchParams.get('search') ?? '';
 
    function addTaskBelow(): void {
       const updatedTasks = [...tasks];
@@ -131,7 +135,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none' }}
                   >
-                     {task.label}
+                     <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.divider} />
                   </Typography>
                </Stack>
             </SwipeActionWrapper>
