@@ -29,16 +29,20 @@ export default function useToggleVisibilityOnScroll(
          element.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
-      function handlePointerUp(): void {
+      function handleDragStart(): void {
+         isDragging = true;
+      }
+
+      function handleDragEnd(): void {
          if (!isDragging) return;
          isDragging = false;
          setHiddenOffset(hiddenOffset <= height / 2 ? 0 : height, true);
       }
 
-      function handlePointerDown(event: PointerEvent): void {
+      function handleMouseDown(event: MouseEvent): void {
          const scrollbarWidth = scrollElement.offsetWidth - scrollElement.clientWidth;
          const isScrollbarClick = scrollbarWidth > 0 && event.clientX >= scrollElement.getBoundingClientRect().right - scrollbarWidth;
-         isDragging = event.pointerType !== 'mouse' || (event.button === 0 && isScrollbarClick);
+         if (event.button === 0 && isScrollbarClick) handleDragStart();
       }
 
       function toggleVisibility(): void {
@@ -50,14 +54,18 @@ export default function useToggleVisibilityOnScroll(
       }
 
       scrollElement.addEventListener('scroll', toggleVisibility, { passive: true });
-      scrollElement.addEventListener('pointerdown', handlePointerDown, { passive: true });
-      window.addEventListener('pointercancel', handlePointerUp);
-      window.addEventListener('pointerup', handlePointerUp);
+      scrollElement.addEventListener('mousedown', handleMouseDown);
+      scrollElement.addEventListener('touchstart', handleDragStart, { passive: true });
+      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener('touchcancel', handleDragEnd);
+      window.addEventListener('touchend', handleDragEnd);
       return () => {
          scrollElement.removeEventListener('scroll', toggleVisibility);
-         scrollElement.removeEventListener('pointerdown', handlePointerDown);
-         window.removeEventListener('pointercancel', handlePointerUp);
-         window.removeEventListener('pointerup', handlePointerUp);
+         scrollElement.removeEventListener('mousedown', handleMouseDown);
+         scrollElement.removeEventListener('touchstart', handleDragStart);
+         window.removeEventListener('mouseup', handleDragEnd);
+         window.removeEventListener('touchcancel', handleDragEnd);
+         window.removeEventListener('touchend', handleDragEnd);
       };
    }, [hideDirection, scrollElRef]);
 
