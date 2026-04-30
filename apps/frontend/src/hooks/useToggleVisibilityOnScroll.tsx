@@ -14,9 +14,10 @@ export default function useToggleVisibilityOnScroll(
       const scrollEl = scrollElRef.current;
       const toggleElement = ref.current;
       if (!scrollEl || !toggleElement) return;
-      const scrollElement: HTMLDivElement = scrollEl;
-      const element: HTMLDivElement = toggleElement;
+      const scrollElement = scrollEl;
+      const element = toggleElement;
       const height = element.offsetHeight;
+      const hideMultiplier = hideDirection === 'up' ? -1 : 1;
       let previousScrollTop = scrollElement.scrollTop;
       let hiddenOffset = 0;
       let isDragging = false;
@@ -25,14 +26,13 @@ export default function useToggleVisibilityOnScroll(
          const nextHiddenOffset = Math.min(height, Math.max(0, offset));
          if (nextHiddenOffset === hiddenOffset) return;
          hiddenOffset = nextHiddenOffset;
-         const translateY = hideDirection === 'up' ? -hiddenOffset : hiddenOffset;
          element.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
-         element.style.transform = `translate3d(0, ${translateY}px, 0)`;
+         element.style.transform = `translate3d(0, ${hiddenOffset * hideMultiplier}px, 0)`;
          element.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
       }
 
       function snapVisibility(): void {
-         setHiddenOffset(height - hiddenOffset >= height / 2 ? 0 : height, true);
+         setHiddenOffset(hiddenOffset <= height / 2 ? 0 : height, true);
       }
 
       function handlePointerUp(): void {
