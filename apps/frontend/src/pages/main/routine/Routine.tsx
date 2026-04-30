@@ -14,8 +14,6 @@ interface T_RoutineProps {
    section: T_Routine_Section;
 }
 
-type T_TaskIndexes = [number] | [number, number] | [number, number, number];
-
 export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
@@ -27,39 +25,33 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase();
 
-   const visibleTasksIndexes = useMemo<T_TaskIndexes[]>(() => {
+   const { checkedTasksCount, visibleTasks } = useMemo(() => {
+      const visibleTasks = new Set<T_Task>();
+      let checkedTasksCount = 0;
       const isVisibleViaTag = (task: T_Task): boolean => {
          if (task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
          return !task.showWhenTags.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
       };
-      const isVisible = (task: T_Task, indexes: T_TaskIndexes): boolean => {
-         if (searchQuery && !task.label.toLowerCase().includes(searchQuery)) return false;
-         if (!isVisibleViaTag(task)) return false;
-         const parentTask = tasks[indexes[0]];
-         if ((indexes.length === 2 || indexes.length === 3) && !isVisibleViaTag(parentTask)) return false;
-         if (indexes.length === 3 && !isVisibleViaTag(parentTask.children![indexes[1]])) return false;
-         return true;
+      const addVisibleTask = (task: T_Task, taskTagsVisible: boolean): void => {
+         if (!taskTagsVisible || (searchQuery && !task.label.toLowerCase().includes(searchQuery))) return;
+         visibleTasks.add(task);
+         if (task.isChecked) checkedTasksCount += 1;
       };
-      const getVisibleTasks = (taskList: T_Task[], parentIndexes: number[] = []): T_TaskIndexes[] => {
-         const visibleTasks: T_TaskIndexes[] = [];
-         taskList.forEach((task, index) => {
-            const indexes = [...parentIndexes, index] as T_TaskIndexes;
-            if (isVisible(task, indexes)) visibleTasks.push(indexes);
-            if (task.children && indexes.length < 3) visibleTasks.push(...getVisibleTasks(task.children, indexes));
-         });
-         return visibleTasks;
-      };
-      return getVisibleTasks(tasks);
+      for (const task of tasks) {
+         const taskTagsVisible = isVisibleViaTag(task);
+         addVisibleTask(task, taskTagsVisible);
+         if (!taskTagsVisible || !task.children) continue;
+         for (const subtask of task.children) {
+            const subtaskTagsVisible = isVisibleViaTag(subtask);
+            addVisibleTask(subtask, subtaskTagsVisible);
+            if (!subtaskTagsVisible || !subtask.children) continue;
+            for (const subsubtask of subtask.children) addVisibleTask(subsubtask, isVisibleViaTag(subsubtask));
+         }
+      }
+      return { checkedTasksCount, visibleTasks };
    }, [tasks, searchQuery, enabledTagIds]);
 
-   const checkedTasksCount = useMemo(() => {
-      const getTask = (ind: number[]): T_Task | null => ind.reduce<T_Task | null>((t, i, idx) => (idx ? t?.children?.[i] : tasks[i]) ?? null, null);
-      return visibleTasksIndexes.filter((indexes) => getTask(indexes)?.isChecked).length;
-   }, [tasks, visibleTasksIndexes]);
-
-   const isTaskVisible = (indexes: T_TaskIndexes): boolean => {
-      return visibleTasksIndexes.some((v) => indexes.length === v.length && indexes.every((index, i) => index === v[i]));
-   };
+   const isTaskVisible = (task: T_Task): boolean => visibleTasks.has(task);
 
    function handleCreateTask(): void {
       const newTask = createNewTask();
@@ -73,7 +65,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
          </Fab>
          <AppBar ref={hideOnScrollRef} component="div" position="absolute" sx={{ bottom: 0, height: 'fit-content', p: 1, border: 'none' }}>
             <Typography variant="body2" align="center">
-               {checkedTasksCount}/{visibleTasksIndexes.length}
+               {checkedTasksCount}/{visibleTasks.size}
             </Typography>
          </AppBar>
 
@@ -83,7 +75,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             items={tasks}
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
-               isTaskVisible([i]) && (
+               isTaskVisible(task) && (
                   <Box>
                      <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
                      {task.children && (
@@ -95,7 +87,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                               setTasks(updatedTasks);
                            }}
                            renderItem={(subtask, dragElProps, j) =>
-                              isTaskVisible([i, j]) && (
+                              isTaskVisible(subtask) && (
                                  <Box key={subtask.id}>
                                     <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
                                     {subtask.children && (
@@ -107,7 +99,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                              setTasks(updatedTasks);
                                           }}
                                           renderItem={(subsubtask, dragElProps, k) =>
-                                             isTaskVisible([i, j, k]) && (
+                                             isTaskVisible(subsubtask) && (
                                                 <Box key={subsubtask.id}>
                                                    <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
                                                 </Box>
