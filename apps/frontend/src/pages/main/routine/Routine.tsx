@@ -1,8 +1,8 @@
 import { Add } from '@mui/icons-material';
-import { Box, Fab, TextField } from '@mui/material';
-import type { T_Routine_Section } from '@repo/types/app.types';
+import { AppBar, Box, Fab, Typography } from '@mui/material';
+import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
-import type { ChangeEvent, JSX } from 'react';
+import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
@@ -15,26 +15,46 @@ interface T_RoutineProps {
 }
 
 export default function Routine({ section }: T_RoutineProps): JSX.Element {
-   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks } = useFirestoreContext();
+   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
-   const [searchParams, setSearchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search') ?? '';
    const { pathname } = useLocation();
    const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
-   const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef);
+   const { ref: hideOnScrollRef, hideOnScrollElHeight } = useHideOnScroll(saveOnScrollRef, 'up');
+   const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
+   const [searchParams] = useSearchParams();
+   const searchQuery = searchParams.get('search')?.toLowerCase();
+
+   const visibleTasks = useMemo(() => {
+      const isVisibleViaTag = (task: T_Task): boolean => {
+         if (task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId))) return false;
+         return !task.showWhenTags.length || task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
+      };
+      const isVisible = (task: T_Task, indexes: number[]): boolean => {
+         if (searchQuery && !task.label.toLowerCase().includes(searchQuery)) return false;
+         if (!isVisibleViaTag(task)) return false;
+         const parentTask = tasks[indexes[0]];
+         if ((indexes.length === 2 || indexes.length === 3) && !isVisibleViaTag(parentTask)) return false;
+         if (indexes.length === 3 && !isVisibleViaTag(parentTask.children![indexes[1]])) return false;
+         return true;
+      };
+      const getVisibleTasks = (taskList: T_Task[], parentIndexes: number[] = []): T_Task[] => {
+         const visibleTasks: T_Task[] = [];
+         taskList.forEach((task, index) => {
+            const indexes = [...parentIndexes, index];
+            if (isVisible(task, indexes)) visibleTasks.push(task);
+            if (task.children && indexes.length < 3) visibleTasks.push(...getVisibleTasks(task.children, indexes));
+         });
+         return visibleTasks;
+      };
+      return getVisibleTasks(tasks);
+   }, [tasks, searchQuery, enabledTagIds]);
+
+   const checkedTasksCount = useMemo(() => visibleTasks.reduce((count, task) => count + (task.isChecked ? 1 : 0), 0), [visibleTasks]);
 
    function handleCreateTask(): void {
       const newTask = createNewTask();
       setTasks([...tasks, newTask]);
-   }
-
-   function handleChangeSearchParam(event: ChangeEvent<HTMLInputElement>): void {
-      const newSearchParams = new URLSearchParams(searchParams);
-      const newQuery = event.currentTarget.value;
-      if (newQuery) newSearchParams.set('search', newQuery);
-      else newSearchParams.delete('search');
-      setSearchParams(newSearchParams, { replace: true });
    }
 
    return (
@@ -42,18 +62,12 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
          <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
             <Add onClick={handleCreateTask} />
          </Fab>
+         <AppBar ref={hideOnScrollRef} component="div" position="absolute" sx={{ bottom: 0, height: 'fit-content', p: 1, border: 'none' }}>
+            <Typography variant="body2" align="center">
+               {checkedTasksCount}/{visibleTasks.length}
+            </Typography>
+         </AppBar>
 
-         <Box ref={hideOnScrollRef} sx={{ zIndex: 999, width: '100%', position: 'absolute', top: 0, backgroundColor: 'black' }}>
-            <TextField
-               autoFocus
-               value={searchQuery}
-               onChange={handleChangeSearchParam}
-               variant="standard"
-               placeholder="Search"
-               size="small"
-               sx={{ m: 1 }}
-            />
-         </Box>
          <DragAndDropList
             ref={saveOnScrollRef}
             style={{ overflow: 'auto', maxHeight: '100%', paddingTop: hideOnScrollElHeight }}
