@@ -15,6 +15,8 @@ export default function useToggleVisibilityOnScroll(
       const scrollElement = scrollElRef.current;
       const element = ref.current;
       const height = element.offsetHeight;
+      if (height === 0) return;
+      const style = element.style;
       const hideMultiplier = hideDirection === 'up' ? -1 : 1;
       let previousScrollTop = scrollElement.scrollTop;
       let hiddenOffset = 0;
@@ -24,9 +26,9 @@ export default function useToggleVisibilityOnScroll(
          const nextHiddenOffset = Math.min(height, Math.max(0, offset));
          if (nextHiddenOffset === hiddenOffset) return;
          hiddenOffset = nextHiddenOffset;
-         element.style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
-         element.style.transform = `translate3d(0, ${hiddenOffset * hideMultiplier}px, 0)`;
-         element.style.opacity = height ? `${1 - hiddenOffset / height}` : '1';
+         style.transition = shouldAnimate ? 'transform 160ms ease, opacity 160ms ease' : 'none';
+         style.transform = `translate3d(0, ${hiddenOffset * hideMultiplier}px, 0)`;
+         style.opacity = `${1 - hiddenOffset / height}`;
       }
 
       function handleDragStart(): void {
@@ -41,8 +43,9 @@ export default function useToggleVisibilityOnScroll(
 
       function handleMouseDown(event: MouseEvent): void {
          const scrollbarWidth = scrollElement.offsetWidth - scrollElement.clientWidth;
-         const isScrollbarClick = scrollbarWidth > 0 && event.clientX >= scrollElement.getBoundingClientRect().right - scrollbarWidth;
-         if (event.button === 0 && isScrollbarClick) handleDragStart();
+         if (event.button === 0 && scrollbarWidth > 0 && event.clientX >= scrollElement.getBoundingClientRect().right - scrollbarWidth) {
+            handleDragStart();
+         }
       }
 
       function toggleVisibility(): void {
