@@ -49,7 +49,6 @@ export default function Settings(): React.JSX.Element {
 
    function toggleInheritTagsFromSource(): void {
       setSettings({ ...settings, inheritTagsFromSource: !settings.inheritTagsFromSource });
-      // TODO: implement inheritTagsFromSource in the createTask / createSubTask function of the app
    }
 
    return (
