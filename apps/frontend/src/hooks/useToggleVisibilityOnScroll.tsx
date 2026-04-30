@@ -32,7 +32,7 @@ export default function useToggleVisibilityOnScroll(
       }
 
       function snapVisibility(): void {
-         setHiddenOffset(height - hiddenOffset > 5 ? 0 : height, true);
+         setHiddenOffset(height - hiddenOffset >= height / 2 ? 0 : height, true);
       }
 
       function handlePointerUp(): void {
