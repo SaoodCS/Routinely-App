@@ -69,7 +69,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
                isTaskVisible(task) && (
-                  <Box>
+                  <Box key={task.id}>
                      <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
                      {task.children && (
                         <DragAndDropList
