@@ -37,108 +37,67 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
    const [tags, setTagsState] = useState<T_FirestoreContext['tags']>([]);
    const [settings, setSettingsState] = useState<T_FirestoreContext['settings']>({});
+   const [error, setError] = useState<string | undefined>(undefined);
    const [initialFetchDone, setInitialFetchDone] = useState<Record<keyof typeof FIRESTORE_PATHS_AND_FIELDS, boolean>>({
       routine_morning_tasks: false,
       routine_evening_tasks: false,
       tags_list_tags: false,
       settings_app_settings: false,
    });
-   const [error, setError] = useState<string | undefined>(undefined);
-   const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
 
-   const createFSSnapshotListener = useCallback(() => {}, []);
+   const createFSSetter = useCallback(
+      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: keyof typeof FIRESTORE_PATHS_AND_FIELDS) => {
+         return (value: T_Val): void => {
+            if (!uid) return;
+            const { path, field } = getFirestorePathAndField(pathField, uid);
+            setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) =>
+               setError(e instanceof Error ? e.message : `Error saving ${field}`),
+            );
+         };
+      },
+      [uid],
+   );
+
+   const createFSSnapshot = useCallback(
+      <T_Val,>(path: keyof typeof FIRESTORE_PATHS_AND_FIELDS, setState: (val: T_Val) => void, fallbackValue: T_Val, uid: string) => {
+         const { path: pathStr, field } = getFirestorePathAndField(path, uid);
+         return onSnapshot(
+            doc(db, pathStr),
+            (snapshot) => {
+               setState((snapshot.data()?.[field] as T_Val | undefined) ?? fallbackValue);
+               setInitialFetchDone((prev) => (prev[path] ? prev : { ...prev, [path]: true }));
+            },
+            (e) => {
+               setInitialFetchDone((prev) => (prev[path] ? prev : { ...prev, [path]: true }));
+               setError(e instanceof Error ? e.message : `Error fetching ${field}`);
+            },
+         );
+      },
+      [],
+   );
+
+   const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
+   const setMorningTasks = useMemo(() => createFSSetter<typeof morningTasks>('routine_morning_tasks'), [createFSSetter]);
+   const setEveningTasks = useMemo(() => createFSSetter<typeof eveningTasks>('routine_evening_tasks'), [createFSSetter]);
+   const setTags = useMemo(() => createFSSetter<typeof tags>('tags_list_tags'), [createFSSetter]);
+   const setSettings = useMemo(() => createFSSetter<typeof settings>('settings_app_settings'), [createFSSetter]);
 
    useEffect(() => {
       if (!uid) return;
-      const { path: morningPath, field: morningField } = getFirestorePathAndField('routine_morning_tasks', uid);
-      const unsubMorningRoutine = onSnapshot(
-         doc(db, morningPath),
-         (snapshot) => {
-            setMorningTasksState((snapshot.data()?.[morningField] as typeof morningTasks) ?? []);
-            setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
-         },
-         (e) => {
-            console.error(e);
-            setInitialFetchDone((prev) => (prev.routine_morning_tasks ? prev : { ...prev, routine_morning_tasks: true }));
-            setError(e.message);
-         },
-      );
-      const { path: eveningPath, field: eveningField } = getFirestorePathAndField('routine_evening_tasks', uid);
-      const unsubEveningRoutine = onSnapshot(
-         doc(db, eveningPath),
-         (snapshot) => {
-            setEveningTasksState((snapshot.data()?.[eveningField] as typeof eveningTasks | undefined) ?? []);
-            setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
-         },
-         (e) => {
-            console.error(e);
-            setInitialFetchDone((prev) => (prev.routine_evening_tasks ? prev : { ...prev, routine_evening_tasks: true }));
-            setError(e.message);
-         },
-      );
-      const { path: tagsPath, field: tagsField } = getFirestorePathAndField('tags_list_tags', uid);
-      const unsubTags = onSnapshot(
-         doc(db, tagsPath),
-         (snapshot) => {
-            setTagsState((snapshot.data()?.[tagsField] as typeof tags | undefined) ?? []);
-            setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
-         },
-         (e) => {
-            console.error(e);
-            setInitialFetchDone((prev) => (prev.tags_list_tags ? prev : { ...prev, tags_list_tags: true }));
-            setError(e.message);
-         },
-      );
-      const { path: settingsPath, field: settingsField } = getFirestorePathAndField('settings_app_settings', uid);
-      const unsubSettings = onSnapshot(
-         doc(db, settingsPath),
-         (snapshot) => {
-            setSettingsState((snapshot.data()?.[settingsField] as typeof settings | undefined) ?? {});
-            setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
-         },
-         (e) => {
-            console.error(e);
-            setInitialFetchDone((prev) => (prev.settings_app_settings ? prev : { ...prev, settings_app_settings: true }));
-            setError(e.message);
-         },
-      );
+      const unsubMorningRoutine = createFSSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksState, [], uid);
+      const unsubEveningRoutine = createFSSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksState, [], uid);
+      const unsubTags = createFSSnapshot<typeof tags>('tags_list_tags', setTagsState, [], uid);
+      const unsubSettings = createFSSnapshot<typeof settings>('settings_app_settings', setSettingsState, {}, uid);
       return () => {
          unsubMorningRoutine();
          unsubEveningRoutine();
          unsubTags();
          unsubSettings();
       };
-   }, [uid]);
-
-   const createFSSetter = useCallback(
-      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: keyof typeof FIRESTORE_PATHS_AND_FIELDS) =>
-         (value: T_Val): void => {
-            if (!uid) return;
-            const { path: path, field } = getFirestorePathAndField(pathField, uid);
-            setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) => {
-               setError(e instanceof Error ? e.message : `Error saving ${field}`);
-               console.error(e);
-            });
-         },
-      [uid],
-   );
-
-   const setMorningTasks = useMemo(() => createFSSetter<typeof morningTasks>('routine_morning_tasks'), [createFSSetter]);
-   const setEveningTasks = useMemo(() => createFSSetter<typeof eveningTasks>('routine_evening_tasks'), [createFSSetter]);
-   const setTags = useMemo(() => createFSSetter<typeof tags>('tags_list_tags'), [createFSSetter]);
-   const setSettings = useMemo(() => createFSSetter<typeof settings>('settings_app_settings'), [createFSSetter]);
+   }, [uid, createFSSnapshot]);
 
    const value: T_FirestoreContext = useMemo(
-      () => ({
-         morningTasks,
-         eveningTasks,
-         tags,
-         settings,
-         setMorningTasks,
-         setEveningTasks,
-         setTags,
-         setSettings,
-      }),
+      () => ({ morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings }),
       [morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
    return (
@@ -158,4 +117,5 @@ export function FirestoreProvider({ children }: { children: ReactNode }): ReactN
    const { uid } = useAuthContext().user ?? {};
    return <FirestoreContextProvider key={uid ?? 'not-authenticated'}>{children}</FirestoreContextProvider>;
 }
+
 export const useFirestoreContext = (): T_FirestoreContext => useContext(FirestoreContext);
