@@ -18,8 +18,8 @@ export default function Tags(): React.JSX.Element {
       const updatedTags = [...tags];
       updatedTags.splice(tagIndex, 1);
       setTags(updatedTags);
-      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].label) })));
-      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].label) })));
+      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
+      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
    }
 
    function handleToggle(tagIndex: number): void {
