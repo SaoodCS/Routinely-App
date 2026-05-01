@@ -154,16 +154,19 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" onClick={toggleCheckAllSubItems}>
-                     <DoneAllOutlined fontSize="small" />
-                  </IconButton>
+
                   <IconButton onClick={addTaskBelow} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
                   </IconButton>
                   {indexes.length !== 3 && (
-                     <IconButton onClick={addSubTask} size="small">
-                        <KeyboardDoubleArrowRight fontSize="small" />
-                     </IconButton>
+                     <>
+                        <IconButton onClick={addSubTask} size="small">
+                           <KeyboardDoubleArrowRight fontSize="small" />
+                        </IconButton>
+                        <IconButton size="small" onClick={toggleCheckAllSubItems}>
+                           <DoneAllOutlined fontSize="small" />
+                        </IconButton>
+                     </>
                   )}
                   <ToggleTaskShowWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
