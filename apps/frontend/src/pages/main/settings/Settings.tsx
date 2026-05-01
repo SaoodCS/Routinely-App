@@ -63,10 +63,10 @@ export default function Settings(): React.JSX.Element {
          <Stack height="100%" overflow={'auto'} alignItems={'center'} padding={2} gap={3}>
             {user?.email && (
                <Stack direction={'column'} gap={1} justifyContent={'center'} alignItems={'center'}>
-                  <Avatar>
+                  <Avatar sx={{ backgroundColor: 'text.secondary' }}>
                      <Person fontSize="large" />
                   </Avatar>
-                  <Typography variant="overline" fontWeight={600}>
+                  <Typography variant="overline" fontWeight={600} color={'text.secondary'}>
                      {user.email}
                   </Typography>
                </Stack>

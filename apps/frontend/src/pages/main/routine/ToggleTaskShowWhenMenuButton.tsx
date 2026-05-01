@@ -44,7 +44,7 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
                <ListItemText>Hide</ListItemText>
             </MenuItem>
 
-            {...tags.map((tag, i) => (
+            {tags.map((tag, i) => (
                <span key={tag.id}>
                   {i > 0 && <Divider />}
                   <MenuItem sx={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 1 }}>
