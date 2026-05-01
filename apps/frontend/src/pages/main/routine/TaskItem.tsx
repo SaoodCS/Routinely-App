@@ -88,12 +88,17 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function toggleCheckAllSubItems(): void {
-      const checkTaskAndChildren = (task: T_Task): void => {
-         task.isChecked = !task.isChecked;
-         task.children?.forEach(checkTaskAndChildren);
+      const checkTaskAndChildren = (task: T_Task, newCheckState: boolean): void => {
+         task.isChecked = newCheckState;
+         task.children?.forEach((task) => checkTaskAndChildren(task, newCheckState));
+      };
+      const isTaskAndSubtasksAllChecked = (task: T_Task): boolean => {
+         if (!task.isChecked) return false;
+         return task.children?.every((task) => isTaskAndSubtasksAllChecked(task)) ?? true;
       };
       const updatedTask = { ...task };
-      checkTaskAndChildren(updatedTask);
+      const taskAndAllSubTasksAreChecked = isTaskAndSubtasksAllChecked(updatedTask);
+      checkTaskAndChildren(updatedTask, !taskAndAllSubTasksAreChecked);
       const updatedTasks = [...tasks];
       if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
       else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;
