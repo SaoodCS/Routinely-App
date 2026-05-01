@@ -17,8 +17,8 @@ const prettierReplace: Record<string, string> = {
 export function formatInputOnSpace(fullInput: string): string {
    // Only format if the last character of the input is a space
    if (!/\s/.test(fullInput.at(-1) ?? '')) return fullInput;
-   // If there are no spaces in the input (i.e. it's just one word) or if it comes after the end of a sentence (e.g. ". "), capitalize the first letter
    const updatedInput = fullInput.slice(0, -1);
+   // If there are no spaces in the updated input (i.e. it's just one word) or if it comes after the end of a sentence (e.g. ". "), capitalize the first letter
    if (!updatedInput) return fullInput;
    const lastWord = updatedInput.trim().split(/\s+/).at(-1) ?? '';
    const beforeLastWord = updatedInput.slice(0, -lastWord.length);
