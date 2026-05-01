@@ -1,6 +1,7 @@
-import { DeleteOutlineOutlined, LocalOfferOutlined, LogoutOutlined, RestartAltOutlined } from '@mui/icons-material';
+import { DeleteOutlineOutlined, LocalOfferOutlined, LogoutOutlined, Person, RestartAltOutlined } from '@mui/icons-material';
 import {
    Alert,
+   Avatar,
    Divider,
    ListItemIcon,
    ListItemText,
@@ -58,7 +59,18 @@ export default function Settings(): React.JSX.Element {
                {snackbar?.msg}
             </Alert>
          </Snackbar>
-         <Stack height="100%" overflow={'auto'} alignItems={'center'} padding="1rem" gap={3}>
+
+         <Stack height="100%" overflow={'auto'} alignItems={'center'} padding={2} gap={3}>
+            {user?.email && (
+               <Stack direction={'column'} gap={1} justifyContent={'center'} alignItems={'center'}>
+                  <Avatar>
+                     <Person fontSize="large" />
+                  </Avatar>
+                  <Typography variant="overline" fontWeight={600}>
+                     {user.email}
+                  </Typography>
+               </Stack>
+            )}
             <Typography variant="h6">App Settings</Typography>
             <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
                <MenuList>
