@@ -68,14 +68,25 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    return (
       <>
-         {/* <Typography variant="body2" color={checkedTasksCount === visibleTasks.size ? 'success' : 'textPrimary'} fontWeight={600}>
-               {checkedTasksCount}/{visibleTasks.size}
-            </Typography> */}
-         <Stack ref={hideOnScrollCheckedRef} position={'absolute'} bottom={0} right={0} p={2}>
-            <Fab color="primary">
-               <Add onClick={handleCreateTask} />
-            </Fab>
-         </Stack>
+         <Box
+            ref={hideOnScrollCheckedRef}
+            sx={{ position: 'absolute', bottom: 0, width: '100%', display: 'grid', gridTemplateColumns: '1fr auto 1fr' }}
+         >
+            <Box />
+            <Box sx={{ justifySelf: 'center', alignSelf: 'end', p: 1 }}>
+               <Chip
+                  label={`Done: ${checkedTasksCount}/${visibleTasks.size}`}
+                  sx={{ bgcolor: 'black', color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}` }}
+               />
+            </Box>
+            <Box sx={{ justifySelf: 'end', p: 2 }}>
+               {tasks.length === 0 && (
+                  <Fab color="primary">
+                     <Add onClick={handleCreateTask} />
+                  </Fab>
+               )}
+            </Box>
+         </Box>
          <AppBar ref={hideOnScrollHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
             <Stack spacing={1} direction={'row'} overflow={'auto'} p={1}>
                {tags.map((tag) => (
