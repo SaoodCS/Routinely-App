@@ -12,5 +12,5 @@ export function createNewTask(taskPresets?: Partial<T_Task>): T_Task {
 }
 
 export function createNewTag(): T_Tag {
-   return { id: `${Date.now()}-tag`, label: 'New Tag', isEnabled: true, color: '#848484' };
+   return { id: `${Date.now()}-tag`, label: 'New Tag', isEnabled: true };
 }

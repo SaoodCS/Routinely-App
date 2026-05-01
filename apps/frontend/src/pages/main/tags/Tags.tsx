@@ -1,6 +1,6 @@
 import { Add, DragIndicatorOutlined } from '@mui/icons-material';
-import { Box, Fab, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
-import type { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
+import { Fab, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
+import type { FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { createNewTag } from '@repo/utils/app.helpers';
 import DragAndDropList from '../../../components/DragAndDropList';
@@ -25,12 +25,6 @@ export default function Tags(): React.JSX.Element {
    function handleToggle(tagIndex: number): void {
       const updatedTags = [...tags];
       updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
-      setTags(updatedTags);
-   }
-
-   function handleColorChange(event: ChangeEvent<HTMLInputElement>, tagIndex: number): void {
-      const updatedTags = [...tags];
-      updatedTags[tagIndex] = { ...updatedTags[tagIndex], color: event.currentTarget.value };
       setTags(updatedTags);
    }
 
@@ -89,13 +83,6 @@ export default function Tags(): React.JSX.Element {
                            >
                               {tag.label}
                            </Typography>
-                           <Box
-                              component="input"
-                              type="color"
-                              value={tag.color}
-                              onChange={(event) => handleColorChange(event, i)}
-                              sx={{ width: 32, height: 32, border: 0, p: 0, bgcolor: 'transparent', cursor: 'pointer' }}
-                           />
                            <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
                         </SwipeActionWrapper>
                      </ListItem>

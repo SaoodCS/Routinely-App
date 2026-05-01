@@ -11,7 +11,6 @@ export interface T_Tag {
    id: string;
    label: string;
    isEnabled: boolean;
-   color: string;
 }
 
 export interface T_Settings {
