@@ -87,9 +87,18 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleCheckAllSubItems(): void {
-      // this function checks the current task and all it's subtasks:
-
+   function toggleCheckAllSubItems(): void {
+      const checkTaskAndChildren = (task: T_Task): void => {
+         task.isChecked = !task.isChecked;
+         task.children?.forEach(checkTaskAndChildren);
+      };
+      const updatedTask = { ...task };
+      checkTaskAndChildren(updatedTask);
+      const updatedTasks = [...tasks];
+      if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
+      else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;
+      else updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = updatedTask;
+      setTasks(updatedTasks);
    }
 
    return (
@@ -118,7 +127,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
                   </IconButton>
-                  <IconButton size="small" onClick={handleCheckAllSubItems}>
+                  <IconButton size="small" onClick={toggleCheckAllSubItems}>
                      <DoneAllOutlined fontSize="small" />
                   </IconButton>
                   <IconButton onClick={addTaskBelow} size="small">
