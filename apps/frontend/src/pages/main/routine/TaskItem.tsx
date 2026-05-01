@@ -1,4 +1,4 @@
-import { DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
+import { DoneAllOutlined, DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
@@ -87,6 +87,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
+   function handleCheckAllSubItems(): void {
+      // this function checks the current task and all it's subtasks:
+
+   }
+
    return (
       <Grow in timeout={500}>
          <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent }}>
@@ -102,8 +107,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
             >
                <Stack
                   direction={'row'}
-                  justifyContent={'start'}
                   alignItems={'center'}
+                  gap={0.5}
                   sx={{
                      pt: 0.5,
                      '& > :last-child': { ml: 'auto' },
@@ -112,6 +117,9 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                >
                   <IconButton {...dragElProps} size="small">
                      <DragIndicatorOutlined fontSize="small" />
+                  </IconButton>
+                  <IconButton size="small" onClick={handleCheckAllSubItems}>
+                     <DoneAllOutlined fontSize="small" />
                   </IconButton>
                   <IconButton onClick={addTaskBelow} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
