@@ -3,13 +3,14 @@ import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
-import { type FocusEvent, type JSX, type KeyboardEvent } from 'react';
+import { type FocusEvent, type FormEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import { formatInputOnSpace } from '../../../helpers/string.helpers';
 import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
@@ -74,6 +75,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (event.key !== 'Enter') return;
       event.preventDefault();
       event.currentTarget.blur();
+   }
+
+   function handleFormatLabelOnInput(event: FormEvent<HTMLSpanElement>): void {
+      const label = event.currentTarget.textContent ?? '';
+      const formattedLabel = formatInputOnSpace(label);
+      if (formattedLabel === label) return;
+      event.currentTarget.textContent = formattedLabel;
+      const selection = window.getSelection();
+      selection?.selectAllChildren(event.currentTarget);
+      selection?.collapseToEnd();
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
@@ -151,11 +162,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      component="span"
                      contentEditable
                      suppressContentEditableWarning
+                     onInput={handleFormatLabelOnInput}
                      onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={taskDepthStyle.fontSize}
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
-                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none' }}
+                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', whiteSpace: 'pre-wrap' }}
                   >
                      <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
                   </Typography>
