@@ -83,7 +83,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                      key={tag.id}
                      label={tag.label}
                      onClick={() => handleToggleTag(tag)}
-                     sx={{ bgcolor: tag.isEnabled ? 'primary.main' : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
+                     sx={{ bgcolor: tag.isEnabled ? 'primary.dark' : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
                   />
                ))}
             </Stack>
