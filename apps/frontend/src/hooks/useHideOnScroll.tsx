@@ -5,7 +5,11 @@ interface T_HideOnScrollReturn {
    hideOnScrollElHeight: number;
 }
 
-export default function useHideOnScroll(scrollElRef: RefObject<HTMLDivElement | null>, hideDirection: 'up' | 'down' = 'up'): T_HideOnScrollReturn {
+export default function useHideOnScroll(
+   scrollElRef: RefObject<HTMLDivElement | null>,
+   hide: 'up' | 'down' = 'up',
+   enabled: boolean = true,
+): T_HideOnScrollReturn {
    const ref = useRef<HTMLDivElement | null>(null);
    const [hideOnScrollElHeight, setHideOnScrollElHeight] = useState(0);
 
@@ -14,7 +18,7 @@ export default function useHideOnScroll(scrollElRef: RefObject<HTMLDivElement | 
       const scrollEl = scrollElRef.current;
       const element = ref.current;
       const style = element.style;
-      const hideMultiplier = hideDirection === 'up' ? -1.2 : 1.2;
+      const hideMultiplier = hide === 'up' ? -1.2 : 1.2;
       let height = element.offsetHeight;
       let hiddenOffset = 0;
       let isDragging = false;
@@ -88,7 +92,7 @@ export default function useHideOnScroll(scrollElRef: RefObject<HTMLDivElement | 
          window.removeEventListener('touchcancel', handleDragEnd);
          window.removeEventListener('touchend', handleDragEnd);
       };
-   }, [hideDirection, scrollElRef]);
+   }, [hide, scrollElRef, enabled]);
 
    return { ref, hideOnScrollElHeight };
 }

@@ -19,9 +19,9 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const { pathname } = useLocation();
-   const { ref: saveOnScrollRef } = useScrollSaver(`${pathname}-scroll`);
-   const { ref: hideOnScrollHeaderRef, hideOnScrollElHeight: hideOnScrollHeaderHeight } = useHideOnScroll(saveOnScrollRef, 'up');
-   const { ref: hideOnScrollCheckedRef } = useHideOnScroll(saveOnScrollRef, 'down');
+   const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
+   const { ref: tagHeaderRef, hideOnScrollElHeight: tagHeaderHeight } = useHideOnScroll(dragDropListRef, 'up', tags.length > 0);
+   const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
@@ -75,22 +75,24 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    return (
       <>
-         <AppBar ref={hideOnScrollHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
-            <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
-               <Chip label={'Toggle All'} onClick={handleToggleAllTags} sx={{ color: 'primary.main' }} variant={'outlined'} />
-               {tags.map((tag) => (
-                  <Chip
-                     key={tag.id}
-                     label={tag.label}
-                     onClick={() => handleToggleTag(tag)}
-                     sx={{ bgcolor: tag.isEnabled ? 'primary.dark' : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
-                  />
-               ))}
-            </Stack>
-         </AppBar>
+         {tags.length > 0 && (
+            <AppBar ref={tagHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
+               <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
+                  <Chip label={'Toggle All'} onClick={handleToggleAllTags} sx={{ color: 'primary.main' }} variant={'outlined'} />
+                  {tags.map((tag) => (
+                     <Chip
+                        key={tag.id}
+                        label={tag.label}
+                        onClick={() => handleToggleTag(tag)}
+                        sx={{ bgcolor: tag.isEnabled ? 'primary.dark' : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
+                     />
+                  ))}
+               </Stack>
+            </AppBar>
+         )}
          <DragAndDropList
-            ref={saveOnScrollRef}
-            style={{ overflow: 'auto', maxHeight: '100%', paddingTop: hideOnScrollHeaderHeight }}
+            ref={dragDropListRef}
+            style={{ overflow: 'auto', maxHeight: '100%', paddingTop: tagHeaderHeight }}
             items={tasks}
             onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
@@ -135,7 +137,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                )
             }
          />
-         <Grid ref={hideOnScrollCheckedRef} container sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
+         <Grid ref={tasksDoneFooterRef} container sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
             <Grid size={3} />
             <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
                <Chip
