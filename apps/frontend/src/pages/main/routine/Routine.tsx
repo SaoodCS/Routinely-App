@@ -144,7 +144,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                />
             </Grid>
             <Grid size={3} sx={{ textAlign: 'right' }}>
-               {tasks.length !== 0 && (
+               {tasks.length === 0 && (
                   <Fab color="primary">
                      <Add onClick={handleCreateTask} />
                   </Fab>
