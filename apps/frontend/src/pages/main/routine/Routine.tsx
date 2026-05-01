@@ -75,7 +75,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                      key={tag.id}
                      label={tag.label}
                      onClick={() => handleToggleTag(tag)}
-                     sx={{ bgcolor: tag.isEnabled ? tag.color : 'grey', opacity: tag.isEnabled ? 1 : 0.25 }}
+                     sx={{ bgcolor: tag.isEnabled ? tag.color : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
                   />
                ))}
             </Stack>
@@ -131,7 +131,6 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Grid size={3} />
             <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
                <Chip
-                  clickable={false}
                   label={`Done: ${checkedTasksCount}/${visibleTasks.size}`}
                   sx={{ color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}` }}
                />
