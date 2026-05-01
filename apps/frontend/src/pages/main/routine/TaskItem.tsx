@@ -94,6 +94,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (formattedBeforeCursor === beforeCursor) return;
       // concatenate the formatted text with the part of the label that comes after the cursor
       element.textContent = formattedBeforeCursor + label.slice(beforeCursor.length);
+      // move the cursor to the end of the formatted text (back to where the user was typing)
       selection.collapse(element.firstChild, formattedBeforeCursor.length);
    }
 
