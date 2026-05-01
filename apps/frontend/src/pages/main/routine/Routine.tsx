@@ -66,10 +66,18 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTags(newTags);
    }
 
+   function handleToggleAllTags(): void {
+      const newTags = [...tags];
+      if (newTags.some(({ isEnabled }) => !isEnabled)) newTags.forEach((tag) => (tag.isEnabled = true));
+      else newTags.forEach((tag) => (tag.isEnabled = false));
+      setTags(newTags);
+   }
+
    return (
       <>
          <AppBar ref={hideOnScrollHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
-            <Stack spacing={1} direction={'row'} overflow={'auto'} p={1}>
+            <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
+               <Chip label={'Toggle All'} onClick={handleToggleAllTags} sx={{ color: 'primary.main' }} variant={'outlined'} />
                {tags.map((tag) => (
                   <Chip
                      key={tag.id}
@@ -132,7 +140,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
                <Chip
                   label={`Done: ${checkedTasksCount}/${visibleTasks.size}`}
-                  sx={{ color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}` }}
+                  sx={{ color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}`, cursor: 'default' }}
                />
             </Grid>
             <Grid size={3} sx={{ textAlign: 'right' }}>

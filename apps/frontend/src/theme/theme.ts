@@ -66,7 +66,16 @@ const components_layout: ThemeOptions['components'] = {
 const components: ThemeOptions['components'] = {
    MuiMenuItem: { defaultProps: { dense: true } },
    MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },
-   MuiChip: { defaultProps: { variant: 'filled' }, styleOverrides: { root: { backgroundColor: 'black', opacity: 1 } } },
+   MuiChip: {
+      defaultProps: { variant: 'filled', clickable: false },
+      styleOverrides: {
+         root: {
+            backgroundColor: 'black',
+            opacity: 1,
+            cursor: 'pointer',
+         },
+      },
+   },
    MuiSnackbar: { defaultProps: { anchorOrigin: { horizontal: 'right', vertical: 'top' } } },
 };
 
