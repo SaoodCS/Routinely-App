@@ -4,7 +4,7 @@ import { createTheme } from '@mui/material/styles';
 const palette: ThemeOptions['palette'] = {
    mode: 'dark',
    background: { default: '#071018', paper: '#071018' },
-   primary: { main: '#42a5f5', light: '#8ec9fb', dark: '#2f86d1' },
+   primary: { main: '#50abf6', light: '#8ec9fb', dark: '#2f86d1' },
    secondary: { main: '#c77dd4', light: '#e3b7ec', dark: '#9959a8' },
    error: { main: '#f28b82', light: '#ffc1c1', dark: '#c25c5c' },
    warning: { main: '#ffb74d', light: '#ffe0a3', dark: '#c88719' },
