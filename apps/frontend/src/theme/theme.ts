@@ -68,7 +68,7 @@ const components: ThemeOptions['components'] = {
    MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },
    MuiChip: {
       defaultProps: { clickable: false },
-      styleOverrides: { root: { cursor: 'pointer' } },
+      styleOverrides: { root: { cursor: 'pointer', backgroundColor: 'black' } },
    },
    MuiSnackbar: { defaultProps: { anchorOrigin: { horizontal: 'right', vertical: 'top' } } },
 };
