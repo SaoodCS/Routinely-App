@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { AppBar, Box, Chip, Fab, Stack } from '@mui/material';
+import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
 import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type JSX } from 'react';
@@ -68,25 +68,6 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    return (
       <>
-         <Box
-            ref={hideOnScrollCheckedRef}
-            sx={{ position: 'absolute', bottom: 0, width: '100%', display: 'grid', gridTemplateColumns: '1fr auto 1fr' }}
-         >
-            <Box />
-            <Box sx={{ justifySelf: 'center', alignSelf: 'end', p: 1 }}>
-               <Chip
-                  label={`Done: ${checkedTasksCount}/${visibleTasks.size}`}
-                  sx={{ bgcolor: 'black', color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}` }}
-               />
-            </Box>
-            <Box sx={{ justifySelf: 'end', p: 2 }}>
-               {tasks.length === 0 && (
-                  <Fab color="primary">
-                     <Add onClick={handleCreateTask} />
-                  </Fab>
-               )}
-            </Box>
-         </Box>
          <AppBar ref={hideOnScrollHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
             <Stack spacing={1} direction={'row'} overflow={'auto'} p={1}>
                {tags.map((tag) => (
@@ -146,6 +127,23 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                )
             }
          />
+         <Grid ref={hideOnScrollCheckedRef} container sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
+            <Grid size={3} />
+            <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
+               <Chip
+                  clickable={false}
+                  label={`Done: ${checkedTasksCount}/${visibleTasks.size}`}
+                  sx={{ color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}` }}
+               />
+            </Grid>
+            <Grid size={3} sx={{ textAlign: 'right' }}>
+               {tasks.length !== 0 && (
+                  <Fab color="primary">
+                     <Add onClick={handleCreateTask} />
+                  </Fab>
+               )}
+            </Grid>
+         </Grid>
       </>
    );
 }

@@ -13,9 +13,9 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
-   1: { indent: 1, color: ['primary', 'main'], fontSize: '1rem' },
-   2: { indent: 2, color: ['secondary', 'dark'], fontSize: '0.9rem' },
-   3: { indent: 3, color: ['secondary', 'main'], fontSize: '0.825rem' },
+   1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem' },
+   2: { indent: 2, color: ['secondary', 'light'], fontSize: '0.9rem' },
+   3: { indent: 3, color: ['success', 'light'], fontSize: '0.825rem' },
 };
 
 interface T_TaskItemProps {
