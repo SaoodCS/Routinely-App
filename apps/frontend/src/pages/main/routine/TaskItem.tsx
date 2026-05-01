@@ -178,7 +178,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={taskDepthStyle.fontSize}
                      color={task.isChecked ? 'textDisabled' : 'textPrimary'}
-                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', whiteSpace: 'pre-wrap' }}
+                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75 }}
                   >
                      <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
                   </Typography>
