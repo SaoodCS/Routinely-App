@@ -24,7 +24,7 @@ export default function Tags(): React.JSX.Element {
 
    function handleToggle(tagIndex: number): void {
       const updatedTags = [...tags];
-      updatedTags[tagIndex].isEnabled = !updatedTags[tagIndex].isEnabled;
+      updatedTags[tagIndex] = { ...updatedTags[tagIndex], isEnabled: !updatedTags[tagIndex].isEnabled };
       setTags(updatedTags);
    }
 
