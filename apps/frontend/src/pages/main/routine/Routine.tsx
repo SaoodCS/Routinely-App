@@ -1,6 +1,6 @@
 import { Add } from '@mui/icons-material';
 import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
-import type { T_Routine_Section, T_Tag, T_Task } from '@repo/types/app.types';
+import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
@@ -59,18 +59,33 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTasks([...tasks, newTask]);
    }
 
-   function handleToggleTag(tag: T_Tag): void {
+   function handleToggleTag(index: number): void {
       const newTags = [...tags];
-      const tagIndex = newTags.findIndex(({ id }) => id === tag.id);
-      newTags[tagIndex] = { ...tag, isEnabled: !tag.isEnabled };
+      newTags[index] = { ...newTags[index], isEnabled: !newTags[index].isEnabled };
       setTags(newTags);
    }
 
    function handleToggleAllTags(): void {
-      const newTags = [...tags];
-      if (newTags.some(({ isEnabled }) => !isEnabled)) newTags.forEach((tag) => (tag.isEnabled = true));
-      else newTags.forEach((tag) => (tag.isEnabled = false));
-      setTags(newTags);
+      const shouldEnableAllTags = tags.some(({ isEnabled }) => !isEnabled);
+      setTags(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
+   }
+
+   function handleReorderTasksOnDrop(newOrderedItems: T_Task[], indexes?: [number] | [number, number]): void {
+      if (!indexes) {
+         setTasks(newOrderedItems);
+         return;
+      }
+      const updatedTasks = [...tasks];
+      if (indexes.length === 1) {
+         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: newOrderedItems };
+         setTasks(updatedTasks);
+      }
+      if (indexes.length === 2) {
+         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
+         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: newOrderedItems };
+         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
+         setTasks(updatedTasks);
+      }
    }
 
    return (
@@ -79,11 +94,11 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <AppBar ref={tagHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
                <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                   <Chip label={'Toggle All'} onClick={handleToggleAllTags} sx={{ color: 'primary.main' }} variant={'outlined'} />
-                  {tags.map((tag) => (
+                  {tags.map((tag, i) => (
                      <Chip
                         key={tag.id}
                         label={tag.label}
-                        onClick={() => handleToggleTag(tag)}
+                        onClick={() => handleToggleTag(i)}
                         sx={{ bgcolor: tag.isEnabled ? 'primary.dark' : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
                      />
                   ))}
@@ -102,11 +117,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
-                           onDrop={(newOrderedItems) => {
-                              const updatedTasks = [...tasks];
-                              updatedTasks[i].children = newOrderedItems;
-                              setTasks(updatedTasks);
-                           }}
+                           onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems, [i])}
                            renderItem={(subtask, dragElProps, j) =>
                               isTaskVisible(subtask) && (
                                  <Box>
@@ -114,11 +125,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                     {subtask.children && (
                                        <DragAndDropList
                                           items={subtask.children}
-                                          onDrop={(newOrderedItems) => {
-                                             const updatedTasks = [...tasks];
-                                             updatedTasks[i].children![j].children = newOrderedItems;
-                                             setTasks(updatedTasks);
-                                          }}
+                                          onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems, [i, j])}
                                           renderItem={(subsubtask, dragElProps, k) =>
                                              isTaskVisible(subsubtask) && (
                                                 <Box>
