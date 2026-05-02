@@ -15,24 +15,20 @@ export default function Tags(): React.JSX.Element {
    const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
 
    function handleDelete(tagIndex: number): void {
-      const updatedTags = [...tags];
-      updatedTags.splice(tagIndex, 1);
-      setTags(updatedTags);
+      setTags(tags.filter((_, i) => i !== tagIndex));
       setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
       setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
    }
 
    function handleToggle(tagIndex: number): void {
-      const updatedTags = [...tags];
-      updatedTags[tagIndex] = { ...updatedTags[tagIndex], isEnabled: !updatedTags[tagIndex].isEnabled };
+      const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, isEnabled: !tag.isEnabled } : tag));
       setTags(updatedTags);
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
       const updatedLabel = event.currentTarget.textContent ?? '';
       if (updatedLabel === tags[tagIndex].label) return;
-      const updatedTags = [...tags];
-      updatedTags[tagIndex] = { ...updatedTags[tagIndex], label: updatedLabel };
+      const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, label: updatedLabel } : tag));
       setTags(updatedTags);
    }
 
