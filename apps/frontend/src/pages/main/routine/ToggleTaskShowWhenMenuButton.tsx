@@ -17,14 +17,29 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    function handleToggle(tagId: T_Tag['id'], taskTagKey: T_Task_TagKeys): void {
-      const updatedTask = { ...task };
-      if (updatedTask[taskTagKey]?.includes(tagId)) updatedTask[taskTagKey] = updatedTask[taskTagKey].filter((id) => id !== tagId);
-      else updatedTask[taskTagKey] = [...(updatedTask[taskTagKey] ?? []), tagId];
+      const updatedTask = {
+         ...task,
+         [taskTagKey]: task[taskTagKey].includes(tagId) ? task[taskTagKey].filter((id) => id !== tagId) : [...task[taskTagKey], tagId],
+      };
       const updatedTasks = [...tasks];
-      if (indexes.length === 1) updatedTasks[indexes[0]] = updatedTask;
-      else if (indexes.length === 2) updatedTasks[indexes[0]].children![indexes[1]] = updatedTask;
-      else updatedTasks[indexes[0]].children![indexes[1]].children![indexes[2]] = updatedTask;
-      setTasks(updatedTasks);
+      if (indexes.length === 1) {
+         updatedTasks[indexes[0]] = updatedTask;
+         setTasks(updatedTasks);
+      }
+      if (indexes.length === 2) {
+         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
+         updatedSubtasks[indexes[1]] = updatedTask;
+         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
+         setTasks(updatedTasks);
+      }
+      if (indexes.length === 3) {
+         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
+         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
+         updatedSubsubtasks[indexes[2]] = updatedTask;
+         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
+         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
+         setTasks(updatedTasks);
+      }
    }
 
    return (
