@@ -146,10 +146,10 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       });
       dragStateRef.current = null;
       if (currentIndex === start.index) return;
-      const newOrderedItems = [...items];
-      const [draggedItem] = newOrderedItems.splice(start.index, 1);
+      const draggedItem = items[start.index];
       if (!draggedItem) return;
-      newOrderedItems.splice(currentIndex, 0, draggedItem);
+      const remainingItems = [...items.slice(0, start.index), ...items.slice(start.index + 1)];
+      const newOrderedItems = [...remainingItems.slice(0, currentIndex), draggedItem, ...remainingItems.slice(currentIndex)];
       onDrop(newOrderedItems);
    }
 
