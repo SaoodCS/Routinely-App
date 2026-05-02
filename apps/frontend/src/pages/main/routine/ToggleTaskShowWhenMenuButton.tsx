@@ -1,6 +1,6 @@
 import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
-import type { T_Routine_Section, T_Tag, T_Task, T_Task_TagKeys } from '@repo/types/app.types';
+import type { T_Routine_Section, T_Tag, T_Task, T_Task_TagFields } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
@@ -16,10 +16,10 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-   function handleToggle(tagId: T_Tag['id'], taskTagKey: T_Task_TagKeys): void {
+   function handleToggle(tagId: T_Tag['id'], taskTagField: T_Task_TagFields): void {
       const updatedTask = {
          ...task,
-         [taskTagKey]: task[taskTagKey].includes(tagId) ? task[taskTagKey].filter((id) => id !== tagId) : [...task[taskTagKey], tagId],
+         [taskTagField]: task[taskTagField].includes(tagId) ? task[taskTagField].filter((id) => id !== tagId) : [...task[taskTagField], tagId],
       };
       const updatedTasks = [...tasks];
       if (indexes.length === 1) {

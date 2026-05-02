@@ -18,4 +18,4 @@ export interface T_Settings {
 }
 
 export type T_Routine_Section = 'morning' | 'evening';
-export type T_Task_TagKeys = NonNullable<{ [K in keyof T_Task]: K extends `${string}Tags${string}` ? K : never }[keyof T_Task]>;
+export type T_Task_TagFields = NonNullable<{ [K in keyof T_Task]: K extends `${string}Tags${string}` ? K : never }[keyof T_Task]>;
