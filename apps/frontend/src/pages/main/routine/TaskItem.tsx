@@ -97,7 +97,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       }
    }
 
-   function handleToggleIsChecked(): void {
+   function handleToggleChecked(): void {
       const updatedTasks = [...tasks];
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], isChecked: !updatedTasks[indexes[0]].isChecked };
@@ -113,6 +113,39 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
          updatedSubsubtasks[indexes[2]] = { ...updatedSubsubtasks[indexes[2]], isChecked: !updatedSubsubtasks[indexes[2]].isChecked };
+         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
+         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
+         setTasks(updatedTasks);
+      }
+   }
+
+   function handleToggleCheckTaskAndSubtasks(): void {
+      const checkTaskAndChildren = (task: T_Task, newCheckState: boolean): T_Task => ({
+         ...task,
+         isChecked: newCheckState,
+         children: task.children?.map((task) => checkTaskAndChildren(task, newCheckState)),
+      });
+      const isTaskAndSubtasksAllChecked = (task: T_Task): boolean => {
+         if (!task.isChecked) return false;
+         return task.children?.every((task) => isTaskAndSubtasksAllChecked(task)) ?? true;
+      };
+      const taskAndAllSubTasksAreChecked = isTaskAndSubtasksAllChecked(task);
+      const updatedTask = checkTaskAndChildren(task, !taskAndAllSubTasksAreChecked);
+      const updatedTasks = [...tasks];
+      if (indexes.length === 1) {
+         updatedTasks[indexes[0]] = updatedTask;
+         setTasks(updatedTasks);
+      }
+      if (indexes.length === 2) {
+         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
+         updatedSubtasks[indexes[1]] = updatedTask;
+         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
+         setTasks(updatedTasks);
+      }
+      if (indexes.length === 3) {
+         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
+         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
+         updatedSubsubtasks[indexes[2]] = updatedTask;
          updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
          setTasks(updatedTasks);
@@ -166,45 +199,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       }
    }
 
-   function toggleCheckAllSubItems(): void {
-      const checkTaskAndChildren = (task: T_Task, newCheckState: boolean): T_Task => ({
-         ...task,
-         isChecked: newCheckState,
-         children: task.children?.map((task) => checkTaskAndChildren(task, newCheckState)),
-      });
-      const isTaskAndSubtasksAllChecked = (task: T_Task): boolean => {
-         if (!task.isChecked) return false;
-         return task.children?.every((task) => isTaskAndSubtasksAllChecked(task)) ?? true;
-      };
-      const taskAndAllSubTasksAreChecked = isTaskAndSubtasksAllChecked(task);
-      const updatedTask = checkTaskAndChildren(task, !taskAndAllSubTasksAreChecked);
-      const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = updatedTask;
-         setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = updatedTask;
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
-         updatedSubsubtasks[indexes[2]] = updatedTask;
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
-   }
-
    return (
       <Grow in timeout={500}>
          <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent }}>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
-               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleIsChecked }}
+               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
                style={{
                   borderRadius: '5px',
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
@@ -234,7 +234,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         <IconButton onClick={addSubTask} size="small">
                            <KeyboardDoubleArrowRight fontSize="small" />
                         </IconButton>
-                        <IconButton size="small" onClick={toggleCheckAllSubItems}>
+                        <IconButton size="small" onClick={handleToggleCheckTaskAndSubtasks}>
                            <DoneAllOutlined fontSize="small" />
                         </IconButton>
                      </>
@@ -242,7 +242,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   <ToggleTaskShowWhenMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 0.75, pb: 0.5 }}>
-                  {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleIsChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
+                  {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
                   <Typography
                      component="span"
                      contentEditable
