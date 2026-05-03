@@ -2,9 +2,9 @@ import { DoneAllOutlined, DragIndicatorOutlined, KeyboardDoubleArrowDown, Keyboa
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
-import { createNewTask } from '@repo/utils/app.helpers';
 import { type FocusEvent, type FormEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
+import { AppUtils } from '@repo/utils/index';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
@@ -37,7 +37,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const searchQuery = searchParams.get('search') ?? '';
 
    function addTaskBelow(): void {
-      const newTask = createNewTask(settings.inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
+      const { inheritTagsFromSource } = settings;
+      const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
       if (indexes.length === 1) {
          const indexToInsertAt = indexes[0] + 1;
@@ -63,7 +64,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function addSubTask(): void {
-      const newTask = createNewTask(settings.inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
+      const { inheritTagsFromSource } = settings;
+      const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: [newTask, ...(updatedTasks[indexes[0]].children ?? [])] };

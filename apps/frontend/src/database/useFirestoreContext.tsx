@@ -1,11 +1,10 @@
 import type { T_Settings, T_Tag, T_Task } from '@repo/types/app.types';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { FIRESTORE_PATHS_AND_FIELDS } from '@repo/utils/firestore.helper';
-import { getFirestorePathAndField } from '@repo/utils/firestore.helper';
 
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
+import { FirestoreUtils } from '@repo/utils/index';
 import type { Unsubscribe } from 'firebase/auth';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
 
@@ -38,7 +37,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [tags, setTagsState] = useState<T_FirestoreContext['tags']>([]);
    const [settings, setSettingsState] = useState<T_FirestoreContext['settings']>({});
    const [error, setError] = useState<string | undefined>(undefined);
-   const [initialFetchDone, setInitialFetchDone] = useState<Record<keyof typeof FIRESTORE_PATHS_AND_FIELDS, boolean>>({
+   const [initialFetchDone, setInitialFetchDone] = useState<Record<FirestoreUtils.T_PathKey, boolean>>({
       routine_morning_tasks: false,
       routine_evening_tasks: false,
       tags_list_tags: false,
@@ -50,12 +49,8 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    useEffect(() => {
       if (!uid) return;
 
-      const createOnSnapshot = <T_Val,>(
-         path: keyof typeof FIRESTORE_PATHS_AND_FIELDS,
-         setState: (val: T_Val) => void,
-         fallbackValue: T_Val,
-      ): Unsubscribe => {
-         const { path: pathStr, field } = getFirestorePathAndField(path, uid);
+      const createOnSnapshot = <T_Val,>(path: FirestoreUtils.T_PathKey, setState: (val: T_Val) => void, fallbackValue: T_Val): Unsubscribe => {
+         const { path: pathStr, field } = FirestoreUtils.getPathAndField(path, uid);
          return onSnapshot(
             doc(db, pathStr),
             (snapshot) => {
@@ -81,10 +76,10 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
 
    // functions for setting Firestore data via setDoc
    const createDocSetter = useCallback(
-      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: keyof typeof FIRESTORE_PATHS_AND_FIELDS) => {
+      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: FirestoreUtils.T_PathKey) => {
          return (value: T_Val): void => {
             if (!uid) return;
-            const { path, field } = getFirestorePathAndField(pathField, uid);
+            const { path, field } = FirestoreUtils.getPathAndField(pathField, uid);
             setDoc(doc(db, path), { [field]: value }, { merge: true }).catch((e) =>
                setError(e instanceof Error ? e.message : `Error saving ${field}`),
             );

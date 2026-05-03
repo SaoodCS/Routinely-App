@@ -1,9 +1,9 @@
 import { Add } from '@mui/icons-material';
 import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
 import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
-import { createNewTask } from '@repo/utils/app.helpers';
 import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
+import { AppUtils } from '@repo/utils/index';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
@@ -55,7 +55,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const isTaskVisible = (task: T_Task): boolean => visibleTasks.has(task);
 
    function handleCreateTask(): void {
-      const newTask = createNewTask();
+      const newTask = AppUtils.createNewTask();
       setTasks([...tasks, newTask]);
    }
 
