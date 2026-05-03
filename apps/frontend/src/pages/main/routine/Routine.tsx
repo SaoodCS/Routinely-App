@@ -109,7 +109,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             ref={dragDropListRef}
             style={{ overflow: 'auto', maxHeight: '100%', paddingTop: tagHeaderHeight }}
             items={tasks}
-            onDrop={(newOrderedItems) => setTasks(newOrderedItems)}
+            onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
                isTaskVisible(task) && (
                   <Box>
