@@ -1,21 +1,21 @@
-export interface T_Task {
+export interface Task {
    id: string;
    label: string;
    isChecked: boolean;
-   showWhenTags: T_Tag['id'][];
-   hideWhenTags: T_Tag['id'][];
-   children?: T_Task[];
+   showWhenTags: Tag['id'][];
+   hideWhenTags: Tag['id'][];
+   children?: Task[];
 }
 
-export interface T_Tag {
+export interface Tag {
    id: string;
    label: string;
    isEnabled: boolean;
 }
 
-export interface T_Settings {
+export interface Settings {
    inheritTagsFromSource?: boolean;
 }
 
-export type T_Routine_Section = 'morning' | 'evening';
-export type T_Task_TagFields = NonNullable<{ [K in keyof T_Task]: K extends `${string}Tags${string}` ? K : never }[keyof T_Task]>;
+export type RoutineSection = 'morning' | 'evening';
+export type TaskTagFields = NonNullable<{ [K in keyof Task]: K extends `${string}Tags${string}` ? K : never }[keyof Task]>;

@@ -1,18 +1,17 @@
-import type { T_Settings, T_Tag, T_Task } from '@repo/types/app.types';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
 import { FirestoreUtils } from '@repo/utils/index';
 import type { Unsubscribe } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import type { AppTypes } from '@repo/types/index';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
 
 type T_FirestoreContext = {
-   morningTasks: T_Task[];
-   eveningTasks: T_Task[];
-   tags: T_Tag[];
-   settings: T_Settings;
+   morningTasks: AppTypes.Task[];
+   eveningTasks: AppTypes.Task[];
+   tags: AppTypes.Tag[];
+   settings: AppTypes.Settings;
    setMorningTasks: (value: T_FirestoreContext['morningTasks']) => void;
    setEveningTasks: (value: T_FirestoreContext['eveningTasks']) => void;
    setTags: (value: T_FirestoreContext['tags']) => void;

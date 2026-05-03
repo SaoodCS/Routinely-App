@@ -1,13 +1,13 @@
 import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
-import type { T_Routine_Section, T_Tag, T_Task, T_Task_TagFields } from '@repo/types/app.types';
 import { useState, type JSX } from 'react';
+import type { AppTypes } from '@repo/types/index';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 interface T_ToggleTaskShowWhenMenuButtonProps {
-   section: T_Routine_Section;
+   section: AppTypes.RoutineSection;
    indexes: [number] | [number, number] | [number, number, number];
-   task: T_Task;
+   task: AppTypes.Task;
 }
 
 export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }: T_ToggleTaskShowWhenMenuButtonProps): JSX.Element {
@@ -16,7 +16,7 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-   function handleToggle(tagId: T_Tag['id'], taskTagField: T_Task_TagFields): void {
+   function handleToggle(tagId: AppTypes.Tag['id'], taskTagField: AppTypes.TaskTagFields): void {
       const updatedTask = {
          ...task,
          [taskTagField]: task[taskTagField].includes(tagId) ? task[taskTagField].filter((id) => id !== tagId) : [...task[taskTagField], tagId],

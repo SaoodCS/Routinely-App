@@ -1,10 +1,10 @@
 import { RotateLeftOutlined } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
+import type { AppTypes } from '@repo/types/index';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 interface T_ResetAllCheckedTasksButtonProps {
-   section: T_Routine_Section;
+   section: AppTypes.RoutineSection;
 }
 
 export default function ResetAllCheckedTasksButton({ section }: T_ResetAllCheckedTasksButtonProps): React.JSX.Element {
@@ -13,7 +13,7 @@ export default function ResetAllCheckedTasksButton({ section }: T_ResetAllChecke
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
    function handleResetTasksCheckedState(): void {
-      const resetChecked = (tasks: T_Task[]): T_Task[] =>
+      const resetChecked = (tasks: AppTypes.Task[]): AppTypes.Task[] =>
          tasks.map((task) => ({
             ...task,
             isChecked: false,

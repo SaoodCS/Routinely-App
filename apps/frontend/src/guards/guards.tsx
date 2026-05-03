@@ -1,11 +1,11 @@
-import type { T_User_Role } from '@repo/types/user.types';
 import type { JSX } from 'react';
 import { Navigate, Outlet, useLocation, type Location } from 'react-router';
+import type { UserTypes } from '@repo/types/index';
 import { useAuthContext } from '../auth/useAuthContext';
 import SpinnerLoader from '../components/SpinnerLoader';
 import { ROUTE_PATHS, type T_Route_Path } from '../routes/router';
 
-export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: T_User_Role[] | 'all' }): JSX.Element {
+export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: UserTypes.Role[] | 'all' }): JSX.Element {
    const location = useLocation();
    const { isLoading, isAuthenticated, userRole } = useAuthContext();
    if (isLoading) return <SpinnerLoader fullPage />;

@@ -1,10 +1,10 @@
 import { DoneAllOutlined, DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
-import type { T_Routine_Section, T_Task } from '@repo/types/app.types';
 import { type FocusEvent, type FormEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
+import type { AppTypes } from '@repo/types/index';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
@@ -20,10 +20,10 @@ const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: numbe
 };
 
 interface T_TaskItemProps {
-   task: T_Task;
-   dragElProps: Parameters<Parameters<typeof DragAndDropList<T_Task>>[0]['renderItem']>[1];
+   task: AppTypes.Task;
+   dragElProps: Parameters<Parameters<typeof DragAndDropList<AppTypes.Task>>[0]['renderItem']>[1];
    indexes: [number] | [number, number] | [number, number, number];
-   section: T_Routine_Section;
+   section: AppTypes.RoutineSection;
 }
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
@@ -122,12 +122,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function handleToggleCheckTaskAndSubtasks(): void {
-      const checkTaskAndChildren = (task: T_Task, newCheckState: boolean): T_Task => ({
+      const checkTaskAndChildren = (task: AppTypes.Task, newCheckState: boolean): AppTypes.Task => ({
          ...task,
          isChecked: newCheckState,
          children: task.children?.map((task) => checkTaskAndChildren(task, newCheckState)),
       });
-      const isTaskAndSubtasksAllChecked = (task: T_Task): boolean => {
+      const isTaskAndSubtasksAllChecked = (task: AppTypes.Task): boolean => {
          if (!task.isChecked) return false;
          return task.children?.every((task) => isTaskAndSubtasksAllChecked(task)) ?? true;
       };

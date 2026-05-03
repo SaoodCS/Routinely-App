@@ -1,13 +1,13 @@
-import type { T_Settings, T_Tag, T_Task } from '@repo/types/app.types';
 import { createContext, useContext, useState, type ReactNode } from 'react';
+import type { AppTypes } from '@repo/types/index';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 type T_LocalStorage_Context = {
    isLoading: boolean;
-   morningTasks: T_Task[];
-   eveningTasks: T_Task[];
-   tags: T_Tag[];
-   settings: T_Settings;
+   morningTasks: AppTypes.Task[];
+   eveningTasks: AppTypes.Task[];
+   tags: AppTypes.Tag[];
+   settings: AppTypes.Settings;
    setMorningTasks: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['morningTasks']>>[1];
    setEveningTasks: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['eveningTasks']>>[1];
    setTags: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['tags']>>[1];
