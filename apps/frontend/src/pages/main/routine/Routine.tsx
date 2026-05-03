@@ -27,23 +27,23 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
    const visibleTasks = useMemo(() => {
-      // TODO: remove recursion
       const visibleTasks = new Set<AppTypes.Task>();
-      const addVisibleTasks = (tasks: AppTypes.Task[]): boolean => {
-         let hasVisibleTasks = false;
-         for (const task of tasks) {
-            const hideWhenTagsEnabled = task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId));
-            const showWhenTagsEnabled = task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
-            if (hideWhenTagsEnabled || (task.showWhenTags.length > 0 && !showWhenTagsEnabled)) continue;
-            const hasVisibleChildren = task.children ? addVisibleTasks(task.children) : false;
-            if (task.label.toLowerCase().includes(searchQuery) || hasVisibleChildren) {
-               visibleTasks.add(task);
-               hasVisibleTasks = true;
-            }
-         }
-         return hasVisibleTasks;
-      };
-      addVisibleTasks(tasks);
+      const tasksToCheck = [...tasks];
+      let visibleTaskCandidatesCount = 0;
+      for (let i = 0; i < tasksToCheck.length; i += 1) {
+         const task = tasksToCheck[i];
+         const hideWhenTagsEnabled = task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId));
+         const showWhenTagsEnabled = task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
+         if (hideWhenTagsEnabled || (task.showWhenTags.length > 0 && !showWhenTagsEnabled)) continue;
+         tasksToCheck[visibleTaskCandidatesCount] = task;
+         visibleTaskCandidatesCount += 1;
+         if (task.children) for (const child of task.children) tasksToCheck.push(child);
+      }
+      for (let i = visibleTaskCandidatesCount - 1; i >= 0; i -= 1) {
+         const task = tasksToCheck[i];
+         const hasVisibleChildren = task.children?.some((child) => visibleTasks.has(child)) ?? false;
+         if (task.label.toLowerCase().includes(searchQuery) || hasVisibleChildren) visibleTasks.add(task);
+      }
       return visibleTasks;
    }, [tasks, searchQuery, enabledTagIds]);
 
