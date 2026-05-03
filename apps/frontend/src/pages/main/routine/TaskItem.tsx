@@ -126,7 +126,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function handleFormatLabelOnInput(event: FormEvent<HTMLSpanElement>): void {
-      // When user edits label, format the part of the label that comes before the cursor i.e. before where they're typing
       const element = event.currentTarget;
       const selection = window.getSelection();
       if (!selection?.rangeCount) return;
@@ -137,13 +136,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       range.setEnd(endContainer, endOffset);
       const label = element.textContent ?? '';
       const beforeCursor = label.slice(0, range.toString().length);
-      const formattedBeforeCursor = formatInputOnSpace(beforeCursor);
-      // If the formatted text is the same as the unformatted text, don't do anything
-      if (formattedBeforeCursor === beforeCursor) return;
-      // concatenate the formatted text with the part of the label that comes after the cursor
-      element.textContent = formattedBeforeCursor + label.slice(beforeCursor.length);
-      // move the cursor to the end of the formatted text (back to where the user was typing)
-      selection.collapse(element.firstChild, formattedBeforeCursor.length);
+      const formattedBeforeCursor = formatInputOnSpace(beforeCursor); // Format the part of the label that comes before the cursor i.e. before where they're typing
+      if (formattedBeforeCursor === beforeCursor) return; // If the formatted text is the same as the unformatted text, don't do anything
+      element.textContent = formattedBeforeCursor + label.slice(beforeCursor.length); // concatenate the formatted text with the part of the label that comes after the cursor
+      selection.collapse(element.firstChild, formattedBeforeCursor.length); // move the cursor to the end of the formatted text (back to where the user was typing)
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
