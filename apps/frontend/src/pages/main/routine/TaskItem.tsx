@@ -88,17 +88,24 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function handleToggleCheckTaskAndSubtasks(): void {
+      let isAllChecked = true;
+      const tasksToCheck = [task];
+      for (let taskIndex = 0; taskIndex < tasksToCheck.length; taskIndex++) {
+         const taskToCheck = tasksToCheck[taskIndex];
+         if (!taskToCheck.isChecked) {
+            isAllChecked = false;
+            break;
+         }
+         tasksToCheck.push(...(taskToCheck.children ?? []));
+      }
+
       const checkTaskAndChildren = (task: AppTypes.Task, newCheckState: boolean): AppTypes.Task => ({
          ...task,
          isChecked: newCheckState,
          children: task.children?.map((task) => checkTaskAndChildren(task, newCheckState)),
       });
-      const isTaskAndSubtasksAllChecked = (task: AppTypes.Task): boolean => {
-         if (!task.isChecked) return false;
-         return task.children?.every((task) => isTaskAndSubtasksAllChecked(task)) ?? true;
-      };
-      const taskAndAllSubTasksAreChecked = isTaskAndSubtasksAllChecked(task);
-      const updatedTask = checkTaskAndChildren(task, !taskAndAllSubTasksAreChecked);
+
+      const updatedTask = checkTaskAndChildren(task, !isAllChecked);
       const updatedTasks = [...tasks];
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = updatedTask;
