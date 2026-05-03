@@ -36,82 +36,55 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
 
+   function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[]): AppTypes.Task[] {
+      let taskListToUpdate = tasksShallowCopy;
+      for (let depth = 0; depth < indexes.length - 1; depth++) {
+         const parentTaskIndex = indexes[depth];
+         const parentTask = taskListToUpdate[parentTaskIndex];
+         const copiedChildren = [...parentTask.children!];
+         taskListToUpdate[parentTaskIndex] = { ...parentTask, children: copiedChildren };
+         taskListToUpdate = copiedChildren;
+      }
+      return taskListToUpdate;
+   }
+
    function addTaskBelow(): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         const indexToInsertAt = indexes[0] + 1;
-         updatedTasks.splice(indexToInsertAt, 0, newTask);
-         setTasks(updatedTasks);
-      } else if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const indexToInsertAt = indexes[1] + 1;
-         updatedSubtasks.splice(indexToInsertAt, 0, newTask);
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 3) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
-         const indexToInsertAt = indexes[2] + 1;
-         updatedSubsubtasks.splice(indexToInsertAt, 0, newTask);
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+      const taskListToInsertInto = getTasksListToUpdate(updatedTasks);
+      const newTaskIndex = indexes.at(-1)! + 1;
+      taskListToInsertInto.splice(newTaskIndex, 0, newTask);
+      setTasks(updatedTasks);
    }
 
    function addSubTask(): void {
+      if (indexes.length === 3) return;
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: [newTask, ...(updatedTasks[indexes[0]].children ?? [])] };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: [newTask, ...(updatedSubtasks[indexes[1]].children ?? [])] };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+      const taskListToUpdate = getTasksListToUpdate(updatedTasks);
+      const taskIndex = indexes.at(-1)!;
+      const taskToUpdate = taskListToUpdate[taskIndex];
+      taskListToUpdate[taskIndex] = { ...taskToUpdate, children: [newTask, ...(taskToUpdate.children ?? [])] };
+      setTasks(updatedTasks);
    }
 
    function handleDelete(): void {
-      if (indexes.length === 1) {
-         setTasks(tasks.filter((_, taskIndex) => taskIndex !== indexes[0]));
-      } else if (indexes.length === 2) {
-         const updatedTasks = [...tasks];
-         const updatedSubtasks = updatedTasks[indexes[0]].children!.filter((_, subtaskIndex) => subtaskIndex !== indexes[1]);
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 3) {
-         const updatedTasks = [...tasks];
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = updatedSubtasks[indexes[1]].children!.filter((_, subsubtaskIndex) => subsubtaskIndex !== indexes[2]);
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+      const updatedTasks = [...tasks];
+      const taskListToDeleteFrom = getTasksListToUpdate(updatedTasks);
+      const taskIndex = indexes[indexes.length - 1];
+      taskListToDeleteFrom.splice(taskIndex, 1);
+      setTasks(updatedTasks);
    }
 
    function handleToggleChecked(): void {
       const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], isChecked: !updatedTasks[indexes[0]].isChecked };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], isChecked: !updatedSubtasks[indexes[1]].isChecked };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 3) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
-         updatedSubsubtasks[indexes[2]] = { ...updatedSubsubtasks[indexes[2]], isChecked: !updatedSubsubtasks[indexes[2]].isChecked };
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+      const taskListToUpdate = getTasksListToUpdate(updatedTasks);
+      const taskIndex = indexes[indexes.length - 1];
+      const taskToUpdate = taskListToUpdate[taskIndex];
+      taskListToUpdate[taskIndex] = { ...taskToUpdate, isChecked: !taskToUpdate.isChecked };
+      setTasks(updatedTasks);
    }
 
    function handleToggleCheckTaskAndSubtasks(): void {
