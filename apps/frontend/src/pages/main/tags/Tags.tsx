@@ -1,12 +1,12 @@
 import { Add, DragIndicatorOutlined } from '@mui/icons-material';
 import { Fab, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
+import { createNewTag } from '@repo/utils/app.utils';
 import type { FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
-import { createNewTag } from '@repo/utils/app.helpers';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import useScrollSaver from '../../../hooks/useScrollSaver';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
