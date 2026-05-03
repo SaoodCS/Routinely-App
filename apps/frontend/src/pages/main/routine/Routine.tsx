@@ -3,7 +3,7 @@ import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
 import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
-import type { AppTypes } from '@repo/types/index';
+import type { AppTypes, DataTypes } from '@repo/types/index';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
@@ -70,7 +70,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTags(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
    }
 
-   function handleReorderTasksOnDrop(newOrderedItems: AppTypes.Task[], indexes?: [number] | [number, number]): void {
+   function handleReorderTasksOnDrop(newOrderedItems: AppTypes.Task[], indexes?: DataTypes.ArrayMaxLength<number, 2>): void {
       if (!indexes) {
          setTasks(newOrderedItems);
          return;

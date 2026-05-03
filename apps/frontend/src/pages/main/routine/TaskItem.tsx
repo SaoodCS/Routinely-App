@@ -22,7 +22,7 @@ const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: numbe
 interface T_TaskItemProps {
    task: AppTypes.Task;
    dragElProps: Parameters<Parameters<typeof DragAndDropList<AppTypes.Task>>[0]['renderItem']>[1];
-   indexes: [number] | [number, number] | [number, number, number];
+   indexes: AppTypes.DepthIndexes;
    section: AppTypes.RoutineSection;
 }
 

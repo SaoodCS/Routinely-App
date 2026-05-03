@@ -6,7 +6,7 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 interface T_ToggleTaskShowWhenMenuButtonProps {
    section: AppTypes.RoutineSection;
-   indexes: [number] | [number, number] | [number, number, number];
+   indexes: AppTypes.DepthIndexes;
    task: AppTypes.Task;
 }
 

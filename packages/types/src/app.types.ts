@@ -1,3 +1,5 @@
+import type { DataTypes } from '.';
+
 export interface Task {
    id: string;
    label: string;
@@ -19,3 +21,4 @@ export interface Settings {
 
 export type RoutineSection = 'morning' | 'evening';
 export type TaskTagFields = NonNullable<{ [K in keyof Task]: K extends `${string}Tags${string}` ? K : never }[keyof Task]>;
+export type DepthIndexes = DataTypes.ArrayMaxLength<number, 3>;
