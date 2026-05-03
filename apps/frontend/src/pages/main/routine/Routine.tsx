@@ -3,7 +3,7 @@ import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
 import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
-import type { AppTypes, DataTypes } from '@repo/types/index';
+import type { AppTypes } from '@repo/types/index';
 import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
@@ -27,6 +27,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
 
    const visibleTasks = useMemo(() => {
+      // TODO: remove recursion
       const visibleTasks = new Set<AppTypes.Task>();
       const addVisibleTasks = (tasks: AppTypes.Task[]): boolean => {
          let hasVisibleTasks = false;
@@ -70,23 +71,16 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTags(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
    }
 
-   function handleReorderTasksOnDrop(newOrderedItems: AppTypes.Task[], indexes?: DataTypes.ArrayMaxLength<number, 2>): void {
+   function handleReorderTasksOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
       if (!indexes) {
          setTasks(newOrderedItems);
          return;
       }
       const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: newOrderedItems };
-         setTasks(updatedTasks);
-         return;
-      }
-      if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: newOrderedItems };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+      const parentTaskList = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
+      const parentTaskIndex = indexes.at(-1)!;
+      parentTaskList[parentTaskIndex] = { ...parentTaskList[parentTaskIndex], children: newOrderedItems };
+      setTasks(updatedTasks);
    }
 
    return (

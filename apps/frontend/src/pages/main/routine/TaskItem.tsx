@@ -36,23 +36,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
 
-   function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesToUpdate: number[] = indexes): AppTypes.Task[] {
-      let taskListToUpdate = tasksShallowCopy;
-      for (let depth = 0; depth < indexesToUpdate.length - 1; depth++) {
-         const parentTaskIndex = indexesToUpdate[depth];
-         const parentTask = taskListToUpdate[parentTaskIndex];
-         const copiedChildren = [...parentTask.children!];
-         taskListToUpdate[parentTaskIndex] = { ...parentTask, children: copiedChildren };
-         taskListToUpdate = copiedChildren;
-      }
-      return taskListToUpdate; // this returns a copy of the task and it's siblings, so the original tasks array isn't mutated
-   }
-
    function addTaskBelow(): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
-      const taskListToInsertInto = getTasksListToUpdate(updatedTasks);
+      const taskListToInsertInto = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
       const newTaskIndex = indexes.at(-1)! + 1;
       taskListToInsertInto.splice(newTaskIndex, 0, newTask);
       setTasks(updatedTasks);
@@ -62,7 +50,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
-      const taskListToUpdate = getTasksListToUpdate(updatedTasks);
+      const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
       const taskIndex = indexes.at(-1)!;
       const taskToUpdate = taskListToUpdate[taskIndex];
       taskListToUpdate[taskIndex] = { ...taskToUpdate, children: [newTask, ...(taskToUpdate.children ?? [])] };
@@ -71,7 +59,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function handleDelete(): void {
       const updatedTasks = [...tasks];
-      const taskListToDeleteFrom = getTasksListToUpdate(updatedTasks);
+      const taskListToDeleteFrom = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
       const taskIndex = indexes[indexes.length - 1];
       taskListToDeleteFrom.splice(taskIndex, 1);
       setTasks(updatedTasks);
@@ -79,7 +67,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function handleToggleChecked(): void {
       const updatedTasks = [...tasks];
-      const taskListToUpdate = getTasksListToUpdate(updatedTasks);
+      const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
       const taskIndex = indexes[indexes.length - 1];
       const taskToUpdate = taskListToUpdate[taskIndex];
       taskListToUpdate[taskIndex] = { ...taskToUpdate, isChecked: !taskToUpdate.isChecked };
@@ -101,7 +89,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       const tasksToUpdate: { task: AppTypes.Task; indexesToUpdate: number[] }[] = [{ task, indexesToUpdate: indexes }];
       for (let i = 0; i < tasksToUpdate.length; i++) {
          const { task: taskToUpdate, indexesToUpdate } = tasksToUpdate[i];
-         const taskListToUpdate = getTasksListToUpdate(updatedTasks, indexesToUpdate);
+         const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexesToUpdate);
          const taskToUpdateIndex = indexesToUpdate.at(-1)!;
          if (taskToUpdate.children) {
             const updatedChildren = [...taskToUpdate.children];
@@ -120,7 +108,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       const updatedLabel = event.currentTarget.textContent ?? '';
       if (updatedLabel === task.label) return;
       const updatedTasks = [...tasks];
-      const taskListToUpdate = getTasksListToUpdate(updatedTasks);
+      const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
       const taskIndex = indexes.at(-1)!;
       const taskToUpdate = taskListToUpdate[taskIndex];
       taskListToUpdate[taskIndex] = { ...taskToUpdate, label: updatedLabel };
