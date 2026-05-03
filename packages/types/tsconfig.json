@@ -8,5 +8,5 @@
       "moduleResolution": "Bundler",
       "noEmit": true
    },
-   "include": ["src/**/*.ts"]
+   "include": ["src/**/*.ts", "../../packages/utils/src/**/*.ts"]
 }

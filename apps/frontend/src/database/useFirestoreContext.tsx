@@ -1,9 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Alert, LinearProgress, Snackbar } from '@mui/material';
+import type { AppTypes, FirestoreTypes } from '@repo/types/index';
 import { FirestoreUtils } from '@repo/utils/index';
 import type { Unsubscribe } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
-import type { AppTypes } from '@repo/types/index';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
 
@@ -36,7 +36,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [tags, setTagsState] = useState<T_FirestoreContext['tags']>([]);
    const [settings, setSettingsState] = useState<T_FirestoreContext['settings']>({});
    const [error, setError] = useState<string | undefined>(undefined);
-   const [initialFetchDone, setInitialFetchDone] = useState<Record<FirestoreUtils.T_PathKey, boolean>>({
+   const [initialFetchDone, setInitialFetchDone] = useState<Record<FirestoreTypes.PathKey, boolean>>({
       routine_morning_tasks: false,
       routine_evening_tasks: false,
       tags_list_tags: false,
@@ -48,7 +48,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    useEffect(() => {
       if (!uid) return;
 
-      const createOnSnapshot = <T_Val,>(path: FirestoreUtils.T_PathKey, setState: (val: T_Val) => void, fallbackValue: T_Val): Unsubscribe => {
+      const createOnSnapshot = <T_Val,>(path: FirestoreTypes.PathKey, setState: (val: T_Val) => void, fallbackValue: T_Val): Unsubscribe => {
          const { path: pathStr, field } = FirestoreUtils.getPathAndField(path, uid);
          return onSnapshot(
             doc(db, pathStr),
@@ -75,7 +75,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
 
    // functions for setting Firestore data via setDoc
    const createDocSetter = useCallback(
-      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: FirestoreUtils.T_PathKey) => {
+      <T_Val extends T_FirestoreContext[keyof T_FirestoreContext]>(pathField: FirestoreTypes.PathKey) => {
          return (value: T_Val): void => {
             if (!uid) return;
             const { path, field } = FirestoreUtils.getPathAndField(pathField, uid);
