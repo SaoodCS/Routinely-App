@@ -36,10 +36,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
 
-   function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[]): AppTypes.Task[] {
+   function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesToUpdate: number[] = indexes): AppTypes.Task[] {
       let taskListToUpdate = tasksShallowCopy;
-      for (let depth = 0; depth < indexes.length - 1; depth++) {
-         const parentTaskIndex = indexes[depth];
+      for (let depth = 0; depth < indexesToUpdate.length - 1; depth++) {
+         const parentTaskIndex = indexesToUpdate[depth];
          const parentTask = taskListToUpdate[parentTaskIndex];
          const copiedChildren = [...parentTask.children!];
          taskListToUpdate[parentTaskIndex] = { ...parentTask, children: copiedChildren };
@@ -59,7 +59,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function addSubTask(): void {
-      if (indexes.length === 3) return;
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
@@ -98,7 +97,24 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
          }
          tasksToCheck.push(...(taskToCheck.children ?? []));
       }
-
+      const updatedTasks = [...tasks];
+      const shouldCheckTasks = !isAllChecked;
+      const tasksToUpdate: { task: AppTypes.Task; indexesToUpdate: number[] }[] = [{ task, indexesToUpdate: indexes }];
+      for (let taskIndex = 0; taskIndex < tasksToUpdate.length; taskIndex++) {
+         const { task: taskToUpdate, indexesToUpdate } = tasksToUpdate[taskIndex];
+         const taskListToUpdate = getTasksListToUpdate(updatedTasks, indexesToUpdate);
+         const taskToUpdateIndex = indexesToUpdate.at(-1)!;
+         if (taskToUpdate.children) {
+            const updatedChildren = [...taskToUpdate.children];
+            taskListToUpdate[taskToUpdateIndex] = { ...taskToUpdate, isChecked: shouldCheckTasks, children: updatedChildren };
+            for (let childTaskIndex = 0; childTaskIndex < updatedChildren.length; childTaskIndex++) {
+               tasksToUpdate.push({ task: updatedChildren[childTaskIndex], indexesToUpdate: [...indexesToUpdate, childTaskIndex] });
+            }
+            continue;
+         }
+         taskListToUpdate[taskToUpdateIndex] = { ...taskToUpdate, isChecked: shouldCheckTasks };
+      }
+      setTasks(updatedTasks);
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
