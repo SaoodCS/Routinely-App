@@ -44,15 +44,13 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
          const indexToInsertAt = indexes[0] + 1;
          updatedTasks.splice(indexToInsertAt, 0, newTask);
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
+      } else if (indexes.length === 2) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const indexToInsertAt = indexes[1] + 1;
          updatedSubtasks.splice(indexToInsertAt, 0, newTask);
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
+      } else if (indexes.length === 3) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
          const indexToInsertAt = indexes[2] + 1;
@@ -70,8 +68,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: [newTask, ...(updatedTasks[indexes[0]].children ?? [])] };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
+      } else if (indexes.length === 2) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: [newTask, ...(updatedSubtasks[indexes[1]].children ?? [])] };
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
@@ -82,14 +79,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    function handleDelete(): void {
       if (indexes.length === 1) {
          setTasks(tasks.filter((_, taskIndex) => taskIndex !== indexes[0]));
-      }
-      if (indexes.length === 2) {
+      } else if (indexes.length === 2) {
          const updatedTasks = [...tasks];
          const updatedSubtasks = updatedTasks[indexes[0]].children!.filter((_, subtaskIndex) => subtaskIndex !== indexes[1]);
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
+      } else if (indexes.length === 3) {
          const updatedTasks = [...tasks];
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const updatedSubsubtasks = updatedSubtasks[indexes[1]].children!.filter((_, subsubtaskIndex) => subsubtaskIndex !== indexes[2]);
@@ -104,14 +99,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], isChecked: !updatedTasks[indexes[0]].isChecked };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
+      } else if (indexes.length === 2) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], isChecked: !updatedSubtasks[indexes[1]].isChecked };
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
+      } else if (indexes.length === 3) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
          updatedSubsubtasks[indexes[2]] = { ...updatedSubsubtasks[indexes[2]], isChecked: !updatedSubsubtasks[indexes[2]].isChecked };

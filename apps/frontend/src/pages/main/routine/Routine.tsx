@@ -79,6 +79,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: newOrderedItems };
          setTasks(updatedTasks);
+         return;
       }
       if (indexes.length === 2) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
