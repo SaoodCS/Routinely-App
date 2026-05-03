@@ -99,30 +99,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
          tasksToCheck.push(...(taskToCheck.children ?? []));
       }
 
-      const checkTaskAndChildren = (task: AppTypes.Task, newCheckState: boolean): AppTypes.Task => ({
-         ...task,
-         isChecked: newCheckState,
-         children: task.children?.map((task) => checkTaskAndChildren(task, newCheckState)),
-      });
-
-      const updatedTask = checkTaskAndChildren(task, !isAllChecked);
-      const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = updatedTask;
-         setTasks(updatedTasks);
-      } else if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = updatedTask;
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 3) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
-         updatedSubsubtasks[indexes[2]] = updatedTask;
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
