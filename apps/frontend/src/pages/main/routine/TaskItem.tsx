@@ -3,13 +3,12 @@ import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { type FocusEvent, type FormEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
-import { AppUtils } from '@repo/utils/index';
+import { AppUtils, StringUtils } from '@repo/utils/index';
 import type { AppTypes } from '@repo/types/index';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
-import { formatInputOnSpace } from '../../../helpers/string.helpers';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
 import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
@@ -126,7 +125,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       range.setEnd(endContainer, endOffset);
       const label = element.textContent ?? '';
       const beforeCursor = label.slice(0, range.toString().length);
-      const formattedBeforeCursor = formatInputOnSpace(beforeCursor); // Format the part of the label that comes before the cursor i.e. before where they're typing
+      const formattedBeforeCursor = StringUtils.formatInputOnSpace(beforeCursor); // Format the part of the label that comes before the cursor i.e. before where they're typing
       if (formattedBeforeCursor === beforeCursor) return; // If the formatted text is the same as the unformatted text, don't do anything
       element.textContent = formattedBeforeCursor + label.slice(beforeCursor.length); // concatenate the formatted text with the part of the label that comes after the cursor
       selection.collapse(element.firstChild, formattedBeforeCursor.length); // move the cursor to the end of the formatted text (back to where the user was typing)
