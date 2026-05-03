@@ -89,8 +89,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    function handleToggleCheckTaskAndSubtasks(): void {
       let shouldCheckTasks = false;
       const tasksToCheck = [task];
-      for (let taskIndex = 0; taskIndex < tasksToCheck.length; taskIndex++) {
-         const taskToCheck = tasksToCheck[taskIndex];
+      for (let i = 0; i < tasksToCheck.length; i++) {
+         const taskToCheck = tasksToCheck[i];
          if (!taskToCheck.isChecked) {
             shouldCheckTasks = true;
             break;
@@ -99,15 +99,15 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       }
       const updatedTasks = [...tasks];
       const tasksToUpdate: { task: AppTypes.Task; indexesToUpdate: number[] }[] = [{ task, indexesToUpdate: indexes }];
-      for (let taskIndex = 0; taskIndex < tasksToUpdate.length; taskIndex++) {
-         const { task: taskToUpdate, indexesToUpdate } = tasksToUpdate[taskIndex];
+      for (let i = 0; i < tasksToUpdate.length; i++) {
+         const { task: taskToUpdate, indexesToUpdate } = tasksToUpdate[i];
          const taskListToUpdate = getTasksListToUpdate(updatedTasks, indexesToUpdate);
          const taskToUpdateIndex = indexesToUpdate.at(-1)!;
          if (taskToUpdate.children) {
             const updatedChildren = [...taskToUpdate.children];
             taskListToUpdate[taskToUpdateIndex] = { ...taskToUpdate, isChecked: shouldCheckTasks, children: updatedChildren };
-            for (let childTaskIndex = 0; childTaskIndex < updatedChildren.length; childTaskIndex++) {
-               tasksToUpdate.push({ task: updatedChildren[childTaskIndex], indexesToUpdate: [...indexesToUpdate, childTaskIndex] });
+            for (let j = 0; j < updatedChildren.length; j++) {
+               tasksToUpdate.push({ task: updatedChildren[j], indexesToUpdate: [...indexesToUpdate, j] });
             }
             continue;
          }
