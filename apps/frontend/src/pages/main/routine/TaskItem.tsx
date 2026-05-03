@@ -37,7 +37,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const searchQuery = searchParams.get('search') ?? '';
 
    function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[]): AppTypes.Task[] {
-      // this returns a shallow copy of the task and it's siblings, so the original tasks array isn't mutated
       let taskListToUpdate = tasksShallowCopy;
       for (let depth = 0; depth < indexes.length - 1; depth++) {
          const parentTaskIndex = indexes[depth];
@@ -46,7 +45,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
          taskListToUpdate[parentTaskIndex] = { ...parentTask, children: copiedChildren };
          taskListToUpdate = copiedChildren;
       }
-      return taskListToUpdate;
+      return taskListToUpdate; // this returns a shallow copy of the task and it's siblings, so the original tasks array isn't mutated
    }
 
    function addTaskBelow(): void {
@@ -119,10 +118,15 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       }
    }
 
-   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      event.currentTarget.blur();
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
+      const updatedLabel = event.currentTarget.textContent ?? '';
+      if (updatedLabel === task.label) return;
+      const updatedTasks = [...tasks];
+      const taskListToUpdate = getTasksListToUpdate(updatedTasks);
+      const taskIndex = indexes.at(-1)!;
+      const taskToUpdate = taskListToUpdate[taskIndex];
+      taskListToUpdate[taskIndex] = { ...taskToUpdate, label: updatedLabel };
+      setTasks(updatedTasks);
    }
 
    function handleFormatLabelOnInput(event: FormEvent<HTMLSpanElement>): void {
@@ -142,26 +146,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       selection.collapse(element.firstChild, formattedBeforeCursor.length); // move the cursor to the end of the formatted text (back to where the user was typing)
    }
 
-   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
-      const updatedLabel = event.currentTarget.textContent ?? '';
-      if (updatedLabel === task.label) return;
-      const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], label: updatedLabel };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], label: updatedLabel };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      } else if (indexes.length === 3) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
-         updatedSubsubtasks[indexes[2]] = { ...updatedSubsubtasks[indexes[2]], label: updatedLabel };
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      event.currentTarget.blur();
    }
 
    return (
