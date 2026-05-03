@@ -45,7 +45,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
          taskListToUpdate[parentTaskIndex] = { ...parentTask, children: copiedChildren };
          taskListToUpdate = copiedChildren;
       }
-      return taskListToUpdate; // this returns a shallow copy of the task and it's siblings, so the original tasks array isn't mutated
+      return taskListToUpdate; // this returns a copy of the task and it's siblings, so the original tasks array isn't mutated
    }
 
    function addTaskBelow(): void {
