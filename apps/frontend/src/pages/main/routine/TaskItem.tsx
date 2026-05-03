@@ -130,14 +130,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = updatedTask;
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
+      } else if (indexes.length === 2) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          updatedSubtasks[indexes[1]] = updatedTask;
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
+      } else if (indexes.length === 3) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
          updatedSubsubtasks[indexes[2]] = updatedTask;
@@ -177,14 +175,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (indexes.length === 1) {
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], label: updatedLabel };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
+      } else if (indexes.length === 2) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], label: updatedLabel };
          updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
          setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
+      } else if (indexes.length === 3) {
          const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
          const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
          updatedSubsubtasks[indexes[2]] = { ...updatedSubsubtasks[indexes[2]], label: updatedLabel };
