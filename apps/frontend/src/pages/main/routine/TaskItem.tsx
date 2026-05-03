@@ -8,12 +8,12 @@ import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import type { PaletteFirstKey, PaletteSecondKey } from '../../../theme/theme';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { formatInputOnSpace } from '../../../helpers/string.helpers';
+import type { PaletteOption, PaletteShade } from '../../../theme/theme';
 import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
-const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteFirstKey, PaletteSecondKey]; fontSize: string }> = {
+const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string }> = {
    1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem' },
    2: { indent: 2, color: ['secondary', 'light'], fontSize: '0.9rem' },
    3: { indent: 3, color: ['success', 'light'], fontSize: '0.825rem' },
