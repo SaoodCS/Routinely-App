@@ -37,6 +37,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const searchQuery = searchParams.get('search') ?? '';
 
    function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[]): AppTypes.Task[] {
+      // this returns a shallow copy of the task and it's siblings, so the original tasks array isn't mutated
       let taskListToUpdate = tasksShallowCopy;
       for (let depth = 0; depth < indexes.length - 1; depth++) {
          const parentTaskIndex = indexes[depth];
