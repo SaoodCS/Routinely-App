@@ -74,31 +74,20 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function handleToggleCheckTaskAndSubtasks(): void {
-      let shouldCheckTasks = false;
-      const tasksToCheck = [task];
-      for (let i = 0; i < tasksToCheck.length; i++) {
-         const taskToCheck = tasksToCheck[i];
-         if (!taskToCheck.isChecked) {
-            shouldCheckTasks = true;
-            break;
-         }
-         tasksToCheck.push(...(taskToCheck.children ?? []));
-      }
       const updatedTasks = [...tasks];
       const tasksToUpdate: { task: AppTypes.Task; indexesToUpdate: number[] }[] = [{ task, indexesToUpdate: indexes }];
       for (let i = 0; i < tasksToUpdate.length; i++) {
          const { task: taskToUpdate, indexesToUpdate } = tasksToUpdate[i];
+         taskToUpdate.children?.forEach((childTask, j) => tasksToUpdate.push({ task: childTask, indexesToUpdate: [...indexesToUpdate, j] }));
+      }
+      const shouldCheckTasks = tasksToUpdate.some(({ task }) => !task.isChecked);
+      for (let i = 0; i < tasksToUpdate.length; i++) {
+         const { task: taskToUpdate, indexesToUpdate } = tasksToUpdate[i];
          const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexesToUpdate);
          const taskToUpdateIndex = indexesToUpdate.at(-1)!;
-         if (taskToUpdate.children) {
-            const updatedChildren = [...taskToUpdate.children];
-            taskListToUpdate[taskToUpdateIndex] = { ...taskToUpdate, isChecked: shouldCheckTasks, children: updatedChildren };
-            for (let j = 0; j < updatedChildren.length; j++) {
-               tasksToUpdate.push({ task: updatedChildren[j], indexesToUpdate: [...indexesToUpdate, j] });
-            }
-            continue;
-         }
-         taskListToUpdate[taskToUpdateIndex] = { ...taskToUpdate, isChecked: shouldCheckTasks };
+         const updatedTask: AppTypes.Task = { ...taskToUpdate, isChecked: shouldCheckTasks };
+         if (taskToUpdate.children) updatedTask.children = [...taskToUpdate.children];
+         taskListToUpdate[taskToUpdateIndex] = updatedTask;
       }
       setTasks(updatedTasks);
    }
