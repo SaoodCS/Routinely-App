@@ -11,7 +11,7 @@ export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
    const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
-   const tasks = useMemo(() => (section === 'morning' ? morningTasks : eveningTasks), [section, morningTasks, eveningTasks]);
+   const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
    const relatedTasks = useMemo(() => {
@@ -78,7 +78,7 @@ export default function TagTasks(): JSX.Element {
                         {task.children && (
                            <DragAndDropList
                               items={task.children}
-                              onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
+                              onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i])}
                               renderItem={(subtask, dragElProps, j) =>
                                  isTaskVisible(subtask) && (
                                     <Box>
@@ -92,7 +92,7 @@ export default function TagTasks(): JSX.Element {
                                        {subtask.children && (
                                           <DragAndDropList
                                              items={subtask.children}
-                                             onDrop={() => {}}
+                                             onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i, j])}
                                              renderItem={(subsubtask, dragElProps, k) =>
                                                 isTaskVisible(subsubtask) && (
                                                    <Box>
