@@ -1,15 +1,18 @@
-import { useState, type JSX } from 'react';
+import { useMemo, useState, type JSX } from 'react';
 import type { AppTypes } from '@repo/types/index';
 import { AppBar, Box, Chip, Stack } from '@mui/material';
 import { useParams } from 'react-router';
+import { AppUtils } from '@repo/utils/index';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import DragAndDropList from '../../../components/DragAndDropList';
 import TaskItem from '../routine/TaskItem';
 
 export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
-   const { tags, morningTasks, eveningTasks } = useFirestoreContext();
+   const { tags, morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
+   const tasks = useMemo(() => (section === 'morning' ? morningTasks : eveningTasks), [section, morningTasks, eveningTasks]);
+   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
    function doesTaskHaveTag(task: AppTypes.Task): boolean {
       return task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
@@ -31,6 +34,18 @@ export default function TagTasks(): JSX.Element {
       return doesTaskHaveTag(task) || doesTaskChildrenHaveTag(task);
    }
 
+   function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
+      if (!indexes) {
+         setTasks(newOrderedItems);
+         return;
+      }
+      const updatedTasks = [...tasks];
+      const parentTaskList = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
+      const parentTaskIndex = indexes.at(-1)!;
+      parentTaskList[parentTaskIndex] = { ...parentTaskList[parentTaskIndex], children: newOrderedItems };
+      setTasks(updatedTasks);
+   }
+
    return (
       <>
          <AppBar component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
@@ -48,7 +63,7 @@ export default function TagTasks(): JSX.Element {
             <DragAndDropList
                items={section === 'morning' ? morningTasks : eveningTasks}
                style={{ overflow: 'auto', maxHeight: '100%' }}
-               onDrop={() => {}}
+               onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
                renderItem={(task, dragElProps, i) =>
                   isTaskVisible(task) && (
                      <Box>
@@ -56,7 +71,7 @@ export default function TagTasks(): JSX.Element {
                         {task.children && (
                            <DragAndDropList
                               items={task.children}
-                              onDrop={() => {}}
+                              onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
                               renderItem={(subtask, dragElProps, j) =>
                                  isTaskVisible(subtask) && (
                                     <Box>

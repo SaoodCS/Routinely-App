@@ -73,7 +73,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTags(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
    }
 
-   function handleReorderTasksOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
+   function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
       if (!indexes) {
          setTasks(newOrderedItems);
          return;
@@ -112,7 +112,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             ref={dragDropListRef}
             style={{ overflow: 'auto', maxHeight: '100%', paddingTop: tagHeaderHeight }}
             items={tasks}
-            onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems)}
+            onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
                (isTaskVisible(task) || showHidden) && (
                   <Box>
@@ -120,7 +120,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
-                           onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems, [i])}
+                           onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i])}
                            renderItem={(subtask, dragElProps, j) =>
                               (isTaskVisible(subtask) || showHidden) && (
                                  <Box>
@@ -134,7 +134,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                     {subtask.children && (
                                        <DragAndDropList
                                           items={subtask.children}
-                                          onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems, [i, j])}
+                                          onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i, j])}
                                           renderItem={(subsubtask, dragElProps, k) =>
                                              (isTaskVisible(subsubtask) || showHidden) && (
                                                 <Box>
