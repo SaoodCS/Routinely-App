@@ -51,10 +51,6 @@ export default function Tags(): React.JSX.Element {
       setTags([...tags, newTag]);
    }
 
-   function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
-      void navigate(`${ROUTE_PATHS.main_tags}/${encodeURIComponent(tagId)}`);
-   }
-
    function getNumberOfTasks(tag: AppTypes.Tag, taskTagField: AppTypes.TaskTagFields): number {
       let numberOfTasks = 0;
       const tasksToCheck = [...morningTasks, ...eveningTasks];
