@@ -23,11 +23,11 @@ interface T_TaskItemProps {
    dragElProps: Parameters<Parameters<typeof DragAndDropList<AppTypes.Task>>[0]['renderItem']>[1];
    indexes: AppTypes.DepthIndexes;
    section: AppTypes.RoutineSection;
-   disabled?: boolean;
+   textOverlay?: string;
 }
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
-   const { task, dragElProps, indexes, section, disabled } = props;
+   const { task, dragElProps, indexes, section, textOverlay } = props;
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
@@ -129,7 +129,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    return (
       <Grow in timeout={500}>
-         <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent }}>
+         <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
+            <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={600}>
+               {textOverlay}
+            </Typography>
             <SwipeActionWrapper
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
@@ -137,10 +140,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   borderRadius: '5px',
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
                   backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
-                  backgroundImage: disabled
-                     ? `repeating-linear-gradient(135deg, transparent 0 8px, ${alpha(palette.text.disabled, 0.6)} 10px 10px)`
-                     : undefined,
-                  opacity: disabled || task.isChecked ? 0.5 : 1,
+                  opacity: textOverlay || task.isChecked ? 0.5 : 1,
                }}
             >
                <Stack

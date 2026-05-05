@@ -9,29 +9,35 @@ import TaskItem from '../routine/TaskItem';
 
 export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
-   const { tags, morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
    const tasks = useMemo(() => (section === 'morning' ? morningTasks : eveningTasks), [section, morningTasks, eveningTasks]);
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
-   function doesTaskHaveTag(task: AppTypes.Task): boolean {
-      return task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
-   }
-
-   function doesTaskChildrenHaveTag(task: AppTypes.Task): boolean {
-      if (!task.children) return false;
-      const tasksToCheck = [...task.children];
+   const relatedTasks = useMemo(() => {
+      const relatedTasks: Set<AppTypes.Task> = new Set();
+      const tasksToCheck = [...tasks];
       for (let i = 0; i < tasksToCheck.length; i += 1) {
-         const child = tasksToCheck[i];
-         if (doesTaskHaveTag(child)) return true;
-         if (!child.children) continue;
-         for (const childTask of child.children) tasksToCheck.push(childTask);
+         const task = tasksToCheck[i];
+         if (task.children) for (const child of task.children) tasksToCheck.push(child);
       }
-      return false;
+      for (let i = tasksToCheck.length - 1; i >= 0; i -= 1) {
+         const task = tasksToCheck[i];
+         const hasTag = task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
+         const hasRelatedChildren = task.children?.some((child) => relatedTasks.has(child)) ?? false;
+         if (hasTag || hasRelatedChildren) relatedTasks.add(task);
+      }
+      return relatedTasks;
+   }, [tasks, tagId]);
+
+   const isTaskVisible = (task: AppTypes.Task): boolean => relatedTasks.has(task);
+
+   function isTagInShowWhenTags(task: AppTypes.Task): boolean {
+      return task.showWhenTags.includes(tagId);
    }
 
-   function isTaskVisible(task: AppTypes.Task): boolean {
-      return doesTaskHaveTag(task) || doesTaskChildrenHaveTag(task);
+   function handleChangeSection(section: AppTypes.RoutineSection): void {
+      setSection(section);
    }
 
    function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
@@ -46,6 +52,11 @@ export default function TagTasks(): JSX.Element {
       setTasks(updatedTasks);
    }
 
+   function handleTextOverlay(task: AppTypes.Task): string | undefined {
+      if (task.hideWhenTags.includes(tagId)) return 'HIDDEN WHEN TAG IS ENABLED';
+      if (!task.showWhenTags.includes(tagId)) return 'PARENT OF RELATED TASK';
+   }
+
    return (
       <>
          <AppBar component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
@@ -54,7 +65,7 @@ export default function TagTasks(): JSX.Element {
                   <Chip
                      key={item}
                      label={item.charAt(0).toUpperCase() + item.slice(1)}
-                     onClick={() => setSection(item)}
+                     onClick={() => handleChangeSection(item)}
                      variant={item === section ? 'filled' : 'outlined'}
                      sx={{ cursor: 'pointer', bgcolor: item === section ? 'primary.dark' : 'transparent', width: '100%' }}
                   />
@@ -67,7 +78,7 @@ export default function TagTasks(): JSX.Element {
                renderItem={(task, dragElProps, i) =>
                   isTaskVisible(task) && (
                      <Box>
-                        <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} disabled={!doesTaskHaveTag(task)} />
+                        <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
                         {task.children && (
                            <DragAndDropList
                               items={task.children}
@@ -80,7 +91,7 @@ export default function TagTasks(): JSX.Element {
                                           dragElProps={dragElProps}
                                           indexes={[i, j]}
                                           section={section}
-                                          disabled={!doesTaskHaveTag(subtask)}
+                                          textOverlay={handleTextOverlay(subtask)}
                                        />
                                        {subtask.children && (
                                           <DragAndDropList
@@ -94,7 +105,7 @@ export default function TagTasks(): JSX.Element {
                                                          dragElProps={dragElProps}
                                                          indexes={[i, j, k]}
                                                          section={section}
-                                                         disabled={!doesTaskHaveTag(subtask)}
+                                                         textOverlay={handleTextOverlay(subsubtask)}
                                                       />
                                                    </Box>
                                                 )

@@ -57,6 +57,10 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    const isTaskVisible = (task: AppTypes.Task): boolean => visibleTasks.has(task);
 
+   function handleTextOverlay(task: AppTypes.Task): string | undefined {
+      if (!isTaskVisible(task)) return 'HIDDEN';
+   }
+
    function handleCreateTask(): void {
       const newTask = AppUtils.createNewTask();
       setTasks([...tasks, newTask]);
@@ -116,7 +120,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             renderItem={(task, dragElProps, i) =>
                (isTaskVisible(task) || showHidden) && (
                   <Box>
-                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} disabled={!isTaskVisible(task)} />
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
@@ -129,7 +133,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                        dragElProps={dragElProps}
                                        indexes={[i, j]}
                                        section={section}
-                                       disabled={!isTaskVisible(subtask)}
+                                       textOverlay={handleTextOverlay(task)}
                                     />
                                     {subtask.children && (
                                        <DragAndDropList
@@ -143,7 +147,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                                       dragElProps={dragElProps}
                                                       indexes={[i, j, k]}
                                                       section={section}
-                                                      disabled={!isTaskVisible(subsubtask)}
+                                                      textOverlay={handleTextOverlay(task)}
                                                    />
                                                 </Box>
                                              )
