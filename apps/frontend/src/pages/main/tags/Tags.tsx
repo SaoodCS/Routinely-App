@@ -1,14 +1,14 @@
 import { Add, ChevronRight, DragIndicatorOutlined } from '@mui/icons-material';
 import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
+import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
 import type { FocusEvent, KeyboardEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import type { AppTypes } from '@repo/types/index';
-import { ROUTE_PATHS } from '../../../routes/router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import { ROUTE_PATHS } from '../../../routes/router';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -51,7 +51,7 @@ export default function Tags(): React.JSX.Element {
       setTags([...tags, newTag]);
    }
 
-   function handleOpenTagTasks(tagId: AppTypes.Tag['id']): void {
+   function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
       void navigate(`${ROUTE_PATHS.main_tags}/${encodeURIComponent(tagId)}`);
    }
 
@@ -113,7 +113,7 @@ export default function Tags(): React.JSX.Element {
                               </Stack>
                               <Stack direction={'row'} alignItems={'center'}>
                                  <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                                 <IconButton onClick={() => handleOpenTagTasks(tag.id)}>
+                                 <IconButton onClick={() => handleOpenTagRoutine(tag.id)}>
                                     <ChevronRight sx={{ color: 'grey.400' }} />
                                  </IconButton>
                               </Stack>
