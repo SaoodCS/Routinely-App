@@ -121,10 +121,7 @@ export const router = createBrowserRouter(
                         path={ROUTE_PATHS.main_tags_tasks}
                         element={<TagTasks />}
                         handle={{
-                           header: {
-                              title: 'Tag Tasks',
-                              showBack: true,
-                           },
+                           header: { title: 'Tag Tasks', showBack: true },
                         }}
                      />
                   </Route>
