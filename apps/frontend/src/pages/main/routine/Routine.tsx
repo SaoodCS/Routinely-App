@@ -116,7 +116,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             renderItem={(task, dragElProps, i) =>
                (isTaskVisible(task) || showHidden) && (
                   <Box>
-                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} grey={!isTaskVisible(task)} />
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} disabled={!isTaskVisible(task)} />
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
@@ -129,7 +129,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                        dragElProps={dragElProps}
                                        indexes={[i, j]}
                                        section={section}
-                                       grey={!isTaskVisible(subtask)}
+                                       disabled={!isTaskVisible(subtask)}
                                     />
                                     {subtask.children && (
                                        <DragAndDropList
@@ -143,7 +143,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                                       dragElProps={dragElProps}
                                                       indexes={[i, j, k]}
                                                       section={section}
-                                                      grey={!isTaskVisible(subsubtask)}
+                                                      disabled={!isTaskVisible(subsubtask)}
                                                    />
                                                 </Box>
                                              )

@@ -23,11 +23,11 @@ interface T_TaskItemProps {
    dragElProps: Parameters<Parameters<typeof DragAndDropList<AppTypes.Task>>[0]['renderItem']>[1];
    indexes: AppTypes.DepthIndexes;
    section: AppTypes.RoutineSection;
-   grey: boolean;
+   disabled: boolean;
 }
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
-   const { task, dragElProps, indexes, section, grey } = props;
+   const { task, dragElProps, indexes, section, disabled } = props;
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
@@ -137,10 +137,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   borderRadius: '5px',
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
                   backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
-                  backgroundImage: grey
+                  backgroundImage: disabled
                      ? `repeating-linear-gradient(135deg, transparent 0 8px, ${alpha(palette.text.disabled, 0.75)} 10px 10px)`
                      : undefined,
-                  opacity: grey || task.isChecked ? 0.55 : 1,
+                  opacity: disabled || task.isChecked ? 0.55 : 1,
                }}
             >
                <Stack
