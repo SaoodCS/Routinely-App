@@ -31,6 +31,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
 
    function handlePointerDown(event: PointerEvent<HTMLDivElement>): void {
       if (!isInteractive || event.button !== 0) return;
+      if (event.target instanceof Element && event.target.closest('button')) return;
       pointerStartXRef.current = event.clientX;
       pointerIdRef.current = event.pointerId;
       setDidSwipe(false);
