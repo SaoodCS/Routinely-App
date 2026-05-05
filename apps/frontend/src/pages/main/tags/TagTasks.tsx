@@ -32,10 +32,11 @@ export default function TagTasks(): JSX.Element {
          const task = tasksToCheck[i];
          const hasTag = task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
          const hasRelatedChildren = task.children?.some((child) => relatedTasks.has(child)) ?? false;
-         if (hasTag || hasRelatedChildren) relatedTasks.add(task);
+         const inSearchQuery = task.label.toLowerCase().includes(searchQuery);
+         if (hasTag || hasRelatedChildren || inSearchQuery) relatedTasks.add(task);
       }
       return relatedTasks;
-   }, [tasks, tagId]);
+   }, [tasks, tagId, searchQuery]);
 
    const isTaskVisible = (task: AppTypes.Task): boolean => relatedTasks.has(task);
 

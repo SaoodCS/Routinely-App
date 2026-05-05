@@ -117,7 +117,11 @@ export const router = createBrowserRouter(
                            },
                         }}
                      />
-                     <Route path={ROUTE_PATHS.main_tags_tasks} element={<TagTasks />} handle={{ header: { showBack: true, title: 'Tasks' } }} />
+                     <Route
+                        path={ROUTE_PATHS.main_tags_tasks}
+                        element={<TagTasks />}
+                        handle={{ header: { showBack: true, title: 'Tasks', RightElement: () => <SearchQueryMenuButton /> } }}
+                     />
                   </Route>
 
                   {/* Settings Routes */}
