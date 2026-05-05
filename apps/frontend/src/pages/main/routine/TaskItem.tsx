@@ -138,9 +138,9 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
                   backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
                   backgroundImage: disabled
-                     ? `repeating-linear-gradient(135deg, transparent 0 8px, ${alpha(palette.text.disabled, 0.75)} 10px 10px)`
+                     ? `repeating-linear-gradient(135deg, transparent 0 8px, ${alpha(palette.text.disabled, 0.6)} 10px 10px)`
                      : undefined,
-                  opacity: disabled || task.isChecked ? 0.55 : 1,
+                  opacity: disabled || task.isChecked ? 0.5 : 1,
                }}
             >
                <Stack
