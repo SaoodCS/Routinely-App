@@ -3,16 +3,14 @@ import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography,
 import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
 import type { FocusEvent, KeyboardEvent } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import { ROUTE_PATHS } from '../../../routes/router';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
-   const navigate = useNavigate();
    const searchQuery = searchParams.get('search');
    const { ref } = useScrollSaver('tags-scroll');
    const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
