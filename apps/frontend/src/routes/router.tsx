@@ -12,12 +12,13 @@ import Settings from '../pages/main/settings/Settings';
 import SortTagsButton from '../pages/main/tags/SortTagsButton';
 import Tags from '../pages/main/tags/Tags';
 import TagTasks from '../pages/main/tags/TagTasks';
+import TagTasksHeaderTitle from '../pages/main/tags/TagTasksHeaderTitle';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
 const Route = ReactRoute as (props: T_RouteProps) => React.ReactElement | null;
 type T_Route_Handle = {
-   header?: { hide?: boolean; title?: string; showBack?: boolean; RightElement?: React.ComponentType };
+   header?: { hide?: boolean; title?: string | React.ComponentType; showBack?: boolean; RightElement?: React.ComponentType };
    nav?: { hide?: boolean; inBottomNav?: boolean };
 };
 //
@@ -120,7 +121,7 @@ export const router = createBrowserRouter(
                      <Route
                         path={ROUTE_PATHS.main_tags_tasks}
                         element={<TagTasks />}
-                        handle={{ header: { showBack: true, title: 'Tasks', RightElement: () => <SearchQueryMenuButton /> } }}
+                        handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchQueryMenuButton /> } }}
                      />
                   </Route>
 

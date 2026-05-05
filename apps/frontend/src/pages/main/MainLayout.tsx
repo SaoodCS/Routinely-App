@@ -8,6 +8,7 @@ export default function MainLayout(): React.JSX.Element {
    const matches = useMatches() as T_Route_UseMatches;
    const currentMatch = matches.at(-1);
    const HeaderRightEl = currentMatch?.handle?.header?.RightElement;
+   const HeaderTitle = currentMatch?.handle?.header?.title ?? 'Routinely';
 
    return (
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -19,9 +20,9 @@ export default function MainLayout(): React.JSX.Element {
                         <ArrowBack />
                      </IconButton>
                   )}
-                  <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                     {currentMatch?.handle?.header?.title}
-                  </Typography>
+                  <Box sx={{ flexGrow: 1 }}>
+                     <Typography variant="h6">{typeof HeaderTitle === 'string' ? HeaderTitle : <HeaderTitle />}</Typography>
+                  </Box>
                   {HeaderRightEl && <HeaderRightEl />}
                </Toolbar>
             </AppBar>
