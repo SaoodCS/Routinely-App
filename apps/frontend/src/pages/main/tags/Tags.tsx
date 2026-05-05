@@ -105,9 +105,11 @@ export default function Tags(): React.JSX.Element {
                                     </Typography>
                                  </Stack>
                               </Stack>
-                              <Stack direction={'row'} alignItems={'center'} pr={1}>
+                              <Stack direction={'row'} alignItems={'center'}>
                                  <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                                 <ChevronRight sx={{ color: 'grey.400' }} />
+                                 <IconButton>
+                                    <ChevronRight sx={{ color: 'grey.400' }} />
+                                 </IconButton>
                               </Stack>
                            </SwipeActionWrapper>
                         </ListItem>
