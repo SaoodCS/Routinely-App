@@ -21,7 +21,7 @@ export default function MainLayout(): React.JSX.Element {
                      </IconButton>
                   )}
                   <Box sx={{ flexGrow: 1 }}>
-                     <Typography variant="h6">{typeof HeaderTitle === 'string' ? HeaderTitle : <HeaderTitle />}</Typography>
+                     {HeaderTitle && (typeof HeaderTitle === 'string' ? <Typography variant="h6">{HeaderTitle}</Typography> : <HeaderTitle />)}
                   </Box>
                   {HeaderRightEl && <HeaderRightEl />}
                </Toolbar>
