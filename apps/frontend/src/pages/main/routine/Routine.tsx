@@ -8,6 +8,7 @@ import DragAndDropList from '../../../components/DragAndDropList';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useHideOnScroll from '../../../hooks/useHideOnScroll';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import TaskItem from './TaskItem';
 
 interface T_RoutineProps {
@@ -25,6 +26,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
+   const [showHidden, setShowHidden] = useLocalStorage<boolean>('show-hidden', false);
 
    const visibleTasks = useMemo(() => {
       const visibleTasks = new Set<AppTypes.Task>();
@@ -89,6 +91,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             <AppBar ref={tagHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
                <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                   <Chip label={'Toggle All'} onClick={handleToggleAllTags} sx={{ color: 'primary.main' }} variant={'outlined'} />
+                  <Chip label={'Toggle Hidden'} onClick={() => setShowHidden(!showHidden)} sx={{ color: 'primary.main' }} variant={'outlined'} />
                   {tags.map((tag, i) => (
                      <Chip
                         key={tag.id}
@@ -106,25 +109,37 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             items={tasks}
             onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
-               isTaskVisible(task) && (
+               (isTaskVisible(task) || showHidden) && (
                   <Box>
-                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} />
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} grey={!isTaskVisible(task)} />
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
                            onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems, [i])}
                            renderItem={(subtask, dragElProps, j) =>
-                              isTaskVisible(subtask) && (
+                              (isTaskVisible(subtask) || showHidden) && (
                                  <Box>
-                                    <TaskItem task={subtask} dragElProps={dragElProps} indexes={[i, j]} section={section} />
+                                    <TaskItem
+                                       task={subtask}
+                                       dragElProps={dragElProps}
+                                       indexes={[i, j]}
+                                       section={section}
+                                       grey={!isTaskVisible(subtask)}
+                                    />
                                     {subtask.children && (
                                        <DragAndDropList
                                           items={subtask.children}
                                           onDrop={(newOrderedItems) => handleReorderTasksOnDrop(newOrderedItems, [i, j])}
                                           renderItem={(subsubtask, dragElProps, k) =>
-                                             isTaskVisible(subsubtask) && (
+                                             (isTaskVisible(subsubtask) || showHidden) && (
                                                 <Box>
-                                                   <TaskItem task={subsubtask} dragElProps={dragElProps} indexes={[i, j, k]} section={section} />
+                                                   <TaskItem
+                                                      task={subsubtask}
+                                                      dragElProps={dragElProps}
+                                                      indexes={[i, j, k]}
+                                                      section={section}
+                                                      grey={!isTaskVisible(subsubtask)}
+                                                   />
                                                 </Box>
                                              )
                                           }

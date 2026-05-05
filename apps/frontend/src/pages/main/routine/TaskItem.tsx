@@ -23,10 +23,11 @@ interface T_TaskItemProps {
    dragElProps: Parameters<Parameters<typeof DragAndDropList<AppTypes.Task>>[0]['renderItem']>[1];
    indexes: AppTypes.DepthIndexes;
    section: AppTypes.RoutineSection;
+   grey: boolean;
 }
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
-   const { task, dragElProps, indexes, section } = props;
+   const { task, dragElProps, indexes, section, grey } = props;
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
@@ -136,7 +137,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   borderRadius: '5px',
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
                   backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
-                  opacity: task.isChecked ? 0.5 : 1,
+                  opacity: grey ? 0.4 : task.isChecked ? 0.75 : 1,
+                  filter: grey ? 'grayscale(100%)' : undefined,
                }}
             >
                <Stack
@@ -178,7 +180,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={taskDepthStyle.fontSize}
-                     color={task.isChecked ? 'textDisabled' : 'textPrimary'}
+                     color={task.isChecked || grey ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75 }}
                   >
                      <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
