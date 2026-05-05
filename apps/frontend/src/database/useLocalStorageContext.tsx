@@ -1,22 +1,19 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import type { AppTypes } from '@repo/types/index';
 import useLocalStorage from '../hooks/useLocalStorage';
 
-type T_LocalStorage_Context = {
-   isLoading: boolean;
+type T_LocalStorageContext = {
    morningTasks: AppTypes.Task[];
    eveningTasks: AppTypes.Task[];
    tags: AppTypes.Tag[];
    settings: AppTypes.Settings;
-   setMorningTasks: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['morningTasks']>>[1];
-   setEveningTasks: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['eveningTasks']>>[1];
-   setTags: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['tags']>>[1];
-   setSettings: ReturnType<typeof useLocalStorage<T_LocalStorage_Context['settings']>>[1];
-   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+   setMorningTasks: ReturnType<typeof useLocalStorage<T_LocalStorageContext['morningTasks']>>[1];
+   setEveningTasks: ReturnType<typeof useLocalStorage<T_LocalStorageContext['eveningTasks']>>[1];
+   setTags: ReturnType<typeof useLocalStorage<T_LocalStorageContext['tags']>>[1];
+   setSettings: ReturnType<typeof useLocalStorage<T_LocalStorageContext['settings']>>[1];
 };
 
-const LocalStorageContext = createContext<T_LocalStorage_Context>({
-   isLoading: true,
+const LocalStorageContext = createContext<T_LocalStorageContext>({
    morningTasks: [],
    eveningTasks: [],
    tags: [],
@@ -25,23 +22,20 @@ const LocalStorageContext = createContext<T_LocalStorage_Context>({
    setEveningTasks: () => {},
    setTags: () => {},
    setSettings: () => {},
-   setIsLoading: () => {},
 });
 
 export function LocalStorageProvider({ children }: { children: ReactNode }): ReactNode {
-   const [isLoading, setIsLoading] = useState<T_LocalStorage_Context['isLoading']>(true);
-   const [morningTasks, setMorningTasks] = useLocalStorage<T_LocalStorage_Context['morningTasks']>('morning-routine-tasks', []);
-   const [eveningTasks, setEveningTasks] = useLocalStorage<T_LocalStorage_Context['eveningTasks']>('evening-routine-tasks', []);
-   const [tags, setTags] = useLocalStorage<T_LocalStorage_Context['tags']>('tags', []);
-   const [settings, setSettings] = useLocalStorage<T_LocalStorage_Context['settings']>('settings', {});
+   const [morningTasks, setMorningTasks] = useLocalStorage<T_LocalStorageContext['morningTasks']>('morning-routine-tasks', []);
+   const [eveningTasks, setEveningTasks] = useLocalStorage<T_LocalStorageContext['eveningTasks']>('evening-routine-tasks', []);
+   const [tags, setTags] = useLocalStorage<T_LocalStorageContext['tags']>('tags', []);
+   const [settings, setSettings] = useLocalStorage<T_LocalStorageContext['settings']>('settings', {});
 
-   return (
-      <LocalStorageContext
-         value={{ isLoading, morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setIsLoading, setSettings }}
-      >
-         {children}
-      </LocalStorageContext>
+   const value: T_LocalStorageContext = useMemo(
+      () => ({ morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings }),
+      [morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
    );
+
+   return <LocalStorageContext value={value}>{children}</LocalStorageContext>;
 }
 
-export const useLocalStorageContext = (): T_LocalStorage_Context => useContext(LocalStorageContext);
+export const useLocalStorageContext = (): T_LocalStorageContext => useContext(LocalStorageContext);
