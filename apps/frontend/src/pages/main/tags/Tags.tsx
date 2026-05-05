@@ -81,7 +81,7 @@ export default function Tags(): React.JSX.Element {
                                  alignItems: 'center',
                                  justifyContent: 'space-between',
                                  backgroundColor: alpha(palette.divider, 0.05),
-                                 border: `1px solid ${palette.divider}`,
+                                 border: `1px solid ${alpha(palette.divider, 0.075)}`,
                                  borderRadius: '6px',
                               }}
                            >
