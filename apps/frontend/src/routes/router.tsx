@@ -11,7 +11,6 @@ import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
 import SortTagsButton from '../pages/main/tags/SortTagsButton';
 import Tags from '../pages/main/tags/Tags';
-import TagTasks from '../pages/main/tags/TagTasks';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
@@ -37,7 +36,6 @@ export const ROUTE_PATHS = {
    main_routine_evening: '/main/routine/evening',
    // main/tags
    main_tags: '/main/tags',
-   main_tags_tasks: '/main/tags/:tagId',
    // main/settings
    main_settings: '/main/settings',
 } as const;
@@ -117,7 +115,6 @@ export const router = createBrowserRouter(
                            },
                         }}
                      />
-                     <Route path={ROUTE_PATHS.main_tags_tasks} element={<TagTasks />} handle={{ header: { title: 'Tag Tasks', showBack: true } }} />
                   </Route>
 
                   {/* Settings Routes */}

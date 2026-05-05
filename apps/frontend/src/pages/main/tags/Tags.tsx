@@ -1,4 +1,4 @@
-import { Add, ChevronRight, DragIndicatorOutlined } from '@mui/icons-material';
+import { Add, DragIndicatorOutlined } from '@mui/icons-material';
 import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
@@ -111,12 +111,7 @@ export default function Tags(): React.JSX.Element {
                                     </Typography>
                                  </Stack>
                               </Stack>
-                              <Stack direction={'row'} alignItems={'center'}>
-                                 <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                                 <IconButton onClick={() => handleOpenTagRoutine(tag.id)}>
-                                    <ChevronRight sx={{ color: 'grey.400' }} />
-                                 </IconButton>
-                              </Stack>
+                              <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} sx={{ mr: 2 }} />
                            </SwipeActionWrapper>
                         </ListItem>
                      </Grow>
