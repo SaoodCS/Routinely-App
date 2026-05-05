@@ -1,16 +1,23 @@
 import { useMemo, useState, type JSX } from 'react';
 import type { AppTypes } from '@repo/types/index';
 import { AppBar, Box, Chip, Stack } from '@mui/material';
-import { useParams } from 'react-router';
+import { useLocation, useParams, useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import DragAndDropList from '../../../components/DragAndDropList';
 import TaskItem from '../routine/TaskItem';
+import useScrollSaver from '../../../hooks/useScrollSaver';
+import useHideOnScroll from '../../../hooks/useHideOnScroll';
 
 export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
+   const { pathname } = useLocation();
    const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
+   const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
+   const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
+   const [searchParams] = useSearchParams();
+   const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
@@ -55,7 +62,7 @@ export default function TagTasks(): JSX.Element {
 
    return (
       <>
-         <AppBar component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
+         <AppBar ref={sectionHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
             <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                {(['morning', 'evening'] satisfies AppTypes.RoutineSection[]).map((item) => (
                   <Chip
@@ -67,57 +74,58 @@ export default function TagTasks(): JSX.Element {
                   />
                ))}
             </Stack>
-            <DragAndDropList
-               items={section === 'morning' ? morningTasks : eveningTasks}
-               style={{ overflow: 'auto', maxHeight: '100%' }}
-               onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
-               renderItem={(task, dragElProps, i) =>
-                  isTaskVisible(task) && (
-                     <Box>
-                        <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
-                        {task.children && (
-                           <DragAndDropList
-                              items={task.children}
-                              onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i])}
-                              renderItem={(subtask, dragElProps, j) =>
-                                 isTaskVisible(subtask) && (
-                                    <Box>
-                                       <TaskItem
-                                          task={subtask}
-                                          dragElProps={dragElProps}
-                                          indexes={[i, j]}
-                                          section={section}
-                                          textOverlay={handleTextOverlay(subtask)}
-                                       />
-                                       {subtask.children && (
-                                          <DragAndDropList
-                                             items={subtask.children}
-                                             onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i, j])}
-                                             renderItem={(subsubtask, dragElProps, k) =>
-                                                isTaskVisible(subsubtask) && (
-                                                   <Box>
-                                                      <TaskItem
-                                                         task={subsubtask}
-                                                         dragElProps={dragElProps}
-                                                         indexes={[i, j, k]}
-                                                         section={section}
-                                                         textOverlay={handleTextOverlay(subsubtask)}
-                                                      />
-                                                   </Box>
-                                                )
-                                             }
-                                          />
-                                       )}
-                                    </Box>
-                                 )
-                              }
-                           />
-                        )}
-                     </Box>
-                  )
-               }
-            />
          </AppBar>
+         <DragAndDropList
+            ref={dragDropListRef}
+            items={section === 'morning' ? morningTasks : eveningTasks}
+            style={{ overflow: 'auto', maxHeight: '100%', paddingTop: sectionHeaderHeight }}
+            onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
+            renderItem={(task, dragElProps, i) =>
+               isTaskVisible(task) && (
+                  <Box>
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
+                     {task.children && (
+                        <DragAndDropList
+                           items={task.children}
+                           onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i])}
+                           renderItem={(subtask, dragElProps, j) =>
+                              isTaskVisible(subtask) && (
+                                 <Box>
+                                    <TaskItem
+                                       task={subtask}
+                                       dragElProps={dragElProps}
+                                       indexes={[i, j]}
+                                       section={section}
+                                       textOverlay={handleTextOverlay(subtask)}
+                                    />
+                                    {subtask.children && (
+                                       <DragAndDropList
+                                          items={subtask.children}
+                                          onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i, j])}
+                                          renderItem={(subsubtask, dragElProps, k) =>
+                                             isTaskVisible(subsubtask) && (
+                                                <Box>
+                                                   <TaskItem
+                                                      task={subsubtask}
+                                                      dragElProps={dragElProps}
+                                                      indexes={[i, j, k]}
+                                                      section={section}
+                                                      textOverlay={handleTextOverlay(subsubtask)}
+                                                   />
+                                                </Box>
+                                             )
+                                          }
+                                       />
+                                    )}
+                                 </Box>
+                              )
+                           }
+                        />
+                     )}
+                  </Box>
+               )
+            }
+         />
       </>
    );
 }
