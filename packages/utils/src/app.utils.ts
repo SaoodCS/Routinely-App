@@ -3,7 +3,7 @@ import type { AppTypes } from '@repo/types/index';
 export function createNewTask(taskPresets?: Partial<AppTypes.Task>): AppTypes.Task {
    return {
       id: taskPresets?.id ?? `${Date.now()}-task`,
-      label: taskPresets?.label ?? 'New Task',
+      label: taskPresets?.label ?? '',
       isChecked: taskPresets?.isChecked ?? false,
       children: taskPresets?.children ?? undefined,
       showWhenTags: taskPresets?.showWhenTags ?? [],
@@ -12,7 +12,7 @@ export function createNewTask(taskPresets?: Partial<AppTypes.Task>): AppTypes.Ta
 }
 
 export function createNewTag(): AppTypes.Tag {
-   return { id: `${Date.now()}-tag`, label: 'New Tag', isEnabled: true };
+   return { id: `${Date.now()}-tag`, label: '', isEnabled: true };
 }
 
 export function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesToUpdate: number[]): AppTypes.Task[] {
