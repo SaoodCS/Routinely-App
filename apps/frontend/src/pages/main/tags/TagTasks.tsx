@@ -12,7 +12,7 @@ import useHideOnScroll from '../../../hooks/useHideOnScroll';
 export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
    const { pathname } = useLocation();
-   const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks, tags } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
    const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
