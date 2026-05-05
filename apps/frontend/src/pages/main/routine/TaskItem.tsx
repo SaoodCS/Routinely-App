@@ -23,7 +23,7 @@ interface T_TaskItemProps {
    dragElProps: Parameters<Parameters<typeof DragAndDropList<AppTypes.Task>>[0]['renderItem']>[1];
    indexes: AppTypes.DepthIndexes;
    section: AppTypes.RoutineSection;
-   disabled: boolean;
+   disabled?: boolean;
 }
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {

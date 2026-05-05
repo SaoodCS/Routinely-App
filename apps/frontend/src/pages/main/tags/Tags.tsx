@@ -1,16 +1,18 @@
-import { Add, DragIndicatorOutlined } from '@mui/icons-material';
+import { Add, ChevronRight, DragIndicatorOutlined } from '@mui/icons-material';
 import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
 import type { FocusEvent, KeyboardEvent } from 'react';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
+import { ROUTE_PATHS } from '../../../routes/router';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
+   const navigate = useNavigate();
    const searchQuery = searchParams.get('search');
    const { ref } = useScrollSaver('tags-scroll');
    const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
@@ -47,6 +49,10 @@ export default function Tags(): React.JSX.Element {
    function handleCreateTag(): void {
       const newTag = createNewTag();
       setTags([...tags, newTag]);
+   }
+
+   function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
+      void navigate(`${ROUTE_PATHS.main_tags}/${encodeURIComponent(tagId)}`);
    }
 
    function getNumberOfTasks(tag: AppTypes.Tag, taskTagField: AppTypes.TaskTagFields): number {
@@ -105,7 +111,12 @@ export default function Tags(): React.JSX.Element {
                                     </Typography>
                                  </Stack>
                               </Stack>
-                              <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} sx={{ mr: 2 }} />
+                              <Stack direction={'row'} alignItems={'center'}>
+                                 <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                                 <IconButton onClick={() => handleOpenTagRoutine(tag.id)}>
+                                    <ChevronRight sx={{ color: 'grey.400' }} />
+                                 </IconButton>
+                              </Stack>
                            </SwipeActionWrapper>
                         </ListItem>
                      </Grow>
