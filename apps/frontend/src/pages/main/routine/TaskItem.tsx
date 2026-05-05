@@ -137,7 +137,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   borderRadius: '5px',
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
                   backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
-                  opacity: grey ? 0.4 : task.isChecked ? 0.75 : 1,
+                  opacity: grey ? 0.5 : task.isChecked ? 0.75 : 1,
                   filter: grey ? 'grayscale(100%)' : undefined,
                }}
             >
