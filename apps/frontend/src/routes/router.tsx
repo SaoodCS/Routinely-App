@@ -117,13 +117,7 @@ export const router = createBrowserRouter(
                            },
                         }}
                      />
-                     <Route
-                        path={ROUTE_PATHS.main_tags_tasks}
-                        element={<TagTasks />}
-                        handle={{
-                           header: { title: 'Tag Tasks', showBack: true },
-                        }}
-                     />
+                     <Route path={ROUTE_PATHS.main_tags_tasks} element={<TagTasks />} handle={{ header: { title: 'Tag Tasks', showBack: true } }} />
                   </Route>
 
                   {/* Settings Routes */}
