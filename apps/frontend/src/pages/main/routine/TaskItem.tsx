@@ -130,7 +130,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    return (
       <Grow in timeout={500}>
          <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
-            <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={600}>
+            <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700}>
                {textOverlay}
             </Typography>
             <SwipeActionWrapper
@@ -182,7 +182,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={taskDepthStyle.fontSize}
-                     color={task.isChecked ? 'textDisabled' : 'textPrimary'}
+                     color={task.isChecked || textOverlay ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75 }}
                   >
                      <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
