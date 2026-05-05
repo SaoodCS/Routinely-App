@@ -32,10 +32,6 @@ export default function TagTasks(): JSX.Element {
 
    const isTaskVisible = (task: AppTypes.Task): boolean => relatedTasks.has(task);
 
-   function isTagInShowWhenTags(task: AppTypes.Task): boolean {
-      return task.showWhenTags.includes(tagId);
-   }
-
    function handleChangeSection(section: AppTypes.RoutineSection): void {
       setSection(section);
    }
