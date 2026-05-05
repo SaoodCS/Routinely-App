@@ -1,6 +1,6 @@
 import { useMemo, useState, type JSX } from 'react';
 import type { AppTypes } from '@repo/types/index';
-import { AppBar, Box, Chip, Stack } from '@mui/material';
+import { AppBar, Box, Chip, Stack, Typography } from '@mui/material';
 import { useLocation, useParams, useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
@@ -12,7 +12,7 @@ import useHideOnScroll from '../../../hooks/useHideOnScroll';
 export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
    const { pathname } = useLocation();
-   const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks, tags } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
    const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
@@ -64,6 +64,9 @@ export default function TagTasks(): JSX.Element {
    return (
       <>
          <AppBar ref={sectionHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
+            <Typography variant="caption" textAlign={'center'} fontWeight={600} pt={1}>
+               {tags.find((t) => t.id === tagId)?.label}
+            </Typography>
             <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                {(['morning', 'evening'] satisfies AppTypes.RoutineSection[]).map((item) => (
                   <Chip
