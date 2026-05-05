@@ -101,11 +101,11 @@ export default function Tags(): React.JSX.Element {
                                        {tag.label}
                                     </Typography>
                                     <Typography variant={'caption'} color="textSecondary">
-                                       {`tasks: ${getNumberOfTasks(tag, 'showWhenTags')} shown, ${getNumberOfTasks(tag, 'hideWhenTags')} hidden`}
+                                       {`${getNumberOfTasks(tag, 'showWhenTags')} shown, ${getNumberOfTasks(tag, 'hideWhenTags')} hidden`}
                                     </Typography>
                                  </Stack>
                               </Stack>
-                              <Stack direction={'row'} alignItems={'center'}>
+                              <Stack direction={'row'} alignItems={'center'} pr={1}>
                                  <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
                                  <ChevronRight sx={{ color: 'grey.400' }} />
                               </Stack>
