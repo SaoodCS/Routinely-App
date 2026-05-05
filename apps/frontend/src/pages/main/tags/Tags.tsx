@@ -1,8 +1,9 @@
-import { Add, DragIndicatorOutlined } from '@mui/icons-material';
-import { Fab, Grow, IconButton, ListItem, Switch, Typography } from '@mui/material';
+import { Add, ChevronRight, DragIndicatorOutlined } from '@mui/icons-material';
+import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
 import { createNewTag } from '@repo/utils/app.utils';
 import type { FocusEvent, KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
+import type { AppTypes } from '@repo/types/index';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
@@ -13,6 +14,7 @@ export default function Tags(): React.JSX.Element {
    const searchQuery = searchParams.get('search');
    const { ref } = useScrollSaver('tags-scroll');
    const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
+   const { palette } = useTheme();
 
    function handleDelete(tagIndex: number): void {
       setTags(tags.filter((_, i) => i !== tagIndex));
@@ -47,11 +49,20 @@ export default function Tags(): React.JSX.Element {
       setTags([...tags, newTag]);
    }
 
+   function getNumberOfTasks(tag: AppTypes.Tag, taskTagField: AppTypes.TaskTagFields): number {
+      let numberOfTasks = 0;
+      const tasksToCheck = [...morningTasks, ...eveningTasks];
+      for (let i = 0; i < tasksToCheck.length; i += 1) {
+         const task = tasksToCheck[i];
+         if (task[taskTagField].includes(tag.id)) numberOfTasks += 1;
+         if (!task.children) continue;
+         for (const child of task.children) tasksToCheck.push(child);
+      }
+      return numberOfTasks;
+   }
+
    return (
       <>
-         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
-            <Add onClick={handleCreateTag} />
-         </Fab>
          <DragAndDropList
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}
@@ -59,33 +70,55 @@ export default function Tags(): React.JSX.Element {
             onDrop={(newOrderedItems) => setTags(newOrderedItems)}
             renderItem={(tag, dragElProps, i) =>
                !isTagHidden(tag.label) && (
-                  <Grow in timeout={500}>
-                     <ListItem sx={{ borderBottom: (theme) => `1px solid ${theme.palette.divider}` }}>
-                        <SwipeActionWrapper
-                           rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                           leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
-                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                        >
-                           <IconButton {...dragElProps} size="small">
-                              <DragIndicatorOutlined />
-                           </IconButton>
-                           <Typography
-                              component="span"
-                              contentEditable
-                              suppressContentEditableWarning
-                              onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                              onKeyDown={handleBlurOnEnterClick}
-                              sx={{ outline: 'none', width: '60%' }}
+                  <Box>
+                     <Grow in timeout={500}>
+                        <ListItem sx={{ py: 0.5, px: 1 }}>
+                           <SwipeActionWrapper
+                              rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
+                              leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
+                              style={{
+                                 display: 'flex',
+                                 alignItems: 'center',
+                                 justifyContent: 'space-between',
+                                 backgroundColor: alpha(palette.divider, 0.05),
+                                 border: `1px solid ${palette.divider}`,
+                                 borderRadius: '6px',
+                              }}
                            >
-                              {tag.label}
-                           </Typography>
-                           <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                        </SwipeActionWrapper>
-                     </ListItem>
-                  </Grow>
+                              <Stack direction="row" gap={2} alignItems={'center'} px={1}>
+                                 <IconButton {...dragElProps} size="small" sx={{ borderRadius: '5px', px: 0, bgcolor: alpha(palette.divider, 0.05) }}>
+                                    <DragIndicatorOutlined />
+                                 </IconButton>
+                                 <Stack sx={{ py: 1 }}>
+                                    <Typography
+                                       component="span"
+                                       contentEditable
+                                       suppressContentEditableWarning
+                                       onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                                       onKeyDown={handleBlurOnEnterClick}
+                                       sx={{ outline: 'none' }}
+                                    >
+                                       {tag.label}
+                                    </Typography>
+                                    <Typography variant={'caption'} color="textSecondary">
+                                       {`tasks: ${getNumberOfTasks(tag, 'showWhenTags')} shown, ${getNumberOfTasks(tag, 'hideWhenTags')} hidden`}
+                                    </Typography>
+                                 </Stack>
+                              </Stack>
+                              <Stack direction={'row'} alignItems={'center'}>
+                                 <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                                 <ChevronRight sx={{ color: 'grey.400' }} />
+                              </Stack>
+                           </SwipeActionWrapper>
+                        </ListItem>
+                     </Grow>
+                  </Box>
                )
             }
          />
+         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
+            <Add onClick={handleCreateTag} />
+         </Fab>
       </>
    );
 }
