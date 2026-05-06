@@ -100,8 +100,8 @@ export const router = createBrowserRouter(
                               title: 'Tags',
                               RightElement: () => (
                                  <>
-                                    <SortTagsButton />
                                     <SearchQueryMenuButton />
+                                    <SortTagsButton />
                                  </>
                               ),
                            },
