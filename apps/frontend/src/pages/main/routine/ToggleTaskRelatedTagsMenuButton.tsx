@@ -1,17 +1,17 @@
 import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
-import { useState, type JSX } from 'react';
 import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
+import { useState, type JSX } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
-interface T_ToggleTaskShowWhenMenuButtonProps {
+interface T_ToggleTaskRelatedTagsMenuButtonProps {
    section: AppTypes.RoutineSection;
    indexes: AppTypes.DepthIndexes;
    task: AppTypes.Task;
 }
 
-export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }: T_ToggleTaskShowWhenMenuButtonProps): JSX.Element {
+export default function ToggleTaskRelatedTagsMenuButton({ indexes, section, task }: T_ToggleTaskRelatedTagsMenuButtonProps): JSX.Element {
    const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;

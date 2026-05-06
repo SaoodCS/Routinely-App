@@ -1,17 +1,17 @@
 import { DoneAllOutlined, DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
+import type { AppTypes } from '@repo/types/index';
+import { AppUtils } from '@repo/utils/index';
 import { useEffect, useRef, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
-import { AppUtils } from '@repo/utils/index';
-import type { AppTypes } from '@repo/types/index';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
 import { InputUtils } from '../../../utils';
-import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
+import ToggleTaskRelatedTagsMenuButton from './ToggleTaskRelatedTagsMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string }> = {
    1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem' },
@@ -178,7 +178,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         </IconButton>
                      </>
                   )}
-                  <ToggleTaskShowWhenMenuButton section={section} indexes={indexes} task={task} />
+                  <ToggleTaskRelatedTagsMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 0.75, pb: 0.5 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
