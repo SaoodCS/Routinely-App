@@ -2,6 +2,7 @@ import { MoreVertOutlined } from '@mui/icons-material';
 import { Divider, IconButton, ListItemText, Menu, MenuItem, Switch } from '@mui/material';
 import { useState, type JSX } from 'react';
 import type { AppTypes } from '@repo/types/index';
+import { AppUtils } from '@repo/utils/index';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 interface T_ToggleTaskShowWhenMenuButtonProps {
@@ -17,29 +18,14 @@ export default function ToggleTaskShowWhenMenuButton({ indexes, section, task }:
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    function handleToggle(tagId: AppTypes.Tag['id'], taskTagField: AppTypes.TaskTagFields): void {
-      const updatedTask = {
-         ...task,
-         [taskTagField]: task[taskTagField].includes(tagId) ? task[taskTagField].filter((id) => id !== tagId) : [...task[taskTagField], tagId],
-      };
+      const taskTagFieldVal = task[taskTagField];
+      const tagIndex = taskTagFieldVal.indexOf(tagId);
+      const updatedTask = { ...task, [taskTagField]: tagIndex === -1 ? [...taskTagFieldVal, tagId] : taskTagFieldVal.toSpliced(tagIndex, 1) };
       const updatedTasks = [...tasks];
-      if (indexes.length === 1) {
-         updatedTasks[indexes[0]] = updatedTask;
-         setTasks(updatedTasks);
-      }
-      if (indexes.length === 2) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         updatedSubtasks[indexes[1]] = updatedTask;
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
-      if (indexes.length === 3) {
-         const updatedSubtasks = [...updatedTasks[indexes[0]].children!];
-         const updatedSubsubtasks = [...updatedSubtasks[indexes[1]].children!];
-         updatedSubsubtasks[indexes[2]] = updatedTask;
-         updatedSubtasks[indexes[1]] = { ...updatedSubtasks[indexes[1]], children: updatedSubsubtasks };
-         updatedTasks[indexes[0]] = { ...updatedTasks[indexes[0]], children: updatedSubtasks };
-         setTasks(updatedTasks);
-      }
+      const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
+      const taskIndex = indexes.at(-1)!;
+      taskListToUpdate[taskIndex] = updatedTask;
+      setTasks(updatedTasks);
    }
 
    return (
