@@ -1,7 +1,7 @@
 import { DoneAllOutlined, DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
 import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
-import { type FocusEvent, type JSX, type KeyboardEvent } from 'react';
+import { useEffect, useRef, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
 import type { AppTypes } from '@repo/types/index';
@@ -36,8 +36,15 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
+   const focusTaskIdRef = useRef<string | null>(null);
 
-   function addTaskBelow(): void {
+   useEffect(() => {
+      if (!focusTaskIdRef.current) return;
+      document.getElementById(focusTaskIdRef.current)?.focus();
+      focusTaskIdRef.current = null;
+   }, [tasks]);
+
+   function addTaskBelow(focusOnNewTask?: boolean): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
@@ -45,9 +52,10 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       const newTaskIndex = indexes.at(-1)! + 1;
       taskListToInsertInto.splice(newTaskIndex, 0, newTask);
       setTasks(updatedTasks);
+      if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
    }
 
-   function addSubTask(): void {
+   function addSubTask(focusOnNewTask?: boolean): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
@@ -56,6 +64,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       const taskToUpdate = taskListToUpdate[taskIndex];
       taskListToUpdate[taskIndex] = { ...taskToUpdate, children: [newTask, ...(taskToUpdate.children ?? [])] };
       setTasks(updatedTasks);
+      if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
    }
 
    function handleDelete(): void {
@@ -106,15 +115,9 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function handleKeyPress(event: KeyboardEvent<HTMLSpanElement>): void {
-      event.preventDefault();
       if (event.key === 'Enter') event.currentTarget.blur();
-      else if (event.key === 'ArrowDown') {
-         event.currentTarget.blur();
-         addTaskBelow();
-      } else if (event.key === 'ArrowRight' && indexes.length < 3) {
-         event.currentTarget.blur();
-         addSubTask();
-      }
+      else if (event.key === 'ArrowDown') addTaskBelow(true);
+      else if (event.key === 'ArrowRight' && indexes.length < 3) addSubTask(true);
    }
 
    return (
@@ -147,12 +150,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      <DragIndicatorOutlined fontSize="small" />
                   </IconButton>
 
-                  <IconButton onClick={addTaskBelow} size="small">
+                  <IconButton onClick={() => addTaskBelow()} size="small">
                      <KeyboardDoubleArrowDown fontSize="small" />
                   </IconButton>
                   {indexes.length !== 3 && (
                      <>
-                        <IconButton onClick={addSubTask} size="small">
+                        <IconButton onClick={() => addSubTask()} size="small">
                            <KeyboardDoubleArrowRight fontSize="small" />
                         </IconButton>
                         <IconButton size="small" onClick={handleToggleCheckTaskAndSubtasks}>
@@ -165,6 +168,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 0.75, pb: 0.5 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
                   <Typography
+                     id={task.id}
                      component="span"
                      contentEditable
                      suppressContentEditableWarning
