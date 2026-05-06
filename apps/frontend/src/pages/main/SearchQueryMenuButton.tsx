@@ -44,7 +44,7 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
                ) : undefined,
             },
          }}
-         sx={{ scale: '0.8', flex: 1 }}
+         sx={{ scale: '0.8', flex: 1, '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: 'divider' } }}
       />
    );
 }

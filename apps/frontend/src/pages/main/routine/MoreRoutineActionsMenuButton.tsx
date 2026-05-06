@@ -34,7 +34,7 @@ export default function MoreRoutineActionsMenuButton({ section }: T_MoreRoutineA
          <IconButton
             onClick={(event) => setAnchorEl(event.currentTarget)}
             size="small"
-            sx={{ borderRadius: '50%', bgcolor: alpha(palette.primary.main, 0.1), border: '1px solid', borderColor: 'divider' }}
+            sx={{ borderRadius: '50%', bgcolor: alpha(palette.primary.main, 0.05), border: '1px solid', borderColor: 'divider' }}
          >
             <MoreHorizRounded fontSize="small" />
          </IconButton>
