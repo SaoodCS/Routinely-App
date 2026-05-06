@@ -78,7 +78,7 @@ export const router = createBrowserRouter(
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
-                                    <MoreRoutineActionsMenuButton />
+                                    <MoreRoutineActionsMenuButton section="morning" />
                                  </>
                               ),
                            },
@@ -94,7 +94,7 @@ export const router = createBrowserRouter(
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
-                                    <MoreRoutineActionsMenuButton />
+                                    <MoreRoutineActionsMenuButton section="evening" />
                                  </>
                               ),
                            },
