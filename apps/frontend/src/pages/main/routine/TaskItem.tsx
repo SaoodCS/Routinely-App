@@ -13,10 +13,13 @@ import type { PaletteOption, PaletteShade } from '../../../theme/theme';
 import { InputUtils } from '../../../utils';
 import ToggleTaskRelatedTagsMenuButton from './ToggleTaskRelatedTagsMenuButton';
 
-const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string }> = {
-   1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem' },
-   2: { indent: 2, color: ['secondary', 'light'], fontSize: '0.9rem' },
-   3: { indent: 3, color: ['success', 'light'], fontSize: '0.825rem' },
+const DEPTH_STYLES: Record<
+   T_TaskItemProps['indexes']['length'],
+   { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string; paddingTop: number }
+> = {
+   1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem', paddingTop: 1 },
+   2: { indent: 2, color: ['secondary', 'light'], fontSize: '0.9rem', paddingTop: 0 },
+   3: { indent: 3, color: ['success', 'light'], fontSize: '0.825rem', paddingTop: 0 },
 };
 
 interface T_TaskItemProps {
@@ -137,7 +140,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    return (
       <Grow in timeout={500}>
-         <ListItem sx={{ py: 0.5, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
+         <ListItem sx={{py: 0.3, pt: taskDepthStyle.paddingTop, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
             <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700} color="grey.500">
                {textOverlay}
             </Typography>
@@ -147,7 +150,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                style={{
                   borderRadius: '5px',
                   borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
-                  backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.15),
+                  backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.1),
                   opacity: textOverlay || task.isChecked ? 0.5 : 1,
                }}
             >
