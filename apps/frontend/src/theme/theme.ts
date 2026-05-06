@@ -45,7 +45,7 @@ const components_layout: ThemeOptions['components'] = {
    MuiAppBar: {
       defaultProps: { component: 'header', elevation: 0, position: 'sticky', square: false },
       styleOverrides: {
-         root: ({ theme: t }) => ({ borderBottom: `1px solid ${t.palette.divider}`, flexShrink: 0, height: hHeight, justifyContent: 'center' }),
+         root: ({ theme: t }) => ({  flexShrink: 0, height: hHeight, justifyContent: 'center' }),
       },
    },
    MuiContainer: {
