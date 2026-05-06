@@ -155,8 +155,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   direction={'row'}
                   alignItems={'center'}
                   gap={0.5}
-                  pl={0.5}
-                  pt={0.5}
+                  p={'4px 0 2px 4px'}
                   sx={{
                      '& > :last-child': { ml: 'auto' },
                      '& button': { p: 0, color: palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]] },
@@ -181,7 +180,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   )}
                   <ToggleTaskRelatedTagsMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
-               <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 0.75, pb: 0.5 }}>
+               <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 1.25, pb: 0.75 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
                   <Typography
                      id={task.id}
@@ -193,7 +192,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      onKeyDown={handleKeyPress}
                      fontSize={taskDepthStyle.fontSize}
                      color={task.isChecked || textOverlay ? 'textDisabled' : 'textPrimary'}
-                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75 }}
+                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75, pb: 0.15 }}
                   >
                      <SearchTextHighlighter query={searchQuery} fullText={task.label.trim() || ' '} highlightColor={palette.warning.main} />
                   </Typography>
