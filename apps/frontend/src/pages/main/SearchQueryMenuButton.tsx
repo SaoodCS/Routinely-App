@@ -44,6 +44,7 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
                ) : undefined,
             },
          }}
+         sx={{ scale: '0.8' }}
       />
    );
 }
