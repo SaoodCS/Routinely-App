@@ -24,31 +24,24 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { ref: tagHeaderRef, hideOnScrollElHeight: tagHeaderHeight } = useHideOnScroll(dragDropListRef, 'up', tags.length > 0);
    const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search');
+   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
    const [showHidden, setShowHidden] = useLocalStorage<boolean>('show-hidden', false);
 
    const visibleTasks = useMemo(() => {
       const visibleTasks = new Set<AppTypes.Task>();
       const tasksToCheck = [...tasks];
-      let visibleTaskCandidatesCount = 0;
       for (let i = 0; i < tasksToCheck.length; i += 1) {
          const task = tasksToCheck[i];
          const hideWhenTagsEnabled = task.hideWhenTags.some((tagId) => enabledTagIds.has(tagId));
          const showWhenTagsEnabled = task.showWhenTags.some((tagId) => enabledTagIds.has(tagId));
-         if (hideWhenTagsEnabled || (task.showWhenTags.length > 0 && !showWhenTagsEnabled)) continue;
-         tasksToCheck[visibleTaskCandidatesCount] = task;
-         visibleTaskCandidatesCount += 1;
+         const showWhenTagsEmpty = task.showWhenTags.length === 0;
+         if (hideWhenTagsEnabled || (!showWhenTagsEmpty && !showWhenTagsEnabled)) continue;
+         visibleTasks.add(task);
          if (task.children) for (const child of task.children) tasksToCheck.push(child);
       }
-      for (let i = visibleTaskCandidatesCount - 1; i >= 0; i -= 1) {
-         const task = tasksToCheck[i];
-         const hasVisibleChildren = task.children?.some((child) => visibleTasks.has(child)) ?? false;
-         const inSearchQuery = task.label.toLowerCase().includes(searchQuery?.toLowerCase() ?? '');
-         if (inSearchQuery || hasVisibleChildren) visibleTasks.add(task);
-      }
       return visibleTasks;
-   }, [tasks, searchQuery, enabledTagIds]);
+   }, [tasks, enabledTagIds]);
 
    const checkedTasksCount = useMemo(() => {
       let checkedTasksCount = 0;
@@ -56,11 +49,24 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       return checkedTasksCount;
    }, [visibleTasks]);
 
-   const isTaskVisible = (task: AppTypes.Task): boolean => visibleTasks.has(task);
+   const isTaskRendered = (task: AppTypes.Task): boolean => {
+      if (!(visibleTasks.has(task) || showHidden)) return false;
+      if (task.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+      if (!task.children) return false;
+      const tasksToCheck = [...task.children];
+      for (let i = 0; i < tasksToCheck.length; i += 1) {
+         const taskToCheck = tasksToCheck[i];
+         if (!(visibleTasks.has(taskToCheck) || showHidden)) continue;
+         if (taskToCheck.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+         if (taskToCheck.children) for (const child of taskToCheck.children) tasksToCheck.push(child);
+      }
+      return false;
+   };
 
    function handleTextOverlay(task: AppTypes.Task): string | undefined {
-      if (!isTaskVisible(task)) return 'HIDDEN';
-      if (!task.label.toLowerCase().includes(searchQuery?.toLowerCase() ?? '')) return 'PARENT OF SEARCH QUERY MATCH';
+      if (!isTaskRendered(task)) return;
+      if (!visibleTasks.has(task) && showHidden) return 'HIDDEN';
+      if (!task.label.toLowerCase().includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
    }
 
    function handleCreateTask(): void {
@@ -120,7 +126,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
             items={tasks}
             onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems)}
             renderItem={(task, dragElProps, i) =>
-               (isTaskVisible(task) || showHidden) && (
+               isTaskRendered(task) && (
                   <Box>
                      <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
                      {task.children && (
@@ -128,7 +134,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                            items={task.children}
                            onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i])}
                            renderItem={(subtask, dragElProps, j) =>
-                              (isTaskVisible(subtask) || showHidden) && (
+                              isTaskRendered(subtask) && (
                                  <Box>
                                     <TaskItem
                                        task={subtask}
@@ -142,7 +148,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                           items={subtask.children}
                                           onDrop={(newOrderedItems) => handleReorderOnDrop(newOrderedItems, [i, j])}
                                           renderItem={(subsubtask, dragElProps, k) =>
-                                             (isTaskVisible(subsubtask) || showHidden) && (
+                                             isTaskRendered(subsubtask) && (
                                                 <Box>
                                                    <TaskItem
                                                       task={subsubtask}
