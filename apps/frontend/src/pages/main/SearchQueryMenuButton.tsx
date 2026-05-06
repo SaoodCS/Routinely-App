@@ -33,13 +33,13 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
             input: {
                startAdornment: (
                   <InputAdornment position="start">
-                     <SearchOutlined fontSize="small" />
+                     <SearchOutlined />
                   </InputAdornment>
                ),
                endAdornment: searchQuery ? (
                   <InputAdornment position="end">
-                     <IconButton aria-label="Clear search" edge="end" onClick={handleClear} size="small">
-                        <ClearOutlined fontSize="small" />
+                     <IconButton edge="end" onClick={handleClear}>
+                        <ClearOutlined />
                      </IconButton>
                   </InputAdornment>
                ) : undefined,

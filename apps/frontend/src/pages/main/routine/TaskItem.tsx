@@ -157,27 +157,29 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                <Stack
                   direction={'row'}
                   alignItems={'center'}
-                  gap={0.5}
-                  p={'4px 0 2px 4px'}
+                  gap={1}
+                  px={1}
+                  pt={0.75}
+                  pb={0.5}
                   sx={{
                      '& > :last-child': { ml: 'auto' },
                      '& button': { p: 0, color: palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]] },
                   }}
                >
-                  <IconButton {...dragElProps} size="small">
-                     <DragIndicatorOutlined fontSize="small" />
+                  <IconButton {...dragElProps}>
+                     <DragIndicatorOutlined />
                   </IconButton>
 
-                  <IconButton onClick={() => addTaskBelow()} size="small">
-                     <KeyboardDoubleArrowDown fontSize="small" />
+                  <IconButton onClick={() => addTaskBelow()}>
+                     <KeyboardDoubleArrowDown />
                   </IconButton>
                   {indexes.length !== 3 && (
                      <>
-                        <IconButton onClick={() => addSubTaskBelow()} size="small">
-                           <KeyboardDoubleArrowRight fontSize="small" />
+                        <IconButton onClick={() => addSubTaskBelow()}>
+                           <KeyboardDoubleArrowRight />
                         </IconButton>
-                        <IconButton size="small" onClick={handleToggleCheckTaskAndSubtasks}>
-                           <DoneAllOutlined fontSize="small" />
+                        <IconButton onClick={handleToggleCheckTaskAndSubtasks}>
+                           <DoneAllOutlined />
                         </IconButton>
                      </>
                   )}

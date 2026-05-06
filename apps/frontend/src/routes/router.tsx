@@ -1,4 +1,5 @@
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route as ReactRoute, type RouteProps, type UIMatch } from 'react-router';
+import { LocalOfferOutlined, NightsStayOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
 import { ProtectedRoute, PublicOnlyRoute } from '../guards/guards';
 import { Login } from '../pages/auth/Login';
 import { Logout } from '../pages/auth/Logout';
@@ -18,7 +19,13 @@ export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
 const Route = ReactRoute as (props: T_RouteProps) => React.ReactElement | null;
 type T_Route_Handle = {
-   header?: { hide?: boolean; title?: string | React.ComponentType; showBack?: boolean; RightElement?: React.ComponentType };
+   header?: {
+      hide?: boolean;
+      Icon?: React.ComponentType;
+      title?: string | React.ComponentType;
+      showBack?: boolean;
+      RightElement?: React.ComponentType;
+   };
    nav?: { hide?: boolean; inBottomNav?: boolean };
 };
 //
@@ -75,6 +82,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Morning',
+                              Icon: () => <WbTwilightOutlined fontSize="small" sx={{ color: 'warning.main' }} />,
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
@@ -91,6 +99,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Evening',
+                              Icon: () => <NightsStayOutlined fontSize="small" sx={{ color: 'error.main' }} />,
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
@@ -109,6 +118,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Tags',
+                              Icon: () => <LocalOfferOutlined fontSize="small" sx={{ color: 'primary.light' }} />,
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
@@ -129,7 +139,10 @@ export const router = createBrowserRouter(
                   <Route
                      path={ROUTE_PATHS.main_settings}
                      element={<Settings />}
-                     handle={{ header: { title: 'Settings' }, nav: { inBottomNav: true } }}
+                     handle={{
+                        header: { title: 'Settings', Icon: () => <SettingsOutlined fontSize="small" sx={{ color: 'grey.400' }} /> },
+                        nav: { inBottomNav: true },
+                     }}
                   ></Route>
                </Route>
             </Route>

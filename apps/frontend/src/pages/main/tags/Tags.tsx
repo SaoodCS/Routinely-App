@@ -79,7 +79,7 @@ export default function Tags(): React.JSX.Element {
                isTagRendered(tag.label) && (
                   <Box>
                      <Grow in timeout={500}>
-                        <ListItem sx={{ py: 0.5, px: 1 }}>
+                        <ListItem sx={{ p: 1 }}>
                            <SwipeActionWrapper
                               rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
                               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
@@ -90,10 +90,11 @@ export default function Tags(): React.JSX.Element {
                                  backgroundColor: alpha(palette.divider, 0.05),
                                  border: `1px solid ${alpha(palette.divider, 0.075)}`,
                                  borderRadius: '6px',
+                                 padding: '0 12px 0 12px',
                               }}
                            >
-                              <Stack direction="row" gap={2} alignItems={'center'} px={1}>
-                                 <IconButton {...dragElProps} size="small" sx={{ borderRadius: '5px', px: 0, bgcolor: alpha(palette.divider, 0.05) }}>
+                              <Stack direction="row" gap={2} alignItems={'center'}>
+                                 <IconButton {...dragElProps} sx={{ borderRadius: '5px', px: 0 }}>
                                     <DragIndicatorOutlined />
                                  </IconButton>
                                  <Stack sx={{ py: 1 }}>
@@ -113,7 +114,7 @@ export default function Tags(): React.JSX.Element {
                                     </Typography>
                                  </Stack>
                               </Stack>
-                              <Stack direction={'row'} alignItems={'center'}>
+                              <Stack direction={'row'} alignItems={'center'} gap={1}>
                                  <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
                                  <IconButton onClick={() => handleOpenTagRoutine(tag.id)}>
                                     <ChevronRight sx={{ color: 'grey.400' }} />

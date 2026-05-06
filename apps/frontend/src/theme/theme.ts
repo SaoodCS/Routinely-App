@@ -1,5 +1,5 @@
 import type { Palette, PaletteColor, ThemeOptions } from '@mui/material/styles';
-import { createTheme } from '@mui/material/styles';
+import { alpha, createTheme } from '@mui/material/styles';
 
 const palette: ThemeOptions['palette'] = {
    mode: 'dark',
@@ -33,7 +33,7 @@ const palette: ThemeOptions['palette'] = {
 
 const typography: ThemeOptions['typography'] = {
    fontFamily: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'].join(','),
-   h6: { lineHeight: 1.25 },
+   h6: { lineHeight: 1 },
 };
 
 const transitions: ThemeOptions['transitions'] = {
@@ -70,15 +70,23 @@ const components: ThemeOptions['components'] = {
    MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },
    MuiChip: {
       defaultProps: { variant: 'filled', clickable: false },
-      styleOverrides: {
-         root: {
-            backgroundColor: 'black',
-            opacity: 1,
-            cursor: 'pointer',
-         },
-      },
+      styleOverrides: { root: { backgroundColor: 'black', opacity: 1, cursor: 'pointer' } },
    },
    MuiSnackbar: { defaultProps: { anchorOrigin: { horizontal: 'right', vertical: 'top' } } },
+   MuiAvatar: { styleOverrides: { root: ({ theme: t }) => ({ backgroundColor: alpha(t.palette.primary.main, 0.05) }) } },
+   MuiIconButton: {
+      defaultProps: { size: 'small' },
+      styleOverrides: {
+         root: ({ theme: t }) => ({
+            borderRadius: '50%',
+            backgroundColor: alpha(t.palette.primary.main, 0.05),
+            border: '1px solid',
+            borderColor: t.palette.divider,
+         }),
+      },
+   },
+   MuiIcon: { defaultProps: { fontSize: 'small' } },
+   MuiSvgIcon: { defaultProps: { fontSize: 'small' } },
 };
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });

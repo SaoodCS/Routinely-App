@@ -1,5 +1,5 @@
-import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
-import { AppBar, BottomNavigation, BottomNavigationAction, Box, Container, IconButton, Stack, Toolbar, Typography } from '@mui/material';
+import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined } from '@mui/icons-material';
+import { AppBar, Avatar, BottomNavigation, BottomNavigationAction, Box, Container, IconButton, Stack, Toolbar, Typography } from '@mui/material';
 import { Outlet, useMatches, useNavigate } from 'react-router';
 import { ROUTE_PATHS, type T_Route_Path, type T_Route_UseMatches } from '../../routes/router';
 
@@ -9,6 +9,7 @@ export default function MainLayout(): React.JSX.Element {
    const currentMatch = matches.at(-1);
    const HeaderRightEl = currentMatch?.handle?.header?.RightElement;
    const HeaderTitle = currentMatch?.handle?.header?.title ?? 'Routinely';
+   const HeaderIcon = currentMatch?.handle?.header?.Icon;
 
    return (
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -21,9 +22,14 @@ export default function MainLayout(): React.JSX.Element {
                      </IconButton>
                   )}
                   <Stack direction={'row'} alignItems={'center'} gap={1.5}>
-                     <WbTwilightOutlined sx={{ color: 'warning.light' }} fontSize="small" />
+                     {HeaderIcon && (
+                        <Avatar>
+                           <HeaderIcon />
+                        </Avatar>
+                     )}
                      {HeaderTitle && (typeof HeaderTitle === 'string' ? <Typography variant="h6">{HeaderTitle}</Typography> : <HeaderTitle />)}
                   </Stack>
+
                   <Stack direction={'row'} alignItems={'center'} ml={'auto'}>
                      {HeaderRightEl && <HeaderRightEl />}
                   </Stack>
