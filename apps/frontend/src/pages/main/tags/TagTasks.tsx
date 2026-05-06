@@ -1,8 +1,9 @@
 import { useMemo, useState, type JSX } from 'react';
 import type { AppTypes } from '@repo/types/index';
-import { AppBar, Box, Chip, Stack } from '@mui/material';
+import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
 import { useLocation, useParams, useSearchParams } from 'react-router';
 import { AppUtils } from '@repo/utils/index';
+import { Add } from '@mui/icons-material';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import DragAndDropList from '../../../components/DragAndDropList';
 import TaskItem from '../routine/TaskItem';
@@ -16,6 +17,7 @@ export default function TagTasks(): JSX.Element {
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
    const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
+   const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
@@ -38,10 +40,26 @@ export default function TagTasks(): JSX.Element {
       return relatedTasks;
    }, [tasks, tagId, searchQuery]);
 
+   const { showWhenTasksCount, checkedShowWhenTasksCount } = useMemo(() => {
+      let showWhenTasksCount = 0;
+      let checkedShowWhenTasksCount = 0;
+      for (const task of relatedTasks) {
+         if (!task.showWhenTags.includes(tagId)) continue;
+         showWhenTasksCount += 1;
+         if (task.isChecked) checkedShowWhenTasksCount += 1;
+      }
+      return { showWhenTasksCount, checkedShowWhenTasksCount };
+   }, [relatedTasks, tagId]);
+
    const isTaskVisible = (task: AppTypes.Task): boolean => relatedTasks.has(task);
 
    function handleChangeSection(section: AppTypes.RoutineSection): void {
       setSection(section);
+   }
+
+   function handleCreateTask(): void {
+      const newTask: AppTypes.Task = AppUtils.createNewTask({ showWhenTags: [tagId] });
+      setTasks([...tasks, newTask]);
    }
 
    function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
@@ -127,6 +145,20 @@ export default function TagTasks(): JSX.Element {
                )
             }
          />
+         <Grid ref={tasksDoneFooterRef} container sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
+            <Grid size={3} />
+            <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
+               <Chip
+                  label={`Done: ${checkedShowWhenTasksCount}/${showWhenTasksCount}`}
+                  sx={{ color: `${checkedShowWhenTasksCount === showWhenTasksCount ? 'success.main' : 'error.main'}`, cursor: 'default' }}
+               />
+            </Grid>
+            <Grid size={3} sx={{ textAlign: 'right' }}>
+               <Fab color="primary">
+                  <Add onClick={handleCreateTask} />
+               </Fab>
+            </Grid>
+         </Grid>
       </>
    );
 }
