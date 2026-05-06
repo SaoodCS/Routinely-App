@@ -8,11 +8,11 @@ import MainLayout from '../pages/main/MainLayout';
 import Routine from '../pages/main/routine/Routine';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
-import SortTagsButton from '../pages/main/tags/SortTagsButton';
 import Tags from '../pages/main/tags/Tags';
 import TagTasks from '../pages/main/tags/TagTasks';
 import TagTasksHeaderTitle from '../pages/main/tags/TagTasksHeaderTitle';
 import MoreRoutineActionsMenuButton from '../pages/main/routine/MoreRoutineActionsMenuButton';
+import MoreTagActionsMenuButton from '../pages/main/tags/MoreTagActionsMenuButton';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
@@ -112,7 +112,7 @@ export const router = createBrowserRouter(
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
-                                    <SortTagsButton />
+                                    <MoreTagActionsMenuButton />
                                  </>
                               ),
                            },
