@@ -1,4 +1,4 @@
-import type { ArrayTypes } from '.';
+import type { ArrayMaxLength } from './array.types.ts';
 
 export interface Task {
    id: string;
@@ -21,4 +21,4 @@ export interface Settings {
 
 export type RoutineSection = 'morning' | 'evening';
 export type TaskTagFields = NonNullable<{ [K in keyof Task]: K extends `${string}Tags${string}` ? K : never }[keyof Task]>;
-export type DepthIndexes = ArrayTypes.ArrayMaxLength<number, 3>;
+export type DepthIndexes = ArrayMaxLength<number, 3>;
