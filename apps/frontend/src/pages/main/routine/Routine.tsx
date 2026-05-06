@@ -24,7 +24,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const { ref: tagHeaderRef, hideOnScrollElHeight: tagHeaderHeight } = useHideOnScroll(dragDropListRef, 'up', tags.length > 0);
    const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search')?.toLowerCase() ?? '';
+   const searchQuery = searchParams.get('search');
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
    const [showHidden, setShowHidden] = useLocalStorage<boolean>('show-hidden', false);
 
@@ -44,7 +44,8 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       for (let i = visibleTaskCandidatesCount - 1; i >= 0; i -= 1) {
          const task = tasksToCheck[i];
          const hasVisibleChildren = task.children?.some((child) => visibleTasks.has(child)) ?? false;
-         if (task.label.toLowerCase().includes(searchQuery) || hasVisibleChildren) visibleTasks.add(task);
+         const inSearchQuery = searchQuery && task.label.toLowerCase().includes(searchQuery.toLowerCase());
+         if (inSearchQuery || hasVisibleChildren) visibleTasks.add(task);
       }
       return visibleTasks;
    }, [tasks, searchQuery, enabledTagIds]);
