@@ -1,11 +1,12 @@
 import { ClearOutlined, SearchOutlined } from '@mui/icons-material';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { alpha, IconButton, InputAdornment, TextField, useTheme } from '@mui/material';
 import type { ChangeEvent } from 'react';
 import { useSearchParams } from 'react-router';
 
 export default function SearchQueryMenuButton(): React.JSX.Element {
    const [searchParams, setSearchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
+   const { palette } = useTheme();
 
    function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
       const newSearchParams = new URLSearchParams(searchParams);
@@ -44,7 +45,12 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
                ) : undefined,
             },
          }}
-         sx={{ scale: '0.8', flex: 1, '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: 'divider' } }}
+         sx={{
+            scale: '0.8',
+            flex: 1,
+            '& .MuiOutlinedInput-root.Mui-focused fieldset': { border: '1px solid', borderColor: 'divider' },
+            bgcolor: alpha(palette.primary.main, 0.05),
+         }}
       />
    );
 }
