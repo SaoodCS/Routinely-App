@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
+import { alpha, AppBar, Box, Chip, Fab, Grid, Stack, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
 import { useMemo, type JSX } from 'react';
@@ -27,6 +27,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
    const [showHidden] = useLocalStorage<boolean>('show-hidden', false);
+   const { palette } = useTheme();
 
    const visibleTasks = useMemo(() => {
       const visibleTasks = new Set<AppTypes.Task>();
@@ -102,7 +103,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                         key={tag.id}
                         label={tag.label}
                         onClick={() => handleToggleTag(i)}
-                        sx={{ bgcolor: tag.isEnabled ? 'primary.dark' : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
+                        sx={{ bgcolor: tag.isEnabled ? alpha(palette.primary.main, 0.6) : 'grey.800', opacity: tag.isEnabled ? 1 : 0.4 }}
                      />
                   ))}
                </Stack>
