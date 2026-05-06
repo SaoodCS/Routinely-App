@@ -29,9 +29,9 @@ interface T_TaskItemProps {
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section, textOverlay } = props;
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, settings } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
-   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
    const { palette } = useTheme();
    const taskDepthStyle = DEPTH_STYLES[indexes.length];
    const [searchParams] = useSearchParams();

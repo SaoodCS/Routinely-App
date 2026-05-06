@@ -4,12 +4,12 @@ import { isEqual, orderBy } from 'lodash';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
 export default function SortTagsButton(): React.JSX.Element {
-   const { tags, setTags } = useFirestoreContext();
+   const { tags, setTagsDb } = useFirestoreContext();
 
    function handleSortTagsButton(): void {
       const sortedTags = orderBy(tags, ['label'], ['asc']);
       const direction = isEqual(tags, sortedTags) ? 'desc' : 'asc';
-      setTags(direction === 'asc' ? sortedTags : orderBy(tags, ['label'], [direction]));
+      setTagsDb(direction === 'asc' ? sortedTags : orderBy(tags, ['label'], [direction]));
    }
 
    return (

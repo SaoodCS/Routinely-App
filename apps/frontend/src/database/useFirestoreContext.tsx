@@ -12,10 +12,10 @@ type T_FirestoreContext = {
    eveningTasks: AppTypes.Task[];
    tags: AppTypes.Tag[];
    settings: AppTypes.Settings;
-   setMorningTasks: (value: T_FirestoreContext['morningTasks']) => void;
-   setEveningTasks: (value: T_FirestoreContext['eveningTasks']) => void;
-   setTags: (value: T_FirestoreContext['tags']) => void;
-   setSettings: (value: T_FirestoreContext['settings']) => void;
+   setMorningTasksDb: (value: T_FirestoreContext['morningTasks']) => void;
+   setEveningTasksDb: (value: T_FirestoreContext['eveningTasks']) => void;
+   setTagsDb: (value: T_FirestoreContext['tags']) => void;
+   setSettingsDb: (value: T_FirestoreContext['settings']) => void;
 };
 
 const FirestoreContext = createContext<T_FirestoreContext>({
@@ -23,18 +23,18 @@ const FirestoreContext = createContext<T_FirestoreContext>({
    eveningTasks: [],
    tags: [],
    settings: {},
-   setMorningTasks: () => {},
-   setEveningTasks: () => {},
-   setTags: () => {},
-   setSettings: () => {},
+   setMorningTasksDb: () => {},
+   setEveningTasksDb: () => {},
+   setTagsDb: () => {},
+   setSettingsDb: () => {},
 });
 
 function FirestoreContextProvider({ children }: { children: ReactNode }): ReactNode {
    const { uid } = useAuthContext().user ?? {};
-   const [morningTasks, setMorningTasksState] = useState<T_FirestoreContext['morningTasks']>([]);
-   const [eveningTasks, setEveningTasksState] = useState<T_FirestoreContext['eveningTasks']>([]);
-   const [tags, setTagsState] = useState<T_FirestoreContext['tags']>([]);
-   const [settings, setSettingsState] = useState<T_FirestoreContext['settings']>({});
+   const [morningTasks, setMorningTasksDbState] = useState<T_FirestoreContext['morningTasks']>([]);
+   const [eveningTasks, setEveningTasksDbState] = useState<T_FirestoreContext['eveningTasks']>([]);
+   const [tags, setTagsDbState] = useState<T_FirestoreContext['tags']>([]);
+   const [settings, setSettingsDbState] = useState<T_FirestoreContext['settings']>({});
    const [error, setError] = useState<string | undefined>(undefined);
    const [initialFetchDone, setInitialFetchDone] = useState<Record<FirestoreTypes.PathKey, boolean>>({
       routine_morning_tasks: false,
@@ -64,10 +64,10 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       };
 
       const unsubscribers = [
-         createOnSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksState, []),
-         createOnSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksState, []),
-         createOnSnapshot<typeof tags>('tags_list_tags', setTagsState, []),
-         createOnSnapshot<typeof settings>('settings_app_settings', setSettingsState, {}),
+         createOnSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksDbState, []),
+         createOnSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksDbState, []),
+         createOnSnapshot<typeof tags>('tags_list_tags', setTagsDbState, []),
+         createOnSnapshot<typeof settings>('settings_app_settings', setSettingsDbState, {}),
       ];
 
       return () => unsubscribers.forEach((unsub) => unsub());
@@ -86,15 +86,15 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       },
       [uid],
    );
-   const setMorningTasks = useMemo(() => createDocSetter<typeof morningTasks>('routine_morning_tasks'), [createDocSetter]);
-   const setEveningTasks = useMemo(() => createDocSetter<typeof eveningTasks>('routine_evening_tasks'), [createDocSetter]);
-   const setTags = useMemo(() => createDocSetter<typeof tags>('tags_list_tags'), [createDocSetter]);
-   const setSettings = useMemo(() => createDocSetter<typeof settings>('settings_app_settings'), [createDocSetter]);
+   const setMorningTasksDb = useMemo(() => createDocSetter<typeof morningTasks>('routine_morning_tasks'), [createDocSetter]);
+   const setEveningTasksDb = useMemo(() => createDocSetter<typeof eveningTasks>('routine_evening_tasks'), [createDocSetter]);
+   const setTagsDb = useMemo(() => createDocSetter<typeof tags>('tags_list_tags'), [createDocSetter]);
+   const setSettingsDb = useMemo(() => createDocSetter<typeof settings>('settings_app_settings'), [createDocSetter]);
 
    // memoize context values to prevent unnecessary re-renders
    const value: T_FirestoreContext = useMemo(
-      () => ({ morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings }),
-      [morningTasks, eveningTasks, tags, settings, setMorningTasks, setEveningTasks, setTags, setSettings],
+      () => ({ morningTasks, eveningTasks, tags, settings, setMorningTasksDb, setEveningTasksDb, setTagsDb, setSettingsDb }),
+      [morningTasks, eveningTasks, tags, settings, setMorningTasksDb, setEveningTasksDb, setTagsDb, setSettingsDb],
    );
 
    return (

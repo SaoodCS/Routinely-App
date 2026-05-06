@@ -14,26 +14,26 @@ import {
    Typography,
    type AlertProps,
 } from '@mui/material';
-import type React from 'react';
-import { useNavigate } from 'react-router';
 import { FirebaseError } from 'firebase/app';
 import { deleteUser } from 'firebase/auth';
+import type React from 'react';
 import { useState } from 'react';
-import { ROUTE_PATHS } from '../../../routes/router';
-import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import { useNavigate } from 'react-router';
 import { useAuthContext } from '../../../auth/useAuthContext';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import { ROUTE_PATHS } from '../../../routes/router';
 
 export default function Settings(): React.JSX.Element {
    const { user } = useAuthContext();
    const navigate = useNavigate();
-   const { setSettings, setMorningTasks, setEveningTasks, setTags, settings } = useFirestoreContext();
+   const { setSettingsDb, setMorningTasksDb, setEveningTasksDb, setTagsDb, settings } = useFirestoreContext();
    const [snackbar, setSnackbar] = useState<{ msg: string; severity: AlertProps['severity'] }>();
 
    function resetAllData(): void {
-      setSettings({});
-      setMorningTasks([]);
-      setEveningTasks([]);
-      setTags([]);
+      setSettingsDb({});
+      setMorningTasksDb([]);
+      setEveningTasksDb([]);
+      setTagsDb([]);
       setSnackbar({ msg: `All data has been reset`, severity: 'success' });
    }
 
@@ -49,7 +49,7 @@ export default function Settings(): React.JSX.Element {
    }
 
    function toggleInheritTagsFromSource(): void {
-      setSettings({ ...settings, inheritTagsFromSource: !settings.inheritTagsFromSource });
+      setSettingsDb({ ...settings, inheritTagsFromSource: !settings.inheritTagsFromSource });
    }
 
    return (

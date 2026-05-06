@@ -1,14 +1,14 @@
 import { Add } from '@mui/icons-material';
 import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
+import type { AppTypes } from '@repo/types/index';
+import { AppUtils } from '@repo/utils/index';
 import { useMemo, type JSX } from 'react';
 import { useLocation, useSearchParams } from 'react-router';
-import { AppUtils } from '@repo/utils/index';
-import type { AppTypes } from '@repo/types/index';
 import DragAndDropList from '../../../components/DragAndDropList';
-import useScrollSaver from '../../../hooks/useScrollSaver';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useHideOnScroll from '../../../hooks/useHideOnScroll';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import useScrollSaver from '../../../hooks/useScrollSaver';
 import TaskItem from './TaskItem';
 
 interface T_RoutineProps {
@@ -16,9 +16,9 @@ interface T_RoutineProps {
 }
 
 export default function Routine({ section }: T_RoutineProps): JSX.Element {
-   const { morningTasks, setMorningTasks, eveningTasks, setEveningTasks, tags, setTags } = useFirestoreContext();
+   const { morningTasks, setMorningTasksDb, eveningTasks, setEveningTasksDb, tags, setTagsDb } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
-   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
    const { pathname } = useLocation();
    const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: tagHeaderRef, hideOnScrollElHeight: tagHeaderHeight } = useHideOnScroll(dragDropListRef, 'up', tags.length > 0);
@@ -76,12 +76,12 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    function handleToggleTag(index: number): void {
       const updatedTag = { ...tags[index], isEnabled: !tags[index].isEnabled };
-      setTags(tags.with(index, updatedTag));
+      setTagsDb(tags.with(index, updatedTag));
    }
 
    function handleToggleAllTags(): void {
       const shouldEnableAllTags = tags.some(({ isEnabled }) => !isEnabled);
-      setTags(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
+      setTagsDb(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
    }
 
    function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {

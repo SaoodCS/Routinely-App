@@ -1,19 +1,19 @@
-import { useMemo, useState, type JSX } from 'react';
-import type { AppTypes } from '@repo/types/index';
-import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
-import { useLocation, useParams, useSearchParams } from 'react-router';
-import { AppUtils } from '@repo/utils/index';
 import { Add } from '@mui/icons-material';
-import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import { AppBar, Box, Chip, Fab, Grid, Stack } from '@mui/material';
+import type { AppTypes } from '@repo/types/index';
+import { AppUtils } from '@repo/utils/index';
+import { useMemo, useState, type JSX } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router';
 import DragAndDropList from '../../../components/DragAndDropList';
-import TaskItem from '../routine/TaskItem';
-import useScrollSaver from '../../../hooks/useScrollSaver';
+import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useHideOnScroll from '../../../hooks/useHideOnScroll';
+import useScrollSaver from '../../../hooks/useScrollSaver';
+import TaskItem from '../routine/TaskItem';
 
 export default function TagTasks(): JSX.Element {
    const { tagId = '' } = useParams();
    const { pathname } = useLocation();
-   const { morningTasks, eveningTasks, setMorningTasks, setEveningTasks } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setMorningTasksDb, setEveningTasksDb } = useFirestoreContext();
    const [section, setSection] = useState<AppTypes.RoutineSection>('morning');
    const { ref: dragDropListRef } = useScrollSaver(`${pathname}-scroll`);
    const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
@@ -21,7 +21,7 @@ export default function TagTasks(): JSX.Element {
    const [searchParams] = useSearchParams();
    const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
-   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
 
    const relatedTasks = useMemo(() => {
       const relatedTasks: Set<AppTypes.Task> = new Set();

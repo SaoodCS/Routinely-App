@@ -16,25 +16,25 @@ export default function Tags(): React.JSX.Element {
    const navigate = useNavigate();
    const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const { ref } = useScrollSaver('tags-scroll');
-   const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
+   const { tags, setTagsDb, setMorningTasksDb, setEveningTasksDb, morningTasks, eveningTasks } = useFirestoreContext();
    const { palette } = useTheme();
 
    function handleDelete(tagIndex: number): void {
-      setTags(tags.filter((_, i) => i !== tagIndex));
-      setMorningTasks(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
-      setEveningTasks(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
+      setTagsDb(tags.filter((_, i) => i !== tagIndex));
+      setMorningTasksDb(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
+      setEveningTasksDb(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
    }
 
    function handleToggle(tagIndex: number): void {
       const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, isEnabled: !tag.isEnabled } : tag));
-      setTags(updatedTags);
+      setTagsDb(updatedTags);
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
       const updatedLabel = event.currentTarget.textContent ?? '';
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, label: updatedLabel } : tag));
-      setTags(updatedTags);
+      setTagsDb(updatedTags);
    }
 
    function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
@@ -49,7 +49,7 @@ export default function Tags(): React.JSX.Element {
 
    function handleCreateTag(): void {
       const newTag = createNewTag();
-      setTags([...tags, newTag]);
+      setTagsDb([...tags, newTag]);
    }
 
    function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
@@ -74,7 +74,7 @@ export default function Tags(): React.JSX.Element {
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}
             items={tags}
-            onDrop={(newOrderedItems) => setTags(newOrderedItems)}
+            onDrop={(newOrderedItems) => setTagsDb(newOrderedItems)}
             renderItem={(tag, dragElProps, i) =>
                isTagRendered(tag.label) && (
                   <Box>

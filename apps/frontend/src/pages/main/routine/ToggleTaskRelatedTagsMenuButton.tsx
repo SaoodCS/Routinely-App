@@ -12,9 +12,9 @@ interface T_ToggleTaskRelatedTagsMenuButtonProps {
 }
 
 export default function ToggleTaskRelatedTagsMenuButton({ indexes, section, task }: T_ToggleTaskRelatedTagsMenuButtonProps): JSX.Element {
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks, tags } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
-   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
    function handleToggle(tagId: AppTypes.Tag['id'], taskTagField: AppTypes.TaskTagFields): void {

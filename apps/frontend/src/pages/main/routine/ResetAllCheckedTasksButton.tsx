@@ -8,9 +8,9 @@ interface T_ResetAllCheckedTasksButtonProps {
 }
 
 export default function ResetAllCheckedTasksButton({ section }: T_ResetAllCheckedTasksButtonProps): React.JSX.Element {
-   const { morningTasks, eveningTasks, setEveningTasks, setMorningTasks } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
-   const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
+   const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
 
    function handleResetTasksCheckedState(): void {
       const resetChecked = (tasks: AppTypes.Task[]): AppTypes.Task[] =>
