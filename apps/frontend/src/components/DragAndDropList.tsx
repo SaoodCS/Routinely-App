@@ -148,8 +148,7 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       if (currentIndex === start.index) return;
       const draggedItem = items[start.index];
       if (!draggedItem) return;
-      const remainingItems = [...items.slice(0, start.index), ...items.slice(start.index + 1)];
-      const newOrderedItems = [...remainingItems.slice(0, currentIndex), draggedItem, ...remainingItems.slice(currentIndex)];
+      const newOrderedItems = items.toSpliced(start.index, 1).toSpliced(currentIndex, 0, draggedItem);
       onDrop(newOrderedItems);
    }
 

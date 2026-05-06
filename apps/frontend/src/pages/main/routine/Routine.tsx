@@ -75,9 +75,8 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    }
 
    function handleToggleTag(index: number): void {
-      const newTags = [...tags];
-      newTags[index] = { ...newTags[index], isEnabled: !newTags[index].isEnabled };
-      setTags(newTags);
+      const updatedTag = { ...tags[index], isEnabled: !tags[index].isEnabled };
+      setTags(tags.with(index, updatedTag));
    }
 
    function handleToggleAllTags(): void {
