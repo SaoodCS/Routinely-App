@@ -13,7 +13,7 @@ import { ROUTE_PATHS } from '../../../routes/router';
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const navigate = useNavigate();
-   const searchQuery = searchParams.get('search');
+   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const { ref } = useScrollSaver('tags-scroll');
    const { tags, setTags, setMorningTasks, setEveningTasks, morningTasks, eveningTasks } = useFirestoreContext();
    const { palette } = useTheme();
@@ -42,8 +42,8 @@ export default function Tags(): React.JSX.Element {
       event.currentTarget.blur();
    }
 
-   function isTagHidden(tagLabel: string): boolean {
-      return !(!searchQuery || tagLabel.toLowerCase().includes(searchQuery.toLowerCase()));
+   function isTagRendered(tagLabel: string): boolean {
+      return tagLabel.toLowerCase().includes(normalizedSearchQuery);
    }
 
    function handleCreateTag(): void {
@@ -75,7 +75,7 @@ export default function Tags(): React.JSX.Element {
             items={tags}
             onDrop={(newOrderedItems) => setTags(newOrderedItems)}
             renderItem={(tag, dragElProps, i) =>
-               !isTagHidden(tag.label) && (
+               isTagRendered(tag.label) && (
                   <Box>
                      <Grow in timeout={500}>
                         <ListItem sx={{ py: 0.5, px: 1 }}>

@@ -10,6 +10,7 @@ import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
+import { InputUtils } from '../../../utils';
 import ToggleTaskShowWhenMenuButton from './ToggleTaskShowWhenMenuButton';
 
 const DEPTH_STYLES: Record<T_TaskItemProps['indexes']['length'], { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string }> = {
@@ -178,7 +179,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      component="span"
                      contentEditable
                      suppressContentEditableWarning
-                     onInput={handleFormatLabelOnInput}
+                     onInput={InputUtils.formatInputOnSpace}
                      onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleBlurOnEnterClick}
                      fontSize={taskDepthStyle.fontSize}
