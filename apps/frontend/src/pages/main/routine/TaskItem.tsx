@@ -140,7 +140,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    return (
       <Grow in timeout={500}>
-         <ListItem sx={{py: 0.3, pt: taskDepthStyle.paddingTop, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
+         <ListItem sx={{ py: 0.3, pt: taskDepthStyle.paddingTop, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
             <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700} color="grey.500">
                {textOverlay}
             </Typography>

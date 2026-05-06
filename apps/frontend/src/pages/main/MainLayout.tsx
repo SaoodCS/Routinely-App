@@ -1,5 +1,5 @@
-import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined } from '@mui/icons-material';
-import { AppBar, BottomNavigation, BottomNavigationAction, Box, Container, IconButton, Toolbar, Typography } from '@mui/material';
+import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
+import { AppBar, BottomNavigation, BottomNavigationAction, Box, Container, IconButton, Stack, Toolbar, Typography } from '@mui/material';
 import { Outlet, useMatches, useNavigate } from 'react-router';
 import { ROUTE_PATHS, type T_Route_Path, type T_Route_UseMatches } from '../../routes/router';
 
@@ -14,16 +14,19 @@ export default function MainLayout(): React.JSX.Element {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
          {!currentMatch?.handle?.header?.hide && (
             <AppBar>
-               <Toolbar>
+               <Toolbar sx={{ gap: 1 }}>
                   {currentMatch?.handle?.header?.showBack && (
                      <IconButton sx={{ mr: 1 }} onClick={() => void navigate(matches.at(-2)?.pathname ?? '/')}>
                         <ArrowBack />
                      </IconButton>
                   )}
-                  <Box sx={{ flexGrow: 1 }}>
+                  <Stack direction={'row'} alignItems={'center'} gap={1.5}>
+                     <WbTwilightOutlined sx={{ color: 'warning.light' }} fontSize="small" />
                      {HeaderTitle && (typeof HeaderTitle === 'string' ? <Typography variant="h6">{HeaderTitle}</Typography> : <HeaderTitle />)}
-                  </Box>
-                  {HeaderRightEl && <HeaderRightEl />}
+                  </Stack>
+                  <Stack direction={'row'} alignItems={'center'} ml={'auto'}>
+                     {HeaderRightEl && <HeaderRightEl />}
+                  </Stack>
                </Toolbar>
             </AppBar>
          )}

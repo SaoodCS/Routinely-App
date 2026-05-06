@@ -47,9 +47,9 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
          }}
          sx={{
             scale: '0.8',
-            flex: 1,
             '& .MuiOutlinedInput-root.Mui-focused fieldset': { border: '1px solid', borderColor: 'divider' },
             bgcolor: alpha(palette.primary.main, 0.05),
+            width: '120px',
          }}
       />
    );

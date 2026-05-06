@@ -33,6 +33,7 @@ const palette: ThemeOptions['palette'] = {
 
 const typography: ThemeOptions['typography'] = {
    fontFamily: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'].join(','),
+   h6: { lineHeight: 1.25 },
 };
 
 const transitions: ThemeOptions['transitions'] = {
