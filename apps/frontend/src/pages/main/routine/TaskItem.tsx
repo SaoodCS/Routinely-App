@@ -155,8 +155,9 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   direction={'row'}
                   alignItems={'center'}
                   gap={0.5}
+                  pl={0.5}
+                  pt={0.5}
                   sx={{
-                     pt: 0.5,
                      '& > :last-child': { ml: 'auto' },
                      '& button': { p: 0, color: palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]] },
                   }}
