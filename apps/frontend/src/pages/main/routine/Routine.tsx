@@ -84,6 +84,13 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       setTagsDb(tags.map((tag) => ({ ...tag, isEnabled: shouldEnableAllTags })));
    }
 
+   function handleUncheckAllTasks(): void {
+      const resetChecked = (tasks: AppTypes.Task[]): AppTypes.Task[] =>
+         tasks.map((task) => ({ ...task, isChecked: false, children: task.children ? resetChecked(task.children) : undefined }));
+      const updatedTasks = resetChecked(tasks);
+      setTasks(updatedTasks);
+   }
+
    function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
       if (!indexes) {
          setTasks(newOrderedItems);
@@ -100,16 +107,21 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       <>
          {tags.length > 0 && (
             <AppBar ref={tagHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
-               <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
-                  <Chip label={'Toggle All Tags'} onClick={handleToggleAllTags} color="primary" variant={'outlined'} />
+               <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'} justifyContent={'center'}>
+                  <Chip label={'Toggle All Tags'} onClick={handleToggleAllTags} color="primary" variant={'outlined'} size={'small'} />
                   <Chip
+                     size={'small'}
                      label={`${showHidden ? 'Hide' : 'Show'} Hidden Tasks`}
                      onClick={() => setShowHidden(!showHidden)}
                      color="primary"
                      variant={'outlined'}
                   />
+                  <Chip label={`Uncheck All`} onClick={handleUncheckAllTasks} color="primary" variant={'outlined'} size={'small'} />
+               </Stack>
+               <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                   {tags.map((tag, i) => (
                      <Chip
+                        size={'small'}
                         key={tag.id}
                         label={tag.label}
                         onClick={() => handleToggleTag(i)}

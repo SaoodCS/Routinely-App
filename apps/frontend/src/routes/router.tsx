@@ -5,7 +5,6 @@ import { Logout } from '../pages/auth/Logout';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import ResetAllCheckedTasksButton from '../pages/main/routine/ResetAllCheckedTasksButton';
 import Routine from '../pages/main/routine/Routine';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import Settings from '../pages/main/settings/Settings';
@@ -75,12 +74,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Morning',
-                              RightElement: () => (
-                                 <>
-                                    <ResetAllCheckedTasksButton section="morning" />
-                                    <SearchQueryMenuButton />
-                                 </>
-                              ),
+                              RightElement: () => <SearchQueryMenuButton />,
                            },
                            nav: { inBottomNav: true },
                         }}
@@ -91,12 +85,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Evening',
-                              RightElement: () => (
-                                 <>
-                                    <ResetAllCheckedTasksButton section="evening" />
-                                    <SearchQueryMenuButton />
-                                 </>
-                              ),
+                              RightElement: () => <SearchQueryMenuButton />,
                            },
                            nav: { inBottomNav: true },
                         }}
