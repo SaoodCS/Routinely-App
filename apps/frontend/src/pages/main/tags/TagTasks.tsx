@@ -19,7 +19,7 @@ export default function TagTasks(): JSX.Element {
    const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
    const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
-   const searchQuery = searchParams.get('search');
+   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasks : setEveningTasks;
 
@@ -28,10 +28,13 @@ export default function TagTasks(): JSX.Element {
       const tasksToCheck = [...tasks];
       for (let i = 0; i < tasksToCheck.length; i += 1) {
          const task = tasksToCheck[i];
+         if (task.children) for (const child of task.children) tasksToCheck.push(child);
+      }
+      for (let i = tasksToCheck.length - 1; i >= 0; i -= 1) {
+         const task = tasksToCheck[i];
          const isTaskRelatedToTag = task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
          const areChildrenOfTaskRelatedToTag = task.children?.some((child) => relatedTasks.has(child)) ?? false;
          if (isTaskRelatedToTag || areChildrenOfTaskRelatedToTag) relatedTasks.add(task);
-         if (task.children) for (const child of task.children) tasksToCheck.push(child);
       }
       return relatedTasks;
    }, [tasks, tagId]);
@@ -51,7 +54,25 @@ export default function TagTasks(): JSX.Element {
       return checkedTasksRelatedViaShowWhenFieldCount;
    }, [tasksRelatedViaShowWhenField]);
 
-   const isTaskVisible = (task: AppTypes.Task): boolean => relatedTasks.has(task);
+   const isTaskVisible = (task: AppTypes.Task): boolean => {
+      if (!relatedTasks.has(task)) return false;
+      if (task.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+      if (!task.children) return false;
+      const tasksToCheck = [...task.children];
+      for (let i = 0; i < tasksToCheck.length; i += 1) {
+         const taskToCheck = tasksToCheck[i];
+         if (!relatedTasks.has(taskToCheck)) continue;
+         if (taskToCheck.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+         if (taskToCheck.children) for (const child of taskToCheck.children) tasksToCheck.push(child);
+      }
+      return false;
+   };
+
+   function handleTextOverlay(task: AppTypes.Task): string | undefined {
+      if (task.hideWhenTags.includes(tagId)) return 'TASK IS HIDDEN WHEN TAG IS ENABLED';
+      if (!task.showWhenTags.includes(tagId)) return 'PARENT OF SUBTASK RELATED TO TAG';
+      if (!task.label.toLowerCase().includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
+   }
 
    function handleChangeSection(section: AppTypes.RoutineSection): void {
       setSection(section);
@@ -72,11 +93,6 @@ export default function TagTasks(): JSX.Element {
       const parentTaskIndex = indexes.at(-1)!;
       parentTaskList[parentTaskIndex] = { ...parentTaskList[parentTaskIndex], children: newOrderedItems };
       setTasks(updatedTasks);
-   }
-
-   function handleTextOverlay(task: AppTypes.Task): string | undefined {
-      if (task.hideWhenTags.includes(tagId)) return 'TASK IS HIDDEN WHEN TAG IS ENABLED';
-      if (!task.showWhenTags.includes(tagId)) return 'PARENT OF SUBTASK RELATED TO TAG';
    }
 
    return (
