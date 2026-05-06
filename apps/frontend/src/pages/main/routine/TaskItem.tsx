@@ -10,6 +10,7 @@ import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
+import ContentEditableInput from '../../../components/ContentEditableInput';
 import { InputUtils } from '../../../utils';
 import ToggleTaskRelatedTagsMenuButton from './ToggleTaskRelatedTagsMenuButton';
 
@@ -118,8 +119,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement, Element>): void {
-      const updatedLabel = event.currentTarget.textContent ?? '';
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLInputElement, Element>): void {
+      const updatedLabel = event.currentTarget.value;
       if (updatedLabel === task.label) return;
       const updatedTasks = [...tasks];
       const taskListToUpdate = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
@@ -129,7 +130,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleKeyPress(event: KeyboardEvent<HTMLSpanElement>): void {
+   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>): void {
       if (event.key === 'Enter') event.currentTarget.blur();
       if (event.ctrlKey) {
          if (event.key === 'ArrowDown') addTaskBelow(true);
@@ -187,20 +188,22 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                </Stack>
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 1.25, pb: 0.75 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
-                  <Typography
+                  <ContentEditableInput
                      id={task.id}
-                     component="span"
-                     contentEditable
-                     suppressContentEditableWarning
-                     onInput={InputUtils.formatInputOnSpace}
+                     text={task.label}
                      onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleKeyPress}
-                     fontSize={taskDepthStyle.fontSize}
-                     color={task.isChecked || textOverlay ? 'textDisabled' : 'textPrimary'}
-                     sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75, pb: 0.15 }}
+                     onInput={InputUtils.formatInputOnSpace}
+                     style={{
+                        fontSize: taskDepthStyle.fontSize,
+                        color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,
+                        textDecoration: task.isChecked ? 'line-through' : 'none',
+                        width: '100%',
+                        padding: '0 6px 1.2px 0',
+                     }}
                   >
-                     <SearchTextHighlighter query={searchQuery} fullText={task.label.trim() || ' '} highlightColor={palette.warning.main} />
-                  </Typography>
+                     <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
+                  </ContentEditableInput>
                </Stack>
             </SwipeActionWrapper>
          </ListItem>
