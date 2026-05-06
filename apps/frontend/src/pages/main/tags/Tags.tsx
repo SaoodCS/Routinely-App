@@ -9,6 +9,7 @@ import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ROUTE_PATHS } from '../../../routes/router';
+import { InputUtils } from '../../../utils';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -100,6 +101,7 @@ export default function Tags(): React.JSX.Element {
                                        component="span"
                                        contentEditable
                                        suppressContentEditableWarning
+                                       onInput={InputUtils.formatInputOnSpace}
                                        onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                        onKeyDown={handleBlurOnEnterClick}
                                        sx={{ outline: 'none' }}
