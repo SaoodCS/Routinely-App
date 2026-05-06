@@ -28,7 +28,6 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
          onChange={handleChange}
          placeholder="Search"
          size="small"
-         variant="standard"
          slotProps={{
             input: {
                startAdornment: (
@@ -44,12 +43,6 @@ export default function SearchQueryMenuButton(): React.JSX.Element {
                   </InputAdornment>
                ) : undefined,
             },
-         }}
-         sx={{
-            m: 1,
-            width: { xs: 'min(56vw, 230px)', sm: 260 },
-            '& .MuiOutlinedInput-root': { borderRadius: 3, bgcolor: 'action.hover' },
-            '& .MuiInputAdornment-root': { color: 'primary.light' },
          }}
       />
    );
