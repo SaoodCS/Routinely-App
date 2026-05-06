@@ -55,7 +55,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
    }
 
-   function addSubTask(focusOnNewTask?: boolean): void {
+   function addSubTaskBelow(focusOnNewTask?: boolean): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
@@ -63,6 +63,18 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       const taskIndex = indexes.at(-1)!;
       const taskToUpdate = taskListToUpdate[taskIndex];
       taskListToUpdate[taskIndex] = { ...taskToUpdate, children: [newTask, ...(taskToUpdate.children ?? [])] };
+      setTasks(updatedTasks);
+      if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
+   }
+
+   function addParentTaskBelow(focusOnNewTask?: boolean): void {
+      if (indexes.length === 1) return;
+      const { inheritTagsFromSource } = settings;
+      const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
+      const updatedTasks = [...tasks];
+      const taskListToInsertInto = AppUtils.getTasksListToUpdate(updatedTasks, indexes.slice(0, -1));
+      const newTaskIndex = indexes.at(-2)! + 1;
+      taskListToInsertInto.splice(newTaskIndex, 0, newTask);
       setTasks(updatedTasks);
       if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
    }
@@ -116,8 +128,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    function handleKeyPress(event: KeyboardEvent<HTMLSpanElement>): void {
       if (event.key === 'Enter') event.currentTarget.blur();
-      else if (event.key === 'ArrowDown') addTaskBelow(true);
-      else if (event.key === 'ArrowRight' && indexes.length < 3) addSubTask(true);
+      if (event.ctrlKey) {
+         if (event.key === 'ArrowDown') addTaskBelow(true);
+         else if (event.key === 'ArrowRight' && indexes.length < 3) addSubTaskBelow(true);
+         else if (event.key === 'ArrowLeft') addParentTaskBelow(true);
+      }
    }
 
    return (
@@ -155,7 +170,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   </IconButton>
                   {indexes.length !== 3 && (
                      <>
-                        <IconButton onClick={() => addSubTask()} size="small">
+                        <IconButton onClick={() => addSubTaskBelow()} size="small">
                            <KeyboardDoubleArrowRight fontSize="small" />
                         </IconButton>
                         <IconButton size="small" onClick={handleToggleCheckTaskAndSubtasks}>
