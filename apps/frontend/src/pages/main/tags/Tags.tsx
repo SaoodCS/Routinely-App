@@ -80,7 +80,7 @@ export default function Tags(): React.JSX.Element {
                isTagRendered(tag.label) && (
                   <Box>
                      <Grow in timeout={500}>
-                        <ListItem sx={{ p: 1 }}>
+                        <ListItem disablePadding sx={{ px: 1, pt: 1 }}>
                            <SwipeActionWrapper
                               rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
                               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
