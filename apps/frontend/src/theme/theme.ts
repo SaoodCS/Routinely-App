@@ -70,7 +70,9 @@ const components: ThemeOptions['components'] = {
    MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },
    MuiChip: {
       defaultProps: { variant: 'filled', clickable: false },
-      styleOverrides: { root: { backgroundColor: 'black', opacity: 1, cursor: 'pointer' } },
+      styleOverrides: {
+         root: ({ theme: t }) => ({ backgroundColor: 'black', opacity: 1, cursor: 'pointer', border: '1px solid', borderColor: t.palette.divider }),
+      },
    },
    MuiSnackbar: { defaultProps: { anchorOrigin: { horizontal: 'right', vertical: 'top' } } },
    MuiAvatar: { styleOverrides: { root: ({ theme: t }) => ({ backgroundColor: alpha(t.palette.primary.main, 0.05) }) } },
