@@ -34,8 +34,8 @@ export default function TagTasks(): JSX.Element {
          const task = tasksToCheck[i];
          const hasTag = task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
          const hasRelatedChildren = task.children?.some((child) => relatedTasks.has(child)) ?? false;
-         const inSearchQuery = searchQuery && task.label.toLowerCase().includes(searchQuery.toLowerCase());
-         if (hasTag || hasRelatedChildren || inSearchQuery) relatedTasks.add(task);
+         const inSearchQuery = task.label.toLowerCase().includes(searchQuery?.toLowerCase() ?? '');
+         if ((hasTag || hasRelatedChildren) && inSearchQuery) relatedTasks.add(task);
       }
       return relatedTasks;
    }, [tasks, tagId, searchQuery]);

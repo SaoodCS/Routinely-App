@@ -44,7 +44,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
       for (let i = visibleTaskCandidatesCount - 1; i >= 0; i -= 1) {
          const task = tasksToCheck[i];
          const hasVisibleChildren = task.children?.some((child) => visibleTasks.has(child)) ?? false;
-         const inSearchQuery = searchQuery && task.label.toLowerCase().includes(searchQuery.toLowerCase());
+         const inSearchQuery = task.label.toLowerCase().includes(searchQuery?.toLowerCase() ?? '');
          if (inSearchQuery || hasVisibleChildren) visibleTasks.add(task);
       }
       return visibleTasks;
@@ -134,7 +134,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                        dragElProps={dragElProps}
                                        indexes={[i, j]}
                                        section={section}
-                                       textOverlay={handleTextOverlay(task)}
+                                       textOverlay={handleTextOverlay(subtask)}
                                     />
                                     {subtask.children && (
                                        <DragAndDropList
@@ -148,7 +148,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                                                       dragElProps={dragElProps}
                                                       indexes={[i, j, k]}
                                                       section={section}
-                                                      textOverlay={handleTextOverlay(task)}
+                                                      textOverlay={handleTextOverlay(subsubtask)}
                                                    />
                                                 </Box>
                                              )
