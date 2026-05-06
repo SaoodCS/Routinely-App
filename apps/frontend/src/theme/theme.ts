@@ -45,7 +45,7 @@ const components_layout: ThemeOptions['components'] = {
    MuiAppBar: {
       defaultProps: { component: 'header', elevation: 0, position: 'sticky', square: false },
       styleOverrides: {
-         root: ({ theme: t }) => ({  flexShrink: 0, height: hHeight, justifyContent: 'center' }),
+         root: { flexShrink: 0, height: hHeight, justifyContent: 'center' },
       },
    },
    MuiContainer: {
@@ -65,6 +65,7 @@ const components_layout: ThemeOptions['components'] = {
 
 const components: ThemeOptions['components'] = {
    MuiMenuItem: { defaultProps: { dense: true } },
+   MuiMenu: { styleOverrides: { paper: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } },
    MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },
    MuiChip: {
       defaultProps: { variant: 'filled', clickable: false },

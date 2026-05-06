@@ -25,12 +25,7 @@ export default function MoreTagActionsMenuButton(): React.JSX.Element {
          >
             <MoreHorizRounded fontSize="small" />
          </IconButton>
-         <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-            slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } }}
-         >
+         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             <MenuItem onClick={handleSortTags}>
                <ListItemIcon>{<SortByAlpha />}</ListItemIcon>
                <ListItemText>{`Sort Tag Order`}</ListItemText>

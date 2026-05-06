@@ -39,12 +39,7 @@ export default function MoreRoutineActionsMenuButton({ section }: T_MoreRoutineA
             <MoreHorizRounded fontSize="small" />
          </IconButton>
 
-         <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-            slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } }}
-         >
+         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             <MenuItem onClick={() => setShowHidden(!showHidden)}>
                <ListItemIcon>{showHidden ? <VisibilityOffOutlined /> : <VisibilityOutlined />}</ListItemIcon>
                <ListItemText>{`${showHidden ? 'Hide' : 'Show'} Hidden Tasks`}</ListItemText>

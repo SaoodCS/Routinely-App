@@ -33,12 +33,7 @@ export default function ToggleTaskRelatedTagsMenuButton({ indexes, section, task
          <IconButton onClick={(event) => setAnchorEl(event.currentTarget)} size="small">
             <MoreVertOutlined fontSize="small" />
          </IconButton>
-         <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-            slotProps={{ paper: { sx: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } }}
-         >
+         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
             <MenuItem key="header" disabled sx={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 1 }}>
                <ListItemText>When</ListItemText>
                <ListItemText>Show</ListItemText>

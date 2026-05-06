@@ -105,7 +105,7 @@ export default function TagTasks(): JSX.Element {
                      label={item.charAt(0).toUpperCase() + item.slice(1)}
                      onClick={() => handleChangeSection(item)}
                      variant={item === section ? 'filled' : 'outlined'}
-                     sx={{ cursor: 'pointer', bgcolor: item === section ? 'primary.dark' : 'transparent', width: '100%' }}
+                     sx={{ bgcolor: item === section ? 'primary.dark' : 'transparent', width: '100%' }}
                   />
                ))}
             </Stack>
