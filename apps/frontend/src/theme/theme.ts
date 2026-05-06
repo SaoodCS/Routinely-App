@@ -88,6 +88,7 @@ const components: ThemeOptions['components'] = {
          }),
       },
    },
+   MuiFab: { defaultProps: { color: 'primary' } },
    MuiIcon: { defaultProps: { fontSize: 'small' } },
    MuiSvgIcon: { defaultProps: { fontSize: 'small' } },
 };
