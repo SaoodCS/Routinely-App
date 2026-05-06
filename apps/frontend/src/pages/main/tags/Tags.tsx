@@ -32,16 +32,14 @@ export default function Tags(): React.JSX.Element {
    }
 
    function handleSaveLabelOnBlur(event: FocusEvent<HTMLInputElement>, tagIndex: number): void {
-      const updatedLabel = event.currentTarget.textContent ?? '';
+      const updatedLabel = event.currentTarget.value;
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, label: updatedLabel } : tag));
       setTagsDb(updatedTags);
    }
 
-   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLInputElement>): void {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      event.currentTarget.blur();
+   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>): void {
+      if (event.key === 'Enter') event.currentTarget.blur();
    }
 
    function isTagRendered(tagLabel: string): boolean {
@@ -102,7 +100,7 @@ export default function Tags(): React.JSX.Element {
                                     <ContentEditableInput
                                        text={tag.label}
                                        onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                                       onKeyDown={handleBlurOnEnterClick}
+                                       onKeyDown={handleKeyPress}
                                        onInput={InputUtils.formatInputOnSpace}
                                        style={{ outline: 'none' }}
                                     >
