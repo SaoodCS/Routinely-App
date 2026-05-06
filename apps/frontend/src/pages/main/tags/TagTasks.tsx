@@ -97,7 +97,7 @@ export default function TagTasks(): JSX.Element {
 
    return (
       <>
-         <AppBar ref={sectionHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
+         <AppBar ref={sectionHeaderRef} component="div" position={'absolute'} sx={{ height: 'fit-content' }}>
             <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                {(['morning', 'evening'] satisfies AppTypes.RoutineSection[]).map((item) => (
                   <Chip

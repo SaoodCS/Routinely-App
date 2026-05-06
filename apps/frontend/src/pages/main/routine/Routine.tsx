@@ -95,7 +95,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
    return (
       <>
          {tags.length > 0 && (
-            <AppBar ref={tagHeaderRef} component="div" sx={{ position: 'absolute', height: 'fit-content', border: 'none' }}>
+            <AppBar ref={tagHeaderRef} component="div" position={'absolute'} sx={{ height: 'fit-content' }}>
                <Stack spacing={1} direction={'row'} overflow={'auto'} p={1} alignItems={'center'}>
                   {tags.map((tag, i) => (
                      <Chip
