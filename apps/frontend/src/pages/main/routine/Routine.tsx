@@ -60,6 +60,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
 
    function handleTextOverlay(task: AppTypes.Task): string | undefined {
       if (!isTaskVisible(task)) return 'HIDDEN';
+      if (!task.label.toLowerCase().includes(searchQuery?.toLowerCase() ?? '')) return 'PARENT OF SEARCH QUERY MATCH';
    }
 
    function handleCreateTask(): void {
