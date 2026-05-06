@@ -10,6 +10,7 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ROUTE_PATHS } from '../../../routes/router';
 import { InputUtils } from '../../../utils';
+import ContentEditableInput from '../../../components/ContentEditableInput';
 
 export default function Tags(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -98,17 +99,15 @@ export default function Tags(): React.JSX.Element {
                                     <DragIndicatorOutlined />
                                  </IconButton>
                                  <Stack sx={{ py: 1 }}>
-                                    <Typography
-                                       component="span"
-                                       contentEditable
-                                       suppressContentEditableWarning
-                                       onInput={InputUtils.formatInputOnSpace}
+                                    <ContentEditableInput
+                                       text={tag.label}
                                        onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                        onKeyDown={handleBlurOnEnterClick}
-                                       sx={{ outline: 'none' }}
+                                       onInput={InputUtils.formatInputOnSpace}
+                                       style={{ outline: 'none' }}
                                     >
                                        {tag.label}
-                                    </Typography>
+                                    </ContentEditableInput>
                                     <Typography variant={'caption'} color="textSecondary">
                                        {`${getNumberOfTasks(tag, 'showWhenTags')} shown, ${getNumberOfTasks(tag, 'hideWhenTags')} hidden`}
                                     </Typography>
