@@ -105,10 +105,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
-      if (event.key !== 'Enter') return;
+   function handleKeyPress(event: KeyboardEvent<HTMLSpanElement>): void {
       event.preventDefault();
-      event.currentTarget.blur();
+      if (event.key === 'Enter') event.currentTarget.blur();
+      else if (event.key === 'ArrowDown') {
+         event.currentTarget.blur();
+         addTaskBelow();
+      } else if (event.key === 'ArrowRight' && indexes.length < 3) {
+         event.currentTarget.blur();
+         addSubTask();
+      }
    }
 
    return (
@@ -164,7 +170,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      suppressContentEditableWarning
                      onInput={InputUtils.formatInputOnSpace}
                      onBlur={handleSaveLabelOnBlur}
-                     onKeyDown={handleBlurOnEnterClick}
+                     onKeyDown={handleKeyPress}
                      fontSize={taskDepthStyle.fontSize}
                      color={task.isChecked || textOverlay ? 'textDisabled' : 'textPrimary'}
                      sx={{ outline: 'none', textDecoration: task.isChecked ? 'line-through' : 'none', width: '100%', pr: 0.75 }}
