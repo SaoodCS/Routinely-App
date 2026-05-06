@@ -65,6 +65,7 @@ const components_layout: ThemeOptions['components'] = {
 };
 
 const components: ThemeOptions['components'] = {
+   MuiAlert: { styleOverrides: { root: { width: '100%' } } },
    MuiMenuItem: { defaultProps: { dense: true } },
    MuiMenu: { styleOverrides: { paper: { overflowY: 'auto', maxHeight: '30rem', minWidth: '15rem' } } },
    MuiButton: { styleOverrides: { root: { textTransform: 'none' } } },

@@ -82,7 +82,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Morning',
-                              Icon: () => <WbTwilightOutlined fontSize="small" sx={{ color: 'warning.main' }} />,
+                              Icon: () => <WbTwilightOutlined sx={{ color: 'warning.main' }} />,
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
@@ -99,7 +99,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Evening',
-                              Icon: () => <NightsStayOutlined fontSize="small" sx={{ color: 'error.main' }} />,
+                              Icon: () => <NightsStayOutlined sx={{ color: 'error.main' }} />,
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
@@ -118,7 +118,7 @@ export const router = createBrowserRouter(
                         handle={{
                            header: {
                               title: 'Tags',
-                              Icon: () => <LocalOfferOutlined fontSize="small" sx={{ color: 'primary.light' }} />,
+                              Icon: () => <LocalOfferOutlined sx={{ color: 'primary.light' }} />,
                               RightElement: () => (
                                  <>
                                     <SearchQueryMenuButton />
@@ -140,7 +140,7 @@ export const router = createBrowserRouter(
                      path={ROUTE_PATHS.main_settings}
                      element={<Settings />}
                      handle={{
-                        header: { title: 'Settings', Icon: () => <SettingsOutlined fontSize="small" sx={{ color: 'grey.400' }} /> },
+                        header: { title: 'Settings', Icon: () => <SettingsOutlined sx={{ color: 'grey.400' }} /> },
                         nav: { inBottomNav: true },
                      }}
                   ></Route>

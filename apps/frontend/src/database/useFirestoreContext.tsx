@@ -101,9 +101,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
       <>
          {isInitialFetchLoading && <LinearProgress sx={{ position: 'absolute', top: 0, width: '100%' }} />}
          <Snackbar open={!!error} autoHideDuration={2000} onClose={() => setError('')}>
-            <Alert severity="error" sx={{ width: '100%' }}>
-               {error}
-            </Alert>
+            <Alert severity="error">{error}</Alert>
          </Snackbar>
          <FirestoreContext value={value}>{children}</FirestoreContext>
       </>

@@ -55,7 +55,7 @@ export default function Settings(): React.JSX.Element {
    return (
       <>
          <Snackbar open={Boolean(snackbar)} onClose={() => setSnackbar(undefined)} autoHideDuration={3000}>
-            <Alert onClose={() => setSnackbar(undefined)} severity={snackbar?.severity} sx={{ width: '100%' }}>
+            <Alert onClose={() => setSnackbar(undefined)} severity={snackbar?.severity}>
                {snackbar?.msg}
             </Alert>
          </Snackbar>
