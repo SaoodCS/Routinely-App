@@ -28,28 +28,28 @@ export default function TagTasks(): JSX.Element {
       const tasksToCheck = [...tasks];
       for (let i = 0; i < tasksToCheck.length; i += 1) {
          const task = tasksToCheck[i];
+         const isTaskRelatedToTag = task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
+         const areChildrenOfTaskRelatedToTag = task.children?.some((child) => relatedTasks.has(child)) ?? false;
+         if (isTaskRelatedToTag || areChildrenOfTaskRelatedToTag) relatedTasks.add(task);
          if (task.children) for (const child of task.children) tasksToCheck.push(child);
       }
-      for (let i = tasksToCheck.length - 1; i >= 0; i -= 1) {
-         const task = tasksToCheck[i];
-         const hasTag = task.showWhenTags.includes(tagId) || task.hideWhenTags.includes(tagId);
-         const hasRelatedChildren = task.children?.some((child) => relatedTasks.has(child)) ?? false;
-         const inSearchQuery = task.label.toLowerCase().includes(searchQuery?.toLowerCase() ?? '');
-         if ((hasTag || hasRelatedChildren) && inSearchQuery) relatedTasks.add(task);
-      }
       return relatedTasks;
-   }, [tasks, tagId, searchQuery]);
+   }, [tasks, tagId]);
 
-   const { showWhenTasksCount, checkedShowWhenTasksCount } = useMemo(() => {
-      let showWhenTasksCount = 0;
-      let checkedShowWhenTasksCount = 0;
+   const tasksRelatedViaShowWhenField = useMemo(() => {
+      const tasksRelatedViaShowWhenField: Set<AppTypes.Task> = new Set();
       for (const task of relatedTasks) {
          if (!task.showWhenTags.includes(tagId)) continue;
-         showWhenTasksCount += 1;
-         if (task.isChecked) checkedShowWhenTasksCount += 1;
+         tasksRelatedViaShowWhenField.add(task);
       }
-      return { showWhenTasksCount, checkedShowWhenTasksCount };
+      return tasksRelatedViaShowWhenField;
    }, [relatedTasks, tagId]);
+
+   const checkedTasksRelatedViaShowWhenFieldCount = useMemo(() => {
+      let checkedTasksRelatedViaShowWhenFieldCount = 0;
+      for (const task of tasksRelatedViaShowWhenField) if (task.isChecked) checkedTasksRelatedViaShowWhenFieldCount += 1;
+      return checkedTasksRelatedViaShowWhenFieldCount;
+   }, [tasksRelatedViaShowWhenField]);
 
    const isTaskVisible = (task: AppTypes.Task): boolean => relatedTasks.has(task);
 
@@ -149,8 +149,11 @@ export default function TagTasks(): JSX.Element {
             <Grid size={3} />
             <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
                <Chip
-                  label={`Done: ${checkedShowWhenTasksCount}/${showWhenTasksCount}`}
-                  sx={{ color: `${checkedShowWhenTasksCount === showWhenTasksCount ? 'success.main' : 'error.main'}`, cursor: 'default' }}
+                  label={`Done: ${checkedTasksRelatedViaShowWhenFieldCount}/${tasksRelatedViaShowWhenField.size}`}
+                  sx={{
+                     color: `${checkedTasksRelatedViaShowWhenFieldCount === tasksRelatedViaShowWhenField.size ? 'success.main' : 'error.main'}`,
+                     cursor: 'default',
+                  }}
                />
             </Grid>
             <Grid size={3} sx={{ textAlign: 'right' }}>
