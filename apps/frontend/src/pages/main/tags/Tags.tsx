@@ -31,14 +31,14 @@ export default function Tags(): React.JSX.Element {
       setTagsDb(updatedTags);
    }
 
-   function handleSaveLabelOnBlur(event: FocusEvent<HTMLSpanElement>, tagIndex: number): void {
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLInputElement>, tagIndex: number): void {
       const updatedLabel = event.currentTarget.textContent ?? '';
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, label: updatedLabel } : tag));
       setTagsDb(updatedTags);
    }
 
-   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLSpanElement>): void {
+   function handleBlurOnEnterClick(event: KeyboardEvent<HTMLInputElement>): void {
       if (event.key !== 'Enter') return;
       event.preventDefault();
       event.currentTarget.blur();
@@ -94,11 +94,11 @@ export default function Tags(): React.JSX.Element {
                                  padding: '0 12px 0 12px',
                               }}
                            >
-                              <Stack direction="row" gap={2} alignItems={'center'}>
-                                 <IconButton {...dragElProps} sx={{ borderRadius: '5px', px: 0 }}>
+                              <Stack direction="row" gap={2} alignItems={'center'} flex={1}>
+                                 <IconButton {...dragElProps} sx={{ borderRadius: '5px' }}>
                                     <DragIndicatorOutlined />
                                  </IconButton>
-                                 <Stack sx={{ py: 1 }}>
+                                 <Stack flex={1} sx={{ py: 1 }}>
                                     <ContentEditableInput
                                        text={tag.label}
                                        onBlur={(event) => handleSaveLabelOnBlur(event, i)}
