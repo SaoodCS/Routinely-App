@@ -76,7 +76,7 @@ export default function TagTasks(): JSX.Element {
 
    function handleTextOverlay(task: AppTypes.Task): string | undefined {
       if (task.hideWhenTags.includes(tagId)) return 'TASK IS HIDDEN WHEN TAG IS ENABLED';
-      if (!task.showWhenTags.includes(tagId)) return 'PARENT OF TAGGED SUBTASK';
+      if (!task.showWhenTags.includes(tagId)) return 'PARENT OF SUBTASK RELATED TO TAG';
    }
 
    return (
