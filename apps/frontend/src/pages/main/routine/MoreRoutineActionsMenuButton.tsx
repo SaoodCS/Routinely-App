@@ -1,6 +1,6 @@
 import type { AppTypes } from '@repo/types/index';
-import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
-import { CheckCircleOutline, LocalOfferOutlined, MoreVertOutlined, VisibilityOffOutlined, VisibilityOutlined } from '@mui/icons-material';
+import { alpha, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, useTheme } from '@mui/material';
+import { CheckCircleOutline, LocalOfferOutlined, MoreHorizRounded, VisibilityOffOutlined, VisibilityOutlined } from '@mui/icons-material';
 import { useMemo, useState } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useLocalStorage from '../../../hooks/useLocalStorage';
@@ -16,6 +16,7 @@ export default function MoreRoutineActionsMenuButton({ section }: T_MoreRoutineA
    const [showHidden, setShowHidden] = useLocalStorage<boolean>('show-hidden', false);
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
    const areAllTagsEnabled = useMemo(() => tags.every(({ isEnabled }) => isEnabled), [tags]);
+   const { palette } = useTheme();
 
    function handleToggleAllTags(): void {
       const shouldEnableAllTags = tags.some(({ isEnabled }) => !isEnabled);
@@ -30,9 +31,14 @@ export default function MoreRoutineActionsMenuButton({ section }: T_MoreRoutineA
    }
    return (
       <>
-         <IconButton onClick={(event) => setAnchorEl(event.currentTarget)} size="small">
-            <MoreVertOutlined fontSize="small" />
+         <IconButton
+            onClick={(event) => setAnchorEl(event.currentTarget)}
+            size="small"
+            sx={{ borderRadius: '50%', bgcolor: alpha(palette.primary.main, 0.1), border: '1px solid', borderColor: 'divider' }}
+         >
+            <MoreHorizRounded fontSize="small" />
          </IconButton>
+
          <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
