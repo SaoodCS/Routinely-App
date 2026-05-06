@@ -19,8 +19,8 @@ const DEPTH_STYLES: Record<
    { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string; paddingTop: number }
 > = {
    1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem', paddingTop: 1 },
-   2: { indent: 2, color: ['secondary', 'light'], fontSize: '0.9rem', paddingTop: 0 },
-   3: { indent: 3, color: ['success', 'light'], fontSize: '0.825rem', paddingTop: 0 },
+   2: { indent: 2.5, color: ['secondary', 'light'], fontSize: '0.9rem', paddingTop: 0 },
+   3: { indent: 4, color: ['success', 'light'], fontSize: '0.825rem', paddingTop: 0 },
 };
 
 interface T_TaskItemProps {
