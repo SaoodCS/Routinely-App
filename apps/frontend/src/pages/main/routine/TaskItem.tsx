@@ -37,7 +37,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
    const { palette } = useTheme();
-   const taskDepthStyle = DEPTH_STYLES[indexes.length];
+   const { indent, color, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
+
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
    const focusTaskIdRef = useRef<string | null>(null);
@@ -141,7 +142,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    return (
       <Grow in timeout={500}>
-         <ListItem sx={{ py: 0.3, pt: taskDepthStyle.paddingTop, px: 1, pl: taskDepthStyle.indent, position: 'relative' }}>
+         <ListItem sx={{ py: 0.3, pt: paddingTop, px: 1, pl: indent, position: 'relative' }}>
             <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700} color="grey.500">
                {textOverlay}
             </Typography>
@@ -150,8 +151,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
                style={{
                   borderRadius: '5px',
-                  borderLeft: `4px solid ${palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]]}`,
-                  backgroundColor: alpha(palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]], 0.1),
+                  borderLeft: `4px solid ${palette[color[0]][color[1]]}`,
+                  background: `linear-gradient(150deg, ${alpha(palette[color[0]][color[1]], 0.2)}, ${alpha(palette[color[0]][color[1]], 0.1)} 50%)`,
                   opacity: textOverlay || task.isChecked ? 0.5 : 1,
                }}
             >
@@ -164,7 +165,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   pb={0.5}
                   sx={{
                      '& > :last-child': { ml: 'auto' },
-                     '& button': { p: 0, color: palette[taskDepthStyle.color[0]][taskDepthStyle.color[1]] },
+                     '& button': { p: 0, color: palette[color[0]][color[1]] },
                   }}
                >
                   <IconButton {...dragElProps}>
@@ -195,7 +196,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      onKeyDown={handleKeyPress}
                      onInput={InputUtils.formatInputOnSpace}
                      style={{
-                        fontSize: taskDepthStyle.fontSize,
+                        fontSize: fontSize,
                         color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,
                         textDecoration: task.isChecked ? 'line-through' : 'none',
                         width: '100%',
