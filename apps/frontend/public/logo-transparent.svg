@@ -16,7 +16,7 @@
     </filter>
   </defs>
 
-  <g filter="url(#bubbleShadow)" transform="translate(-41 -69) translate(481.72 481.72) scale(1.42) translate(-481.72 -481.72)">
+  <g filter="url(#bubbleShadow)" transform="translate(-35.5 -60.5) translate(481.72 481.72) scale(1.24) translate(-481.72 -481.72)">
     <path d="M256 500L380 740L526 582" stroke="url(#bubbleBlue)" stroke-width="136" stroke-linecap="round"
       stroke-linejoin="round" />
     <circle cx="646" cy="452" r="68" fill="url(#bubbleBlue)" />
