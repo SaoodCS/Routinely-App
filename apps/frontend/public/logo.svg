@@ -28,7 +28,7 @@
   <circle cx="512" cy="512" r="372" fill="#42a5f5" opacity="0.035" />
   <circle cx="754" cy="286" r="92" fill="#42a5f5" opacity="0.06" />
 
-  <g transform="translate(512 512) scale(1.16) translate(-512 -512)">
+  <g transform="translate(462 469) scale(1.44) translate(-512 -512)">
     <g filter="url(#softShadow)">
       <rect x="257" y="254" width="510" height="520" rx="92" fill="#141414" stroke="url(#accent)" stroke-width="38" />
       <path d="M257 366H767" stroke="url(#accent)" stroke-width="38" stroke-linecap="round" />

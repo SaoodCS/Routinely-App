@@ -1,10 +1,5 @@
-<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="963.44" height="963.44" viewBox="67.44 18.28 889.92 963.44" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="bgGlow" cx="50%" cy="34%" r="68%">
-      <stop offset="0%" stop-color="transparent" />
-      <stop offset="62%" stop-color="transparent" />
-      <stop offset="100%" stop-color="transparent" />
-    </radialGradient>
     <linearGradient id="accent" x1="286" y1="222" x2="784" y2="812" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#70c1ff" />
       <stop offset="52%" stop-color="#42a5f5" />
@@ -14,21 +9,25 @@
       <stop offset="0%" stop-color="#42a5f5" />
       <stop offset="100%" stop-color="#0f3d6a" />
     </linearGradient>
+    <filter id="softShadow" x="130" y="120" width="820" height="820" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="28" stdDeviation="34" flood-color="#000000" flood-opacity="0.34" />
+    </filter>
+    <mask id="badgeCutout" maskUnits="userSpaceOnUse">
+      <rect width="1024" height="1024" fill="white" />
+      <circle cx="686" cy="692" r="170" fill="black" />
+    </mask>
   </defs>
 
-  <rect width="1024" height="1024" rx="228" fill="none" />
-  <circle cx="512" cy="512" r="372" fill="#42a5f5" opacity="0.035" />
-  <circle cx="754" cy="286" r="92" fill="#42a5f5" opacity="0.06" />
-
-  <g transform="translate(512 512) scale(1.16) translate(-512 -512)">
-    <g>
-      <rect x="257" y="254" width="510" height="520" rx="92" fill="#141414" stroke="url(#accent)" stroke-width="38" />
-      <path d="M257 366H767" stroke="url(#accent)" stroke-width="38" stroke-linecap="round" />
-      <path d="M387 218V318" stroke="url(#accent)" stroke-width="38" stroke-linecap="round" />
-      <path d="M637 218V318" stroke="url(#accent)" stroke-width="38" stroke-linecap="round" />
+  <g transform="translate(496 478) scale(1.44) translate(-512 -512)">
+    <g filter="url(#softShadow)" mask="url(#badgeCutout)">
+      <rect x="262" y="258" width="500" height="510" rx="78" fill="none" stroke="url(#accent)" stroke-width="36" />
+      <path d="M296 366H728" stroke="url(#accent)" stroke-width="36" stroke-linecap="round" />
+      <path d="M390 220V302" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" />
+      <path d="M634 220V302" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" />
     </g>
 
-    <g opacity="0.9">
+    <g opacity="0.9" mask="url(#badgeCutout)">
       <circle cx="386" cy="466" r="24" fill="url(#accent)" />
       <rect x="448" y="448" width="220" height="34" rx="17" fill="url(#muted)" />
       <circle cx="386" cy="568" r="24" fill="url(#accent)" />
@@ -38,12 +37,9 @@
     </g>
 
     <g>
-      <circle cx="686" cy="692" r="151" fill="#071018" stroke="url(#accent)" stroke-width="38" />
-      <path d="M616 690L671 745L767 638" stroke="url(#accent)" stroke-width="44" stroke-linecap="round"
+      <circle cx="686" cy="692" r="140" fill="none" stroke="url(#accent)" stroke-width="36" />
+      <path d="M612 696L668 752L768 638" stroke="url(#accent)" stroke-width="54" stroke-linecap="round"
         stroke-linejoin="round" />
     </g>
-
-    <path d="M305 820C379 856 515 875 665 842" stroke="#42a5f5" stroke-width="18" stroke-linecap="round"
-      opacity="0.12" />
   </g>
 </svg>
