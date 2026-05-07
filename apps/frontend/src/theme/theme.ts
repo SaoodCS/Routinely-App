@@ -90,7 +90,6 @@ const components: ThemeOptions['components'] = {
             borderRadius: '50%',
             backgroundColor: alpha(t.palette.primary.main, 0.05),
             border: `1px solid ${t.palette.divider}`,
-            pointerEvents: 'auto',
          }),
       },
    },
