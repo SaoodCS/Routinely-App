@@ -83,7 +83,7 @@ export function Login(): React.JSX.Element {
             sx={{ p: { xs: 3, sm: 4 }, backdropFilter: 'blur(3px)', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}
          >
             <Stack direction="row" alignItems="center" gap={1.5}>
-               <Box component="img" src="/logo-transparent.svg" alt="Routinely" sx={{ width: 56, height: 56, display: 'block' }} />
+               <object data="/logo-transparent.svg" type="image/svg+xml" width={56} height={56} style={{ colorScheme: 'light' }} />
                <Box>
                   <Typography color="primary" fontWeight={700}>
                      Routinely
