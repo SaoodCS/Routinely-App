@@ -82,7 +82,6 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
             onPointerUp={handlePointerEnd}
             style={{
                position: 'relative',
-               zIndex: 1,
                transform: `translateX(${offsetX}px)`,
                transition: isDragging ? 'none' : 'transform 150ms cubic-bezier(0.4, 0, 0.2, 1)',
                willChange: isInteractive ? 'transform' : undefined,
