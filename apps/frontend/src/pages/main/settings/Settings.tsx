@@ -3,6 +3,7 @@ import {
    Alert,
    Avatar,
    Divider,
+   LinearProgress,
    ListItemIcon,
    ListItemText,
    MenuItem,
@@ -19,29 +20,42 @@ import { deleteUser } from 'firebase/auth';
 import type React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { FirestoreUtils } from '@repo/utils/index';
+import { doc, writeBatch } from 'firebase/firestore';
+import type { FirestoreTypes } from '@repo/types/index';
 import { useAuthContext } from '../../../auth/useAuthContext';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { ROUTE_PATHS } from '../../../routes/router';
+import { db } from '../../../firebase/config';
 
 export default function Settings(): React.JSX.Element {
    const { user } = useAuthContext();
    const navigate = useNavigate();
-   const { setSettingsDb, setMorningTasksDb, setEveningTasksDb, setTagsDb, settings } = useFirestoreContext();
+   const { setSettingsDb, settings } = useFirestoreContext();
    const [snackbar, setSnackbar] = useState<{ msg: string; severity: AlertProps['severity'] }>();
+   const [isLoading, setIsLoading] = useState(false);
 
    function resetAllData(): void {
-      setSettingsDb({});
-      setMorningTasksDb([]);
-      setEveningTasksDb([]);
-      setTagsDb([]);
-      setSnackbar({ msg: `All data has been reset`, severity: 'success' });
+      if (!user) return void navigate(ROUTE_PATHS.auth_login, { replace: true });
+      const paths = Object.entries(FirestoreUtils.PATHS_FIELDS).map(([key]) =>
+         FirestoreUtils.getPathAndField(key as FirestoreTypes.PathKey, user.uid),
+      );
+      setIsLoading(true);
+      const batch = writeBatch(db);
+      paths.forEach(({ path }) => batch.delete(doc(db, path)));
+      batch
+         .commit()
+         .then(() => setSnackbar({ msg: 'Data successfully reset', severity: 'success' }))
+         .catch((e) => setSnackbar({ msg: e instanceof FirebaseError ? e.message : `Could not reset data`, severity: 'error' }))
+         .finally(() => setIsLoading(false));
    }
 
    function deleteAccount(): void {
       if (!user) return void navigate(ROUTE_PATHS.auth_login, { replace: true });
-      deleteUser(user).catch((e) => {
-         setSnackbar({ msg: e instanceof FirebaseError ? e.message : `Could not delete account`, severity: 'error' });
-      });
+      setIsLoading(true);
+      deleteUser(user)
+         .catch((e) => setSnackbar({ msg: e instanceof FirebaseError ? e.message : `Could not delete account`, severity: 'error' }))
+         .finally(() => setIsLoading(false));
    }
 
    function logout(): void {
@@ -54,6 +68,7 @@ export default function Settings(): React.JSX.Element {
 
    return (
       <>
+         {isLoading && <LinearProgress sx={{ position: 'absolute', top: 0, width: '100%' }} />}
          <Snackbar open={Boolean(snackbar)} onClose={() => setSnackbar(undefined)} autoHideDuration={3000}>
             <Alert onClose={() => setSnackbar(undefined)} severity={snackbar?.severity}>
                {snackbar?.msg}
