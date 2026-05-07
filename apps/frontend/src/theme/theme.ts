@@ -91,6 +91,7 @@ const components: ThemeOptions['components'] = {
    MuiFab: { defaultProps: { color: 'primary' } },
    MuiIcon: { defaultProps: { fontSize: 'small' } },
    MuiSvgIcon: { defaultProps: { fontSize: 'small' } },
+   MuiSpeedDialAction: { styleOverrides: { staticTooltipLabel: { whiteSpace: 'nowrap', width: 'max-content' } } },
 };
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });

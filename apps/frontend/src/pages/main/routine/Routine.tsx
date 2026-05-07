@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { alpha, AppBar, Box, Chip, Fab, Grid, Stack, useTheme } from '@mui/material';
+import { alpha, AppBar, Box, Chip, Grid, SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
 import { useMemo, type JSX } from 'react';
@@ -171,10 +171,10 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                   sx={{ color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}`, cursor: 'default' }}
                />
             </Grid>
-            <Grid size={3} sx={{ textAlign: 'right' }}>
-               <Fab>
-                  <Add onClick={handleCreateTask} />
-               </Fab>
+            <Grid size={3}>
+               <SpeedDial ariaLabel="quick actions" icon={<SpeedDialIcon />}>
+                  <SpeedDialAction onClick={handleCreateTask} icon={<Add />} slotProps={{ tooltip: { open: true, title: 'Add Task' } }} />
+               </SpeedDial>
             </Grid>
          </Grid>
       </>
