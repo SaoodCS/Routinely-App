@@ -1,4 +1,4 @@
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, LinearProgress, Snackbar } from '@mui/material';
 import type { AppTypes, FirestoreTypes } from '@repo/types/index';
 import { FirestoreUtils } from '@repo/utils/index';
 import type { Unsubscribe } from 'firebase/auth';
@@ -6,7 +6,6 @@ import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useAuthContext } from '../auth/useAuthContext';
 import { db } from '../firebase/config';
-import SpinnerLoader from '../components/SpinnerLoader';
 
 type T_FirestoreContext = {
    morningTasks: AppTypes.Task[];
@@ -100,7 +99,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
 
    return (
       <>
-         {isInitialFetchLoading && <SpinnerLoader fullPage />}
+         {isInitialFetchLoading && <LinearProgress sx={{ position: 'absolute', top: 0, width: '100%' }} />}
          <Snackbar open={!!error} autoHideDuration={2000} onClose={() => setError('')}>
             <Alert severity="error">{error}</Alert>
          </Snackbar>
