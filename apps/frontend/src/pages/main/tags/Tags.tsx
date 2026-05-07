@@ -115,7 +115,10 @@ export default function Tags(): React.JSX.Element {
                               </Stack>
                               <Stack direction={'row'} alignItems={'center'} gap={1}>
                                  <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                                 <IconButton onClick={() => handleOpenTagRoutine(tag.id)}>
+                                 <IconButton
+                                    onClick={() => handleOpenTagRoutine(tag.id)}
+                                    disabled={getNumberOfTasks(tag, 'showWhenTags') === 0 && getNumberOfTasks(tag, 'hideWhenTags') === 0}
+                                 >
                                     <ChevronRight sx={{ color: 'grey.400' }} />
                                  </IconButton>
                               </Stack>
