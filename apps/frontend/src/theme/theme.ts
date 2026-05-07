@@ -90,6 +90,7 @@ const components: ThemeOptions['components'] = {
             borderRadius: '50%',
             backgroundColor: alpha(t.palette.primary.main, 0.05),
             border: `1px solid ${t.palette.divider}`,
+            pointerEvents: 'auto',
          }),
       },
    },
@@ -98,7 +99,7 @@ const components: ThemeOptions['components'] = {
    MuiSvgIcon: { defaultProps: { fontSize: 'small' } },
    MuiSpeedDial: {
       styleOverrides: {
-         root: { '& .MuiSpeedDial-actionsClosed': { width: 0, height: 0, margin: 0, padding: 0, overflow: 'hidden' } },
+         root: { '& .MuiSpeedDial-actionsClosed': { width: 0, height: 0, margin: 0, padding: 0, overflow: 'hidden' }, pointerEvents: 'auto' },
       },
    },
    MuiSpeedDialAction: { styleOverrides: { staticTooltipLabel: { whiteSpace: 'nowrap', width: 'max-content' } } },
