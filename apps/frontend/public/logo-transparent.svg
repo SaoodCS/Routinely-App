@@ -1,45 +1,30 @@
-<svg width="963.44" height="963.44" viewBox="67.44 18.28 889.92 963.44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="963.44" height="963.44" viewBox="0 0 963.44 963.44" fill="none" preserveAspectRatio="xMidYMid meet"
+  xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="accent" x1="286" y1="222" x2="784" y2="812" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#70c1ff" />
+    <linearGradient id="bubbleBlue" x1="166" y1="688" x2="746" y2="226" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1976d2" />
       <stop offset="52%" stop-color="#42a5f5" />
-      <stop offset="100%" stop-color="#1976d2" />
+      <stop offset="100%" stop-color="#70c1ff" />
     </linearGradient>
-    <linearGradient id="muted" x1="352" y1="404" x2="668" y2="584" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#42a5f5" />
-      <stop offset="100%" stop-color="#0f3d6a" />
+    <linearGradient id="bubbleHighlight" x1="214" y1="392" x2="710" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.4" />
     </linearGradient>
-    <filter id="softShadow" x="130" y="120" width="820" height="820" filterUnits="userSpaceOnUse"
+    <filter id="bubbleShadow" x="-80" y="-80" width="1123.44" height="1123.44" filterUnits="userSpaceOnUse"
       color-interpolation-filters="sRGB">
-      <feDropShadow dx="0" dy="28" stdDeviation="34" flood-color="#000000" flood-opacity="0.34" />
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#0f3d6a" flood-opacity="0.2" />
     </filter>
-    <mask id="badgeCutout" maskUnits="userSpaceOnUse">
-      <rect width="1024" height="1024" fill="white" />
-      <circle cx="686" cy="692" r="170" fill="black" />
-    </mask>
   </defs>
 
-  <g transform="translate(496 478) scale(1.44) translate(-512 -512)">
-    <g filter="url(#softShadow)" mask="url(#badgeCutout)">
-      <rect x="262" y="258" width="500" height="510" rx="78" fill="none" stroke="url(#accent)" stroke-width="36" />
-      <path d="M296 366H728" stroke="url(#accent)" stroke-width="36" stroke-linecap="round" />
-      <path d="M390 220V302" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" />
-      <path d="M634 220V302" stroke="url(#accent)" stroke-width="42" stroke-linecap="round" />
-    </g>
+  <g filter="url(#bubbleShadow)" transform="translate(-41 -69) translate(481.72 481.72) scale(1.42) translate(-481.72 -481.72)">
+    <path d="M256 500L380 740L526 582" stroke="url(#bubbleBlue)" stroke-width="136" stroke-linecap="round"
+      stroke-linejoin="round" />
+    <circle cx="646" cy="452" r="68" fill="url(#bubbleBlue)" />
+    <circle cx="766" cy="322" r="68" fill="url(#bubbleBlue)" />
 
-    <g opacity="0.9" mask="url(#badgeCutout)">
-      <circle cx="386" cy="466" r="24" fill="url(#accent)" />
-      <rect x="448" y="448" width="220" height="34" rx="17" fill="url(#muted)" />
-      <circle cx="386" cy="568" r="24" fill="url(#accent)" />
-      <rect x="448" y="550" width="174" height="34" rx="17" fill="url(#muted)" />
-      <circle cx="386" cy="670" r="24" fill="url(#accent)" />
-      <rect x="448" y="652" width="118" height="34" rx="17" fill="url(#muted)" />
-    </g>
-
-    <g>
-      <circle cx="686" cy="692" r="140" fill="none" stroke="url(#accent)" stroke-width="36" />
-      <path d="M612 696L668 752L768 638" stroke="url(#accent)" stroke-width="54" stroke-linecap="round"
-        stroke-linejoin="round" />
-    </g>
+    <path d="M294 482L360 610" stroke="url(#bubbleHighlight)" stroke-width="34" stroke-linecap="round" />
+    <circle cx="504" cy="560" r="22" fill="#ffffff" opacity="0.24" />
+    <circle cx="624" cy="430" r="22" fill="#ffffff" opacity="0.24" />
+    <circle cx="744" cy="300" r="22" fill="#ffffff" opacity="0.24" />
   </g>
 </svg>
