@@ -163,7 +163,7 @@ export default function Routine({ section }: T_RoutineProps): JSX.Element {
                )
             }
          />
-         <Grid ref={tasksDoneFooterRef} container sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2 }}>
+         <Grid ref={tasksDoneFooterRef} container sx={{ position: 'absolute', bottom: 0, width: '100%', p: 2, pointerEvents: 'none' }}>
             <Grid size={3} />
             <Grid size={6} sx={{ textAlign: 'center', alignSelf: 'end' }}>
                <Chip

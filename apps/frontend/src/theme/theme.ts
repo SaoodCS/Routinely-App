@@ -72,7 +72,13 @@ const components: ThemeOptions['components'] = {
    MuiChip: {
       defaultProps: { variant: 'filled', clickable: false },
       styleOverrides: {
-         root: ({ theme: t }) => ({ backgroundColor: 'black', opacity: 1, cursor: 'pointer', border: '1px solid', borderColor: t.palette.divider }),
+         root: ({ theme: t }) => ({
+            backgroundColor: 'black',
+            opacity: 1,
+            cursor: 'pointer',
+            border: `1px solid ${t.palette.divider}`,
+            pointerEvents: 'auto',
+         }),
       },
    },
    MuiSnackbar: { defaultProps: { anchorOrigin: { horizontal: 'right', vertical: 'top' } } },
@@ -83,8 +89,7 @@ const components: ThemeOptions['components'] = {
          root: ({ theme: t }) => ({
             borderRadius: '50%',
             backgroundColor: alpha(t.palette.primary.main, 0.05),
-            border: '1px solid',
-            borderColor: t.palette.divider,
+            border: `1px solid ${t.palette.divider}`,
          }),
       },
    },
