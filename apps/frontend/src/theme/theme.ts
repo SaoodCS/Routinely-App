@@ -91,6 +91,11 @@ const components: ThemeOptions['components'] = {
    MuiFab: { defaultProps: { color: 'primary' } },
    MuiIcon: { defaultProps: { fontSize: 'small' } },
    MuiSvgIcon: { defaultProps: { fontSize: 'small' } },
+   MuiSpeedDial: {
+      styleOverrides: {
+         root: { '& .MuiSpeedDial-actionsClosed': { width: 0, height: 0, margin: 0, padding: 0, overflow: 'hidden' } },
+      },
+   },
    MuiSpeedDialAction: { styleOverrides: { staticTooltipLabel: { whiteSpace: 'nowrap', width: 'max-content' } } },
 };
 
