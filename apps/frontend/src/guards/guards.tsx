@@ -1,7 +1,7 @@
+import type { UserTypes } from '@repo/types/index';
 import type { JSX } from 'react';
 import { Navigate, Outlet, useLocation, type Location } from 'react-router';
-import type { UserTypes } from '@repo/types/index';
-import { useAuthContext } from '../auth/useAuthContext';
+import { useAuthContext } from '../authentication/useAuthContext';
 import SpinnerLoader from '../components/SpinnerLoader';
 import { ROUTE_PATHS, type T_Route_Path } from '../routes/router';
 

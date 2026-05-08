@@ -4,9 +4,9 @@ import { FirestoreUtils } from '@repo/utils/index';
 import type { Unsubscribe } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { useAuthContext } from '../auth/useAuthContext';
-import { db } from '../firebase/config';
+import { useAuthContext } from '../authentication/useAuthContext';
 import SpinnerLoader from '../components/SpinnerLoader';
+import { db } from '../firebase/config';
 
 type T_FirestoreContext = {
    morningTasks: AppTypes.Task[];
