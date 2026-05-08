@@ -1,6 +1,8 @@
 import { LocalOfferOutlined, NightsStayOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route as ReactRoute, type RouteProps, type UIMatch } from 'react-router';
-import { ProtectedRoute, PublicOnlyRoute } from '../guards/guards';
+import { createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route as ReactRoute, useLocation } from 'react-router';
+import type { RouteProps, UIMatch, Location } from 'react-router';
+import type { UserTypes } from '@repo/types/index';
+import type { JSX } from 'react';
 import LoginPage from '../pages/auth/LoginPage';
 import LogoutPage from '../pages/auth/LogoutPage';
 import Forbidden from '../pages/error/Forbidden';
@@ -14,6 +16,8 @@ import MoreTagActionsMenuButton from '../pages/main/tags/MoreTagActionsMenuButto
 import TagsPage from '../pages/main/tags/TagsPage';
 import TagIdPage from '../pages/main/tags/tagId/TagIdPage';
 import TagTasksHeaderTitle from '../pages/main/tags/tagId/TagIdHeaderTitle';
+import { useAuthContext } from '../authentication/useAuthContext';
+import SpinnerLoader from '../components/SpinnerLoader';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
@@ -49,6 +53,25 @@ export const ROUTE_PATHS = {
    // main/settings
    main_settings: '/main/settings',
 } as const;
+
+function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: UserTypes.Role[] | 'all' }): JSX.Element {
+   const location = useLocation();
+   const { isLoading, isAuthenticated, userRole } = useAuthContext();
+   if (isLoading) return <SpinnerLoader fullPage />;
+   if (!isAuthenticated) return <Navigate to={ROUTE_PATHS.auth_login} replace state={{ from: location }} />;
+   if (userRole && (allowedRoles === 'all' || allowedRoles.includes(userRole))) return <Outlet />;
+   return <Navigate to={ROUTE_PATHS.forbidden} replace state={{ from: location }} />;
+}
+
+function PublicOnlyRoute({ fallbackRoute = ROUTE_PATHS.main }: { fallbackRoute?: T_Route_Path }): JSX.Element {
+   const location = useLocation() as Location<{ from?: Location } | null>;
+   const { isLoading, isAuthenticated } = useAuthContext();
+   if (isLoading) return <SpinnerLoader fullPage />;
+   if (!isAuthenticated) return <Outlet />;
+   const from = location.state?.from;
+   const redirectTo = from && from?.pathname !== ROUTE_PATHS.auth_logout ? from : fallbackRoute;
+   return <Navigate to={redirectTo} replace />;
+}
 
 export const router = createBrowserRouter(
    createRoutesFromElements(
