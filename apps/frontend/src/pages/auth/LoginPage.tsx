@@ -14,7 +14,7 @@ import { AppRegistration, LoginSharp, Person } from '@mui/icons-material';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '../../firebase/config';
 
-export function Login(): React.JSX.Element {
+export default function LoginPage(): React.JSX.Element {
    const [isLoading, setIsLoading] = useState<'reg' | 'email-pwd' | 'google' | 'anonymous'>();
    const [error, setError] = useState<string | null>(null);
    const [email, setEmail] = useState('');

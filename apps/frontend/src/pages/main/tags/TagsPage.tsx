@@ -13,7 +13,7 @@ import { InputUtils } from '../../../utils';
 import ContentEditableInput from '../../../components/ContentEditableInput';
 import NoTagsPlaceholder from './NoTagsPlaceholder';
 
-export default function Tags(): React.JSX.Element {
+export default function TagsPage(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const navigate = useNavigate();
    const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';

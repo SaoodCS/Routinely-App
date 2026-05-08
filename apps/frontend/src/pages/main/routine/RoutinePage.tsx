@@ -16,7 +16,7 @@ interface T_RoutineProps {
    section: AppTypes.RoutineSection;
 }
 
-export default function Routine({ section }: T_RoutineProps): JSX.Element {
+export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
    const { morningTasks, setMorningTasksDb, eveningTasks, setEveningTasksDb, tags, setTagsDb } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;

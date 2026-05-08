@@ -1,19 +1,19 @@
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route as ReactRoute, type RouteProps, type UIMatch } from 'react-router';
 import { LocalOfferOutlined, NightsStayOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
 import { ProtectedRoute, PublicOnlyRoute } from '../guards/guards';
-import { Login } from '../pages/auth/Login';
-import { Logout } from '../pages/auth/Logout';
+import LoginPage from '../pages/auth/LoginPage';
+import LogoutPage from '../pages/auth/LogoutPage';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import Routine from '../pages/main/routine/Routine';
 import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
-import Settings from '../pages/main/settings/Settings';
-import Tags from '../pages/main/tags/Tags';
 import TagTasks from '../pages/main/tags/TagTasks';
 import TagTasksHeaderTitle from '../pages/main/tags/TagTasksHeaderTitle';
 import MoreRoutineActionsMenuButton from '../pages/main/routine/MoreRoutineActionsMenuButton';
 import MoreTagActionsMenuButton from '../pages/main/tags/MoreTagActionsMenuButton';
+import RoutinePage from '../pages/main/routine/RoutinePage';
+import SettingsPage from '../pages/main/settings/SettingsPage';
+import TagsPage from '../pages/main/tags/TagsPage';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
@@ -62,10 +62,10 @@ export const router = createBrowserRouter(
          <Route path={ROUTE_PATHS.auth}>
             <Route index element={<Navigate to={ROUTE_PATHS.auth_login} replace />} />
             <Route element={<PublicOnlyRoute fallbackRoute={ROUTE_PATHS.main} />}>
-               <Route path={ROUTE_PATHS.auth_login} element={<Login />} />
+               <Route path={ROUTE_PATHS.auth_login} element={<LoginPage />} />
             </Route>
             <Route element={<ProtectedRoute />}>
-               <Route path={ROUTE_PATHS.auth_logout} element={<Logout />} />
+               <Route path={ROUTE_PATHS.auth_logout} element={<LogoutPage />} />
             </Route>
          </Route>
          {/* Main Routes */}
@@ -78,7 +78,7 @@ export const router = createBrowserRouter(
                      <Route index element={<Navigate to={ROUTE_PATHS.main_routine_morning} replace />} />
                      <Route
                         path={ROUTE_PATHS.main_routine_morning}
-                        element={<Routine section="morning" />}
+                        element={<RoutinePage section="morning" />}
                         handle={{
                            header: {
                               title: 'Morning',
@@ -95,7 +95,7 @@ export const router = createBrowserRouter(
                      />
                      <Route
                         path={ROUTE_PATHS.main_routine_evening}
-                        element={<Routine section="evening" />}
+                        element={<RoutinePage section="evening" />}
                         handle={{
                            header: {
                               title: 'Evening',
@@ -114,7 +114,7 @@ export const router = createBrowserRouter(
                   <Route path={ROUTE_PATHS.main_tags} handle={{ nav: { inBottomNav: true } }}>
                      <Route
                         index
-                        element={<Tags />}
+                        element={<TagsPage />}
                         handle={{
                            header: {
                               title: 'Tags',
@@ -138,7 +138,7 @@ export const router = createBrowserRouter(
                   {/* Settings Routes */}
                   <Route
                      path={ROUTE_PATHS.main_settings}
-                     element={<Settings />}
+                     element={<SettingsPage />}
                      handle={{
                         header: { title: 'Settings', Icon: () => <SettingsOutlined sx={{ color: 'grey.400' }} /> },
                         nav: { inBottomNav: true },

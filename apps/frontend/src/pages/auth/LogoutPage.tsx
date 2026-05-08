@@ -4,7 +4,7 @@ import { FirebaseError } from 'firebase/app';
 import SpinnerLoader from '../../components/SpinnerLoader';
 import { auth } from '../../firebase/config';
 
-export function Logout(): React.JSX.Element {
+export default function LogoutPage(): React.JSX.Element {
    useEffect(() => {
       signOut(auth).catch((e) => window.alert(e instanceof FirebaseError ? e.message : 'Logout failed.'));
    }, []);

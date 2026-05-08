@@ -28,7 +28,7 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { db } from '../../../firebase/config';
 import { ROUTE_PATHS } from '../../../routes/router';
 
-export default function Settings(): React.JSX.Element {
+export default function SettingsPage(): React.JSX.Element {
    const { user } = useAuthContext();
    const navigate = useNavigate();
    const { setSettingsDb, settings } = useFirestoreContext();
