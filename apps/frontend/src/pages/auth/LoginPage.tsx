@@ -13,6 +13,7 @@ import {
 import { AppRegistration, LoginSharp, Person } from '@mui/icons-material';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '../../firebase/config';
+import logoUrl from '../../assets/logo.svg';
 
 export default function LoginPage(): React.JSX.Element {
    const [isLoading, setIsLoading] = useState<'reg' | 'email-pwd' | 'google' | 'anonymous'>();
@@ -83,7 +84,7 @@ export default function LoginPage(): React.JSX.Element {
             sx={{ p: { xs: 3, sm: 4 }, backdropFilter: 'blur(3px)', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}
          >
             <Stack direction="row" alignItems="center" gap={1.5}>
-               <object data="/logo-transparent.svg" type="image/svg+xml" width={56} height={56} style={{ colorScheme: 'light' }} />
+               <object data={logoUrl} type="image/svg+xml" width={56} height={56} style={{ colorScheme: 'light' }} />
                <Box>
                   <Typography color="primary" fontWeight={700}>
                      Routinely
