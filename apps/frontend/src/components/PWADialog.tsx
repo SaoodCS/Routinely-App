@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { type JSX } from 'react';
-import useLocalStorage from './hooks/useLocalStorage';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 export default function PWADialog(): JSX.Element {
    const [dialogSeen, setDialogSeen] = useLocalStorage('pwa-dialog-seen', false);
