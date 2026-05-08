@@ -3,7 +3,7 @@ import { alpha, IconButton, InputAdornment, TextField, useTheme, type TextFieldP
 import type { ChangeEvent } from 'react';
 import { useSearchParams } from 'react-router';
 
-export default function SearchParamInputField(props?: TextFieldProps): React.JSX.Element {
+export default function SearchParamInput(props?: TextFieldProps): React.JSX.Element {
    const { ...textFieldProps } = props ?? {};
    const [searchParams, setSearchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';

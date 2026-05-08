@@ -10,7 +10,7 @@ import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
 import RoutineActionsMenuButton from '../pages/main/routine/RoutineActionsMenuButton';
 import RoutinePage from '../pages/main/routine/RoutinePage';
-import SearchParamInputField from '../components/SearchParamInputField';
+import SearchParamInput from '../components/SearchParamInput';
 import SettingsPage from '../pages/main/settings/SettingsPage';
 import TagsActionsMenuButton from '../pages/main/tags/TagsActionsMenuButton';
 import TagsPage from '../pages/main/tags/TagsPage';
@@ -108,7 +108,7 @@ export const router = createBrowserRouter(
                               Icon: () => <WbTwilightOutlined sx={{ color: 'warning.main' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchParamInputField />
+                                    <SearchParamInput />
                                     <RoutineActionsMenuButton section="morning" />
                                  </>
                               ),
@@ -125,7 +125,7 @@ export const router = createBrowserRouter(
                               Icon: () => <NightsStayOutlined sx={{ color: 'error.main' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchParamInputField />
+                                    <SearchParamInput />
                                     <RoutineActionsMenuButton section="evening" />
                                  </>
                               ),
@@ -144,7 +144,7 @@ export const router = createBrowserRouter(
                               Icon: () => <LocalOfferOutlined sx={{ color: 'primary.light' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchParamInputField />
+                                    <SearchParamInput />
                                     <TagsActionsMenuButton />
                                  </>
                               ),
@@ -154,7 +154,7 @@ export const router = createBrowserRouter(
                      <Route
                         path={ROUTE_PATHS.main_tags_tagId}
                         element={<TagIdPage />}
-                        handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchParamInputField /> } }}
+                        handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchParamInput /> } }}
                      />
                   </Route>
 
