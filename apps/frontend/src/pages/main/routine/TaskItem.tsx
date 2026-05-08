@@ -36,13 +36,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb, settings } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
-   const { palette } = useTheme();
-   const { indent, colorAndShade, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
-   const color = palette[colorAndShade[0]][colorAndShade[1]];
-
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
    const focusTaskIdRef = useRef<string | null>(null);
+   const { palette } = useTheme();
+   const { indent, colorAndShade, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
+   const color = palette[colorAndShade[0]][colorAndShade[1]];
 
    useEffect(() => {
       if (!focusTaskIdRef.current) return;
@@ -166,7 +165,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   <IconButton {...dragElProps}>
                      <DragIndicatorOutlined />
                   </IconButton>
-
                   <IconButton onClick={() => addTaskBelow()}>
                      <KeyboardDoubleArrowDown />
                   </IconButton>
