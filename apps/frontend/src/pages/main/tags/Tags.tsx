@@ -76,58 +76,62 @@ export default function Tags(): React.JSX.Element {
             style={{ overflow: 'auto', height: '100%' }}
             items={tags}
             onDrop={(newOrderedItems) => setTagsDb(newOrderedItems)}
-            renderItem={(tag, dragElProps, i) =>
-               isTagRendered(tag.label) && (
-                  <Box>
-                     <Grow in timeout={500}>
-                        <ListItem disablePadding sx={{ px: 1, pt: 1 }}>
-                           <SwipeActionWrapper
-                              rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
-                              leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
-                              style={{
-                                 display: 'flex',
-                                 alignItems: 'center',
-                                 justifyContent: 'space-between',
-                                 backgroundColor: alpha(palette.divider, 0.05),
-                                 border: `1px solid ${alpha(palette.divider, 0.075)}`,
-                                 borderRadius: '6px',
-                                 padding: '0 12px 0 12px',
-                              }}
-                           >
-                              <Stack direction="row" gap={2} alignItems={'center'} flex={1}>
-                                 <IconButton {...dragElProps} sx={{ borderRadius: '5px' }}>
-                                    <DragIndicatorOutlined />
-                                 </IconButton>
-                                 <Stack flex={1} sx={{ py: 1 }}>
-                                    <ContentEditableInput
-                                       text={tag.label}
-                                       onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                                       onKeyDown={handleKeyPress}
-                                       onInput={InputUtils.formatInputOnSpace}
-                                       style={{ outline: 'none' }}
-                                    >
-                                       {tag.label}
-                                    </ContentEditableInput>
-                                    <Typography variant={'caption'} color="textSecondary">
-                                       {`${getNumberOfTasks(tag, 'showWhenTags')} shown, ${getNumberOfTasks(tag, 'hideWhenTags')} hidden`}
-                                    </Typography>
+            renderItem={(tag, dragElProps, i) => {
+               const numberOfShowWhenTasks = getNumberOfTasks(tag, 'showWhenTags');
+               const numberOfHideWhenTasks = getNumberOfTasks(tag, 'hideWhenTags');
+               return (
+                  isTagRendered(tag.label) && (
+                     <Box>
+                        <Grow in timeout={500}>
+                           <ListItem disablePadding sx={{ px: 1, pt: 1 }}>
+                              <SwipeActionWrapper
+                                 rightAction={{ label: 'Delete', bgColor: 'red', onAction: () => handleDelete(i) }}
+                                 leftAction={{ label: 'Toggle', bgColor: 'green', onAction: () => handleToggle(i) }}
+                                 style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    backgroundColor: alpha(palette.divider, 0.05),
+                                    border: `1px solid ${alpha(palette.divider, 0.075)}`,
+                                    borderRadius: '6px',
+                                    padding: '0 12px 0 12px',
+                                 }}
+                              >
+                                 <Stack direction="row" gap={2} alignItems={'center'} flex={1}>
+                                    <IconButton {...dragElProps} sx={{ borderRadius: '5px' }}>
+                                       <DragIndicatorOutlined />
+                                    </IconButton>
+                                    <Stack flex={1} sx={{ py: 1 }}>
+                                       <ContentEditableInput
+                                          text={tag.label}
+                                          onBlur={(event) => handleSaveLabelOnBlur(event, i)}
+                                          onKeyDown={handleKeyPress}
+                                          onInput={InputUtils.formatInputOnSpace}
+                                          style={{ outline: 'none' }}
+                                       >
+                                          {tag.label}
+                                       </ContentEditableInput>
+                                       <Typography variant={'caption'} color="textSecondary">
+                                          {`${numberOfShowWhenTasks} shown, ${numberOfHideWhenTasks} hidden`}
+                                       </Typography>
+                                    </Stack>
                                  </Stack>
-                              </Stack>
-                              <Stack direction={'row'} alignItems={'center'} gap={1}>
-                                 <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
-                                 <IconButton
-                                    onClick={() => handleOpenTagRoutine(tag.id)}
-                                    disabled={getNumberOfTasks(tag, 'showWhenTags') === 0 && getNumberOfTasks(tag, 'hideWhenTags') === 0}
-                                 >
-                                    <ChevronRight sx={{ color: 'grey.400' }} />
-                                 </IconButton>
-                              </Stack>
-                           </SwipeActionWrapper>
-                        </ListItem>
-                     </Grow>
-                  </Box>
-               )
-            }
+                                 <Stack direction={'row'} alignItems={'center'} gap={1}>
+                                    <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                                    <IconButton
+                                       onClick={() => handleOpenTagRoutine(tag.id)}
+                                       disabled={numberOfShowWhenTasks === 0 && numberOfHideWhenTasks === 0}
+                                    >
+                                       <ChevronRight sx={{ color: 'grey.400' }} />
+                                    </IconButton>
+                                 </Stack>
+                              </SwipeActionWrapper>
+                           </ListItem>
+                        </Grow>
+                     </Box>
+                  )
+               );
+            }}
          />
          <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
             <Add onClick={handleCreateTag} />
