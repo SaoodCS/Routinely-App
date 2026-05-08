@@ -5,11 +5,11 @@ import { useMemo, useState } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
-interface T_MoreRoutineActionsMenuButtonProps {
+interface T_RoutineActionsMenuButtonProps {
    section: AppTypes.RoutineSection;
 }
 
-export default function MoreRoutineActionsMenuButton({ section }: T_MoreRoutineActionsMenuButtonProps): React.JSX.Element {
+export default function RoutineActionsMenuButton({ section }: T_RoutineActionsMenuButtonProps): React.JSX.Element {
    const { morningTasks, setMorningTasksDb, eveningTasks, setEveningTasksDb, tags, setTagsDb } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;

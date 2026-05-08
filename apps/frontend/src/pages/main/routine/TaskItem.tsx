@@ -12,7 +12,7 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
 import ContentEditableInput from '../../../components/ContentEditableInput';
 import { InputUtils } from '../../../utils';
-import ToggleTaskRelatedTagsMenuButton from './ToggleTaskRelatedTagsMenuButton';
+import TaskItemRelatedTagsMenuButton from './TaskItemRelatedTagsMenuButton';
 
 const DEPTH_STYLES: Record<
    T_TaskItemProps['indexes']['length'],
@@ -178,7 +178,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         </IconButton>
                      </>
                   )}
-                  <ToggleTaskRelatedTagsMenuButton section={section} indexes={indexes} task={task} />
+                  <TaskItemRelatedTagsMenuButton section={section} indexes={indexes} task={task} />
                </Stack>
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 1.25, pb: 0.75 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}

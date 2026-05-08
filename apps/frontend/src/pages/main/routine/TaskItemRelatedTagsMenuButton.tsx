@@ -5,13 +5,13 @@ import { AppUtils } from '@repo/utils/index';
 import { useState, type JSX } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
-interface T_ToggleTaskRelatedTagsMenuButtonProps {
+interface T_TaskItemRelatedTagsMenuButtonProps {
    section: AppTypes.RoutineSection;
    indexes: AppTypes.DepthIndexes;
    task: AppTypes.Task;
 }
 
-export default function ToggleTaskRelatedTagsMenuButton({ indexes, section, task }: T_ToggleTaskRelatedTagsMenuButtonProps): JSX.Element {
+export default function TaskItemRelatedTagsMenuButton({ indexes, section, task }: T_TaskItemRelatedTagsMenuButtonProps): JSX.Element {
    const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb, tags } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;

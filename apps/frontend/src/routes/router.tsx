@@ -8,11 +8,11 @@ import LogoutPage from '../pages/auth/LogoutPage';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import MoreRoutineActionsMenuButton from '../pages/main/routine/MoreRoutineActionsMenuButton';
+import RoutineActionsMenuButton from '../pages/main/routine/RoutineActionsMenuButton';
 import RoutinePage from '../pages/main/routine/RoutinePage';
-import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
+import SearchParamInputField from '../components/SearchParamInputField';
 import SettingsPage from '../pages/main/settings/SettingsPage';
-import MoreTagActionsMenuButton from '../pages/main/tags/MoreTagActionsMenuButton';
+import TagsActionsMenuButton from '../pages/main/tags/TagsActionsMenuButton';
 import TagsPage from '../pages/main/tags/TagsPage';
 import TagIdPage from '../pages/main/tags/tagId/TagIdPage';
 import TagTasksHeaderTitle from '../pages/main/tags/tagId/TagIdHeaderTitle';
@@ -108,8 +108,8 @@ export const router = createBrowserRouter(
                               Icon: () => <WbTwilightOutlined sx={{ color: 'warning.main' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchQueryMenuButton />
-                                    <MoreRoutineActionsMenuButton section="morning" />
+                                    <SearchParamInputField />
+                                    <RoutineActionsMenuButton section="morning" />
                                  </>
                               ),
                            },
@@ -125,8 +125,8 @@ export const router = createBrowserRouter(
                               Icon: () => <NightsStayOutlined sx={{ color: 'error.main' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchQueryMenuButton />
-                                    <MoreRoutineActionsMenuButton section="evening" />
+                                    <SearchParamInputField />
+                                    <RoutineActionsMenuButton section="evening" />
                                  </>
                               ),
                            },
@@ -144,8 +144,8 @@ export const router = createBrowserRouter(
                               Icon: () => <LocalOfferOutlined sx={{ color: 'primary.light' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchQueryMenuButton />
-                                    <MoreTagActionsMenuButton />
+                                    <SearchParamInputField />
+                                    <TagsActionsMenuButton />
                                  </>
                               ),
                            },
@@ -154,7 +154,7 @@ export const router = createBrowserRouter(
                      <Route
                         path={ROUTE_PATHS.main_tags_tagId}
                         element={<TagIdPage />}
-                        handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchQueryMenuButton /> } }}
+                        handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchParamInputField /> } }}
                      />
                   </Route>
 

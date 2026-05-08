@@ -4,7 +4,7 @@ import { isEqual, orderBy } from 'lodash';
 import { useState } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
-export default function MoreTagActionsMenuButton(): React.JSX.Element {
+export default function TagsActionsMenuButton(): React.JSX.Element {
    const { tags, setTagsDb } = useFirestoreContext();
    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
