@@ -1,19 +1,19 @@
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route as ReactRoute, type RouteProps, type UIMatch } from 'react-router';
 import { LocalOfferOutlined, NightsStayOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route as ReactRoute, type RouteProps, type UIMatch } from 'react-router';
 import { ProtectedRoute, PublicOnlyRoute } from '../guards/guards';
 import LoginPage from '../pages/auth/LoginPage';
 import LogoutPage from '../pages/auth/LogoutPage';
 import Forbidden from '../pages/error/Forbidden';
 import NotFound from '../pages/error/NotFound';
 import MainLayout from '../pages/main/MainLayout';
-import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
-import TagTasks from '../pages/main/tags/TagTasks';
-import TagTasksHeaderTitle from '../pages/main/tags/TagTasksHeaderTitle';
 import MoreRoutineActionsMenuButton from '../pages/main/routine/MoreRoutineActionsMenuButton';
-import MoreTagActionsMenuButton from '../pages/main/tags/MoreTagActionsMenuButton';
 import RoutinePage from '../pages/main/routine/RoutinePage';
+import SearchQueryMenuButton from '../pages/main/SearchQueryMenuButton';
 import SettingsPage from '../pages/main/settings/SettingsPage';
+import MoreTagActionsMenuButton from '../pages/main/tags/MoreTagActionsMenuButton';
 import TagsPage from '../pages/main/tags/TagsPage';
+import TagIdPage from '../pages/main/tags/tagId/TagIdPage';
+import TagTasksHeaderTitle from '../pages/main/tags/tagId/TagIdHeaderTitle';
 export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
 export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
 type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: React.ReactNode; handle?: T_Route_Handle };
@@ -45,7 +45,7 @@ export const ROUTE_PATHS = {
    main_routine_evening: '/main/routine/evening',
    // main/tags
    main_tags: '/main/tags',
-   main_tags_tasks: '/main/tags/:tagId',
+   main_tags_tagId: '/main/tags/:tagId',
    // main/settings
    main_settings: '/main/settings',
 } as const;
@@ -129,8 +129,8 @@ export const router = createBrowserRouter(
                         }}
                      />
                      <Route
-                        path={ROUTE_PATHS.main_tags_tasks}
-                        element={<TagTasks />}
+                        path={ROUTE_PATHS.main_tags_tagId}
+                        element={<TagIdPage />}
                         handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchQueryMenuButton /> } }}
                      />
                   </Route>
