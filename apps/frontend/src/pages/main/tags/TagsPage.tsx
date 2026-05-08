@@ -11,7 +11,7 @@ import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ROUTE_PATHS } from '../../../routes/router';
 import { InputUtils } from '../../../utils';
 import ContentEditableInput from '../../../components/ContentEditableInput';
-import NoTagsPlaceholder from './NoTagsPlaceholder';
+import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 
 export default function TagsPage(): React.JSX.Element {
    const [searchParams] = useSearchParams();
@@ -70,7 +70,7 @@ export default function TagsPage(): React.JSX.Element {
 
    return (
       <>
-         {tags.length === 0 && <NoTagsPlaceholder />}
+         {tags.length === 0 && <TagsEmptyPlaceholder />}
          <DragAndDropList
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}

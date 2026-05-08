@@ -1,7 +1,7 @@
-import { TaskAltOutlined } from '@mui/icons-material';
+import { LocalOfferOutlined } from '@mui/icons-material';
 import { Box, Stack, Typography, useTheme } from '@mui/material';
 
-export default function NoTasksPlaceholder(): React.JSX.Element {
+export default function TagsEmptyPlaceholder(): React.JSX.Element {
    const { palette } = useTheme();
    return (
       <Stack
@@ -23,13 +23,13 @@ export default function NoTasksPlaceholder(): React.JSX.Element {
             bgcolor={'#ffffff05'}
             sx={{ p: { xs: 3, sm: 4 }, backdropFilter: 'blur(3px)', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}
          >
-            <TaskAltOutlined fontSize="large" sx={{ color: 'grey.500' }} />
+            <LocalOfferOutlined fontSize="large" sx={{ color: 'grey.500' }} />
             <Box>
                <Typography variant={'h6'} color="textSecondary">
-                  {'No Tasks.'}
+                  {'No Tags.'}
                </Typography>
                <Typography variant={'caption'} color={'textSecondary'}>
-                  {'Create a task below to get started.'}
+                  {'Create a tag below to get started.'}
                </Typography>
             </Box>
          </Stack>

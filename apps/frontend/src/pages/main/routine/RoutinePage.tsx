@@ -10,7 +10,7 @@ import useHideOnScroll from '../../../hooks/useHideOnScroll';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import TaskItem from './TaskItem';
-import NoTasksPlaceholder from './NoTasksPlaceholder';
+import RoutineEmptyPlaceholder from './RoutineEmptyPlaceholder';
 
 interface T_RoutineProps {
    section: AppTypes.RoutineSection;
@@ -113,7 +113,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
                </Stack>
             </AppBar>
          )}
-         {tasks.length === 0 && <NoTasksPlaceholder />}
+         {tasks.length === 0 && <RoutineEmptyPlaceholder />}
          <DragAndDropList
             ref={dragDropListRef}
             style={{ overflow: 'auto', maxHeight: '100%', paddingTop: tagHeaderHeight }}
