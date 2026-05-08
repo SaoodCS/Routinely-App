@@ -26,3 +26,15 @@ export function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesT
    }
    return taskListToUpdate; // this returns a copy of the task and it's siblings, so the original tasks array isn't mutated
 }
+
+export const FIRESTORE_PATHS_FIELDS = {
+   routine_morning_tasks: 'users/{uid}/routines/morning[tasks]',
+   routine_evening_tasks: 'users/{uid}/routines/evening[tasks]',
+   tags_list_tags: 'users/{uid}/tags/list[tags]',
+   settings_app_settings: 'users/{uid}/settings/app[settings]',
+} as const; // NOTE: firestore documents have an even number of segments, collections have an odd number
+
+export function getFirestorePathAndField(path: AppTypes.FirestorePathField, uid: string): { path: string; field: string } {
+   const [pathStr, fieldStr] = FIRESTORE_PATHS_FIELDS[path].split('[');
+   return { path: pathStr.replace('{uid}', uid), field: fieldStr.replace(']', '') };
+}

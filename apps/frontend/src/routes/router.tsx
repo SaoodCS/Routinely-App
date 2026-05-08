@@ -1,7 +1,7 @@
 import { LocalOfferOutlined, NightsStayOutlined, SettingsOutlined, WbTwilightOutlined } from '@mui/icons-material';
 import { createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route as ReactRoute, useLocation } from 'react-router';
 import type { RouteProps, UIMatch, Location } from 'react-router';
-import type { UserTypes } from '@repo/types/index';
+import type { AppTypes } from '@repo/types/index';
 import type { JSX } from 'react';
 import LoginPage from '../pages/auth/LoginPage';
 import LogoutPage from '../pages/auth/LogoutPage';
@@ -54,7 +54,7 @@ export const ROUTE_PATHS = {
    main_settings: '/main/settings',
 } as const;
 
-function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: UserTypes.Role[] | 'all' }): JSX.Element {
+function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: AppTypes.UserRole[] | 'all' }): JSX.Element {
    const location = useLocation();
    const { isLoading, isAuthenticated, userRole } = useAuthContext();
    if (isLoading) return <SpinnerLoader fullPage />;

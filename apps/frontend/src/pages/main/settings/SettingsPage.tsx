@@ -15,14 +15,14 @@ import {
    Typography,
    type AlertProps,
 } from '@mui/material';
-import type { FirestoreTypes } from '@repo/types/index';
-import { FirestoreUtils } from '@repo/utils/index';
+import type { AppTypes } from '@repo/types/index';
 import { FirebaseError } from 'firebase/app';
 import { deleteUser } from 'firebase/auth';
 import { doc, writeBatch } from 'firebase/firestore';
 import type React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { AppUtils } from '@repo/utils/index';
 import { useAuthContext } from '../../../authentication/useAuthContext';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { db } from '../../../firebase/config';
@@ -37,8 +37,8 @@ export default function SettingsPage(): React.JSX.Element {
 
    function resetAllData(): void {
       if (!user) return void navigate(ROUTE_PATHS.auth_login, { replace: true });
-      const paths = Object.entries(FirestoreUtils.PATHS_FIELDS).map(([key]) =>
-         FirestoreUtils.getPathAndField(key as FirestoreTypes.PathKey, user.uid),
+      const paths = Object.entries(AppUtils.FIRESTORE_PATHS_FIELDS).map(([key]) =>
+         AppUtils.getFirestorePathAndField(key as AppTypes.FirestorePathField, user.uid),
       );
       setIsLoading(true);
       const batch = writeBatch(db);

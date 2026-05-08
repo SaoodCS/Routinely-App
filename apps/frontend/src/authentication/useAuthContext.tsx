@@ -1,9 +1,9 @@
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { UserTypes } from '@repo/types/index';
+import type { AppTypes } from '@repo/types/index';
 import { auth } from '../firebase/config';
 
-type T_Auth_Context = { isLoading: boolean; isAuthenticated: boolean; user: User | null; userRole?: UserTypes.Role };
+type T_Auth_Context = { isLoading: boolean; isAuthenticated: boolean; user: User | null; userRole?: AppTypes.UserRole };
 
 const AuthContext = createContext<T_Auth_Context>({ isLoading: true, isAuthenticated: false, user: null });
 
