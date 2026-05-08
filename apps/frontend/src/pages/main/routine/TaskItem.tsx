@@ -16,11 +16,11 @@ import ToggleTaskRelatedTagsMenuButton from './ToggleTaskRelatedTagsMenuButton';
 
 const DEPTH_STYLES: Record<
    T_TaskItemProps['indexes']['length'],
-   { indent: number; color: [PaletteOption, PaletteShade]; fontSize: string; paddingTop: number }
+   { indent: number; colorAndShade: [PaletteOption, PaletteShade]; fontSize: string; paddingTop: number }
 > = {
-   1: { indent: 1, color: ['primary', 'light'], fontSize: '1rem', paddingTop: 1 },
-   2: { indent: 2.5, color: ['secondary', 'light'], fontSize: '0.9rem', paddingTop: 0 },
-   3: { indent: 4, color: ['success', 'light'], fontSize: '0.825rem', paddingTop: 0 },
+   1: { indent: 1, colorAndShade: ['primary', 'light'], fontSize: '1rem', paddingTop: 1 },
+   2: { indent: 2.5, colorAndShade: ['secondary', 'light'], fontSize: '0.9rem', paddingTop: 0 },
+   3: { indent: 4, colorAndShade: ['success', 'light'], fontSize: '0.825rem', paddingTop: 0 },
 };
 
 interface T_TaskItemProps {
@@ -37,7 +37,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
    const { palette } = useTheme();
-   const { indent, color, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
+   const { indent, colorAndShade, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
+   const color = palette[colorAndShade[0]][colorAndShade[1]];
 
    const [searchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
@@ -151,22 +152,16 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
                style={{
                   borderRadius: '5px',
-                  borderLeft: `4px solid ${palette[color[0]][color[1]]}`,
-                  background: `linear-gradient(150deg, ${alpha(palette[color[0]][color[1]], 0.2)}, ${alpha(palette[color[0]][color[1]], 0.1)} 50%)`,
+                  borderLeft: `4px solid ${color}`,
+                  background: `linear-gradient(150deg, ${alpha(color, 0.2)}, ${alpha(color, 0.1)} 50%)`,
                   opacity: textOverlay || task.isChecked ? 0.5 : 1,
                }}
             >
                <Stack
-                  direction={'row'}
-                  alignItems={'center'}
+                  direction="row"
+                  alignItems="center"
                   gap={1}
-                  px={1}
-                  pt={0.75}
-                  pb={0.5}
-                  sx={{
-                     '& > :last-child': { ml: 'auto' },
-                     '& button': { p: 0, color: palette[color[0]][color[1]] },
-                  }}
+                  sx={{ px: 1, pt: 0.75, pb: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: color } }}
                >
                   <IconButton {...dragElProps}>
                      <DragIndicatorOutlined />
