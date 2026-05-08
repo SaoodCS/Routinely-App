@@ -4,6 +4,7 @@ import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 
+// NOTE: Firebase API Keys are made to be public (app security is done via AppCheck and Firestore Rules instead)
 const firebaseConfig: FirebaseOptions = {
    apiKey: 'AIzaSyCw1NGuWWpiZ1J46PFmTmQjqakTshTORlo',
    authDomain: 'routinely-app-d7d9c.web.app',
