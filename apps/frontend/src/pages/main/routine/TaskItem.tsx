@@ -6,7 +6,7 @@ import { AppUtils } from '@repo/utils/index';
 import { useEffect, useRef, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import type DragAndDropList from '../../../components/DragAndDropList';
-import SearchTextHighlighter from '../../../components/SearchTextHighlighter';
+import TextHighlighter from '../../../components/TextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
@@ -196,7 +196,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         padding: '0 6px 1.2px 0',
                      }}
                   >
-                     <SearchTextHighlighter query={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
+                     <TextHighlighter highlightText={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
                   </ContentEditableInput>
                </Stack>
             </SwipeActionWrapper>
