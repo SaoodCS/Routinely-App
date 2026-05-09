@@ -1,13 +1,33 @@
 import type { AppTypes } from '@repo/types/index';
-import type { JSX } from 'react';
-import type { Location } from 'react-router';
-import { Navigate, Outlet, Route, useLocation } from 'react-router';
+import type { ComponentType, JSX, ReactElement, ReactNode } from 'react';
+import { Navigate, Outlet, Route, type Location, type RouteProps, type UIMatch, useLocation } from 'react-router';
 import { useAuthContext } from '../authentication/useAuthContext';
 import SpinnerLoader from '../components/SpinnerLoader';
-import { ROUTE_PATHS } from './routes.constants';
-import type { T_Route_Path, T_RouteProps } from './routes.types';
+export type T_Route_Path = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
+export type T_Route_UseMatches = UIMatch<unknown, T_Route_Handle | undefined>[];
+export type T_RouteProps = Omit<RouteProps, 'children' | 'handle' | 'path'> & { path?: T_Route_Path; children?: ReactNode; handle?: T_Route_Handle };
+export type T_Route_Handle = {
+   header?: { hide?: boolean; Icon?: ComponentType; title?: string | ComponentType; showBack?: boolean; RightElement?: ComponentType };
+   nav?: { hide?: boolean; inBottomNav?: boolean };
+};
 
-export const SafeRoute = Route as (props: T_RouteProps) => React.ReactElement | null;
+export const ROUTE_PATHS = {
+   notFound: '*',
+   forbidden: '/403',
+   landing: '/',
+   auth: '/auth',
+   auth_login: '/auth/login',
+   auth_logout: '/auth/logout',
+   main: '/main',
+   main_routine: '/main/routine',
+   main_routine_morning: '/main/routine/morning',
+   main_routine_evening: '/main/routine/evening',
+   main_tags: '/main/tags',
+   main_tags_tagId: '/main/tags/:tagId',
+   main_settings: '/main/settings',
+} as const;
+
+export const SafeRoute = Route as (props: T_RouteProps) => ReactElement | null;
 
 export function ProtectedRoute({ allowedRoles = 'all' }: { allowedRoles?: AppTypes.UserRole[] | 'all' }): JSX.Element {
    const location = useLocation();

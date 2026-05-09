@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router';
-import { ROUTE_PATHS } from '../routes.constants';
-import { ProtectedRoute, SafeRoute } from '../routes.components';
+import { ProtectedRoute, ROUTE_PATHS, SafeRoute } from '../index.route';
 import MainLayout from './MainLayout';
 import { routineRoute } from './routine/routine.route';
 import { tagsRoute } from './tags/tags.route';

@@ -1,6 +1,5 @@
 import { SettingsOutlined } from '@mui/icons-material';
-import { ROUTE_PATHS } from '../../routes.constants';
-import { SafeRoute } from '../../routes.components';
+import { ROUTE_PATHS, SafeRoute } from '../../index.route';
 import SettingsPage from './SettingsPage';
 
 export const settingsRoute = (

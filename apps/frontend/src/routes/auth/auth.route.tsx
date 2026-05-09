@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router';
-import { ProtectedRoute, PublicOnlyRoute, SafeRoute } from '../routes.components';
-import { ROUTE_PATHS } from '../routes.constants';
+import { ProtectedRoute, PublicOnlyRoute, ROUTE_PATHS, SafeRoute } from '../index.route';
 import LoginPage from './LoginPage';
 import LogoutPage from './LogoutPage';
 

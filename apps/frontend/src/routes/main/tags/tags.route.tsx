@@ -1,7 +1,6 @@
 import { LocalOfferOutlined } from '@mui/icons-material';
 import SearchParamField from '../../../components/SearchParamField';
-import { ROUTE_PATHS } from '../../routes.constants';
-import { SafeRoute } from '../../routes.components';
+import { ROUTE_PATHS, SafeRoute } from '../../index.route';
 import TagsActionsMenuButton from './TagsActionsMenuButton';
 import TagsPage from './TagsPage';
 import TagIdPage from './tagId/TagIdPage';

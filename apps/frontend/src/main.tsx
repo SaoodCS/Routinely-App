@@ -10,7 +10,7 @@ import PWADialog from './components/PWADialog.tsx';
 import { FirestoreProvider } from './database/useFirestoreContext.tsx';
 import { LocalStorageProvider } from './database/useLocalStorageContext.tsx';
 import theme from './theme/theme.ts';
-import { router } from './routes/index.tsx';
+import { router } from './routes/assemble.route.tsx';
 
 registerSW({ immediate: true });
 
