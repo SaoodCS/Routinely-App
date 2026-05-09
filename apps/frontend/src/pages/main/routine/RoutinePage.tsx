@@ -173,7 +173,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
                   sx={{ color: `${checkedTasksCount === visibleTasks.size ? 'success.main' : 'error.main'}`, cursor: 'default' }}
                />
             </Grid>
-            <Grid size={3}>
+            <Grid size={3} sx={{ placeItems: 'end' }}>
                <SpeedDial ariaLabel="quick actions" icon={<SpeedDialIcon />}>
                   <SpeedDialAction onClick={handleCreateTask} icon={<Add />} slotProps={{ tooltip: { open: true, title: 'Add Task' } }} />
                </SpeedDial>
