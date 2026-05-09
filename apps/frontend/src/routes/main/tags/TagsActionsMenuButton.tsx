@@ -1,6 +1,7 @@
 import { MoreHorizRounded, SortByAlpha } from '@mui/icons-material';
 import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
-import { isEqual, orderBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
+import isEqual from 'lodash/isEqual';
 import { useState } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 
