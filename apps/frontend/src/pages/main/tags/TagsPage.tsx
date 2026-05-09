@@ -4,13 +4,13 @@ import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
 import type { FocusEvent, KeyboardEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
+import ContentEditableField from '../../../components/ContentEditableField';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ROUTE_PATHS } from '../../../routes/router';
 import { InputUtils } from '../../../utils';
-import ContentEditableInput from '../../../components/ContentEditableInput';
 import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 
 export default function TagsPage(): React.JSX.Element {
@@ -102,7 +102,7 @@ export default function TagsPage(): React.JSX.Element {
                                        <DragIndicatorOutlined />
                                     </IconButton>
                                     <Stack flex={1} sx={{ py: 1 }}>
-                                       <ContentEditableInput
+                                       <ContentEditableField
                                           text={tag.label}
                                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                           onKeyDown={handleKeyPress}
@@ -110,7 +110,7 @@ export default function TagsPage(): React.JSX.Element {
                                           style={{ outline: 'none' }}
                                        >
                                           {tag.label}
-                                       </ContentEditableInput>
+                                       </ContentEditableField>
                                        <Typography variant={'caption'} color="textSecondary">
                                           {`${numberOfShowWhenTasks} shown, ${numberOfHideWhenTasks} hidden`}
                                        </Typography>

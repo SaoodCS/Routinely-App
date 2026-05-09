@@ -4,11 +4,11 @@ import { act, useState, type ReactElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { InputUtils } from '../utils';
-import ContentEditableInput from './ContentEditableInput';
+import ContentEditableField from './ContentEditableField';
 
 const mountedRoots: { container: HTMLDivElement; root: Root }[] = [];
 
-function renderContentEditableInput(element: ReactElement): HTMLDivElement {
+function renderContentEditableField(element: ReactElement): HTMLDivElement {
    const container = document.createElement('div');
    const root = createRoot(container);
    document.body.append(container);
@@ -38,12 +38,12 @@ afterEach(() => {
    }
 });
 
-describe('ContentEditableInput', () => {
+describe('ContentEditableField', () => {
    it('renders highlighted children over a real input without contentEditable', () => {
-      const container = renderContentEditableInput(
-         <ContentEditableInput text="Task">
+      const container = renderContentEditableField(
+         <ContentEditableField text="Task">
             <mark>Task</mark>
-         </ContentEditableInput>,
+         </ContentEditableField>,
       );
 
       expect(container.querySelector('[contenteditable]')).toBeNull();
@@ -55,13 +55,13 @@ describe('ContentEditableInput', () => {
       function TestInput(): ReactElement {
          const [label, setLabel] = useState('');
          return (
-            <ContentEditableInput text={label} onBlur={(event) => setLabel(event.currentTarget.value)}>
+            <ContentEditableField text={label} onBlur={(event) => setLabel(event.currentTarget.value)}>
                {label ? <mark>{label}</mark> : ''}
-            </ContentEditableInput>
+            </ContentEditableField>
          );
       }
 
-      const container = renderContentEditableInput(<TestInput />);
+      const container = renderContentEditableField(<TestInput />);
       const inputElement = getInputElement(container);
 
       act(() => {
@@ -85,12 +85,12 @@ describe('ContentEditableInput', () => {
          return (
             <>
                <button onClick={() => setLabel('New')}>Update</button>
-               <ContentEditableInput text={label}>{label}</ContentEditableInput>
+               <ContentEditableField text={label}>{label}</ContentEditableField>
             </>
          );
       }
 
-      const container = renderContentEditableInput(<TestInput />);
+      const container = renderContentEditableField(<TestInput />);
 
       act(() => {
          container.querySelector('button')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -101,10 +101,10 @@ describe('ContentEditableInput', () => {
    });
 
    it('keeps the input surface stable while allowing caller styles', () => {
-      const container = renderContentEditableInput(
-         <ContentEditableInput text="Task" style={{ color: 'red' }}>
+      const container = renderContentEditableField(
+         <ContentEditableField text="Task" style={{ color: 'red' }}>
             Task
-         </ContentEditableInput>,
+         </ContentEditableField>,
       );
       const wrapperElement = container.firstElementChild as HTMLSpanElement;
       const inputElement = getInputElement(container);
@@ -121,7 +121,7 @@ describe('ContentEditableInput', () => {
    });
 
    it('keeps an empty input clickable', () => {
-      const container = renderContentEditableInput(<ContentEditableInput text="">{''}</ContentEditableInput>);
+      const container = renderContentEditableField(<ContentEditableField text="">{''}</ContentEditableField>);
       const wrapperElement = container.firstElementChild as HTMLSpanElement;
       const inputElement = getInputElement(container);
 
@@ -132,10 +132,10 @@ describe('ContentEditableInput', () => {
 
    it('prevents enter before forwarding keydown', () => {
       const onKeyDown = vi.fn();
-      const container = renderContentEditableInput(
-         <ContentEditableInput text="Task" onKeyDown={onKeyDown}>
+      const container = renderContentEditableField(
+         <ContentEditableField text="Task" onKeyDown={onKeyDown}>
             Task
-         </ContentEditableInput>,
+         </ContentEditableField>,
       );
       const event = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Enter' });
 
@@ -148,10 +148,10 @@ describe('ContentEditableInput', () => {
    });
 
    it('formats input text on space', () => {
-      const container = renderContentEditableInput(
-         <ContentEditableInput text="" onInput={InputUtils.formatInputOnSpace}>
+      const container = renderContentEditableField(
+         <ContentEditableField text="" onInput={InputUtils.formatInputOnSpace}>
             {''}
-         </ContentEditableInput>,
+         </ContentEditableField>,
       );
       const inputElement = getInputElement(container);
 
@@ -172,10 +172,10 @@ describe('ContentEditableInput', () => {
    });
 
    it('formats mapped words on space', () => {
-      const container = renderContentEditableInput(
-         <ContentEditableInput text="" onInput={InputUtils.formatInputOnSpace}>
+      const container = renderContentEditableField(
+         <ContentEditableField text="" onInput={InputUtils.formatInputOnSpace}>
             {''}
-         </ContentEditableInput>,
+         </ContentEditableField>,
       );
       const inputElement = getInputElement(container);
 

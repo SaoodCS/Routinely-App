@@ -5,12 +5,12 @@ import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
 import { useEffect, useRef, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
+import ContentEditableField from '../../../components/ContentEditableField';
 import type DragAndDropList from '../../../components/DragAndDropList';
-import TextHighlighter from '../../../components/TextHighlighter';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
+import TextHighlighter from '../../../components/TextHighlighter';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
-import ContentEditableInput from '../../../components/ContentEditableInput';
 import { InputUtils } from '../../../utils';
 import TaskItemRelatedTagsMenuButton from './TaskItemRelatedTagsMenuButton';
 
@@ -182,7 +182,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                </Stack>
                <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 1.25, pb: 0.75 }}>
                   {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
-                  <ContentEditableInput
+                  <ContentEditableField
                      id={task.id}
                      text={task.label}
                      onBlur={handleSaveLabelOnBlur}
@@ -197,7 +197,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      }}
                   >
                      <TextHighlighter highlightText={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
-                  </ContentEditableInput>
+                  </ContentEditableField>
                </Stack>
             </SwipeActionWrapper>
          </ListItem>

@@ -1,11 +1,11 @@
 import { useState, type FocusEvent, type InputHTMLAttributes, type JSX, type KeyboardEvent, type ReactNode } from 'react';
 
-type T_ContentEditableInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'children' | 'value'> & {
+type T_ContentEditableFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'children' | 'value'> & {
    children: ReactNode;
    text: string;
 };
 
-export default function ContentEditableInput(props: T_ContentEditableInputProps): JSX.Element {
+export default function ContentEditableField(props: T_ContentEditableFieldProps): JSX.Element {
    const { children, onBlur, onChange, onFocus, onInput, onKeyDown, style, text, ...rest } = props;
    const [isEditing, setIsEditing] = useState(false);
    const [draft, setDraft] = useState<{ base: string; value: string } | null>(null);

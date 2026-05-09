@@ -3,7 +3,7 @@ import { alpha, IconButton, InputAdornment, TextField, useTheme, type TextFieldP
 import type { ChangeEvent } from 'react';
 import { useSearchParams } from 'react-router';
 
-export default function SearchParamInput(props?: TextFieldProps): React.JSX.Element {
+export default function SearchParamField(props?: TextFieldProps): React.JSX.Element {
    const { ...textFieldProps } = props ?? {};
    const [searchParams, setSearchParams] = useSearchParams();
    const searchQuery = searchParams.get('search') ?? '';
@@ -46,6 +46,7 @@ export default function SearchParamInput(props?: TextFieldProps): React.JSX.Elem
                ) : undefined,
             },
          }}
+         // TODO: NEED TO ADD THIS SX AS A PROP INSTEAD AND FEED IT IN FROM WHERE THIS COMPONENT IS REFERENCED IN ORDER TO MAKE THIS COMPONENT REUSABLE (OR SET A DEFAULT STYLE FOR IT IN THEME.TS)
          sx={{
             scale: '0.8',
             '& .MuiOutlinedInput-root.Mui-focused fieldset': { border: '1px solid', borderColor: 'divider' },
