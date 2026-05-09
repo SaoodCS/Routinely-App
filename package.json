@@ -14,6 +14,8 @@
       "build:frontend": "npm run build --workspace @repo/frontend",
       "deploy:frontend": "npm run build:frontend && npx -y firebase-tools@latest deploy --only hosting --project routinely-app-d7d9c",
       "dev:backend": "[//TODO: ref to script that runs backend server]",
+      "build:backend": "[//TODO: ref to script that builds backend]",
+      "deploy:backend": "npm run build:backend && [//TODO: ref to script that deploys backend]",
       "dev:app": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\" --prefix-colors \"bgBlue.bold,bgMagenta.bold\" --names \"FRONTEND,BACKEND\"",
       "lint": "eslint .",
       "typecheck": "npm run typecheck --workspaces --if-present",
