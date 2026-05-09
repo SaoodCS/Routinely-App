@@ -1,6 +1,8 @@
 // component has 0 UI library dependencies so can copy to any react project
 import type { PointerEvent, ReactNode } from 'react';
 import { useRef, useState } from 'react';
+const CLICKABLE_ELEMENTS = 'button, a';
+const NONTEXT_INPUT_ELEMENTS = ['button', 'submit', 'reset', 'checkbox', 'radio', 'range'];
 
 interface T_SwipeActionWrapperProps {
    children: ReactNode;
@@ -31,7 +33,8 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
 
    function handlePointerDown(event: PointerEvent<HTMLDivElement>): void {
       if (!isInteractive || event.button !== 0) return;
-      if (event.target instanceof Element && event.target.closest('button')) return;
+      if (event.target instanceof Element && (event.target.closest(CLICKABLE_ELEMENTS) || !event.currentTarget.contains(event.target))) return;
+      if (event.target instanceof HTMLInputElement && NONTEXT_INPUT_ELEMENTS.includes(event.target.type)) return;
       pointerStartXRef.current = event.clientX;
       pointerIdRef.current = event.pointerId;
       setDidSwipe(false);
@@ -68,6 +71,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
       if (!didSwipe) return;
       event.preventDefault();
       event.stopPropagation();
+      setDidSwipe(false);
    }
 
    return (

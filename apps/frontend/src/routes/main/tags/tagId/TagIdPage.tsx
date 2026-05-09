@@ -172,9 +172,9 @@ export default function TagIdPage(): JSX.Element {
                   }}
                />
             </Grid>
-            <Grid size={3} sx={{ textAlign: 'right' }}>
+            <Grid size={3} sx={{ textAlign: 'right' }} onClick={handleCreateTask}>
                <Fab color="primary">
-                  <Add onClick={handleCreateTask} />
+                  <Add />
                </Fab>
             </Grid>
          </Grid>

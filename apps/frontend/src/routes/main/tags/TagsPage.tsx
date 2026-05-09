@@ -21,10 +21,32 @@ export default function TagsPage(): React.JSX.Element {
    const { tags, setTagsDb, setMorningTasksDb, setEveningTasksDb, morningTasks, eveningTasks } = useFirestoreContext();
    const { palette } = useTheme();
 
+   function removeTagIdFromTasks(tasks: AppTypes.Task[], tagId: AppTypes.Tag['id']): AppTypes.Task[] {
+      const updatedTasks = [...tasks];
+      const tasksToUpdate = updatedTasks.map((_, index) => ({ index, taskList: updatedTasks }));
+      for (let i = 0; i < tasksToUpdate.length; i += 1) {
+         const { index, taskList } = tasksToUpdate[i];
+         const task = taskList[index];
+         const updatedTask: AppTypes.Task = {
+            ...task,
+            showWhenTags: task.showWhenTags.filter((t) => t !== tagId),
+            hideWhenTags: task.hideWhenTags.filter((t) => t !== tagId),
+         };
+         taskList[index] = updatedTask;
+         if (!task.children) continue;
+         const updatedChildren = [...task.children];
+         updatedTask.children = updatedChildren;
+         for (let j = 0; j < updatedChildren.length; j += 1) tasksToUpdate.push({ index: j, taskList: updatedChildren });
+      }
+      return updatedTasks;
+   }
+
    function handleDelete(tagIndex: number): void {
+      const tagId = tags[tagIndex]?.id;
+      if (!tagId) return;
       setTagsDb(tags.filter((_, i) => i !== tagIndex));
-      setMorningTasksDb(morningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
-      setEveningTasksDb(eveningTasks.map((task) => ({ ...task, showWhenTags: task.showWhenTags.filter((t) => t !== tags[tagIndex].id) })));
+      setMorningTasksDb(removeTagIdFromTasks(morningTasks, tagId));
+      setEveningTasksDb(removeTagIdFromTasks(eveningTasks, tagId));
    }
 
    function handleToggle(tagIndex: number): void {
@@ -133,8 +155,8 @@ export default function TagsPage(): React.JSX.Element {
                );
             }}
          />
-         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }}>
-            <Add onClick={handleCreateTag} />
+         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={handleCreateTag}>
+            <Add />
          </Fab>
       </>
    );
