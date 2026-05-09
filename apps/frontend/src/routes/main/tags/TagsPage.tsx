@@ -2,7 +2,7 @@ import { Add, ChevronRight, DragIndicatorOutlined } from '@mui/icons-material';
 import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
-import type { FocusEvent, KeyboardEvent } from 'react';
+import { useEffect, useRef, type FocusEvent, type KeyboardEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import ContentEditableField from '../../../components/ContentEditableField';
 import DragAndDropList from '../../../components/DragAndDropList';
@@ -19,7 +19,14 @@ export default function TagsPage(): React.JSX.Element {
    const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
    const { ref } = useScrollSaver('tags-scroll');
    const { tags, setTagsDb, setMorningTasksDb, setEveningTasksDb, morningTasks, eveningTasks } = useFirestoreContext();
+   const focusTagIdRef = useRef<string | null>(null);
    const { palette } = useTheme();
+
+   useEffect(() => {
+      if (!focusTagIdRef.current) return;
+      document.getElementById(focusTagIdRef.current)?.focus();
+      focusTagIdRef.current = null;
+   }, [tags]);
 
    function removeTagIdFromTasks(tasks: AppTypes.Task[], tagId: AppTypes.Tag['id']): AppTypes.Task[] {
       const updatedTasks = [...tasks];
@@ -63,15 +70,19 @@ export default function TagsPage(): React.JSX.Element {
 
    function handleKeyPress(event: KeyboardEvent<HTMLInputElement>): void {
       if (event.key === 'Enter') event.currentTarget.blur();
+      if (event.ctrlKey) {
+         if (event.key === 'ArrowDown' || event.key === 'Enter') addTag(true);
+      }
    }
 
    function isTagRendered(tagLabel: string): boolean {
       return tagLabel.toLowerCase().includes(normalizedSearchQuery);
    }
 
-   function handleCreateTag(): void {
+   function addTag(focusOnNewTag?: boolean): void {
       const newTag = createNewTag();
       setTagsDb([...tags, newTag]);
+      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
    }
 
    function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
@@ -125,6 +136,7 @@ export default function TagsPage(): React.JSX.Element {
                                     </IconButton>
                                     <Stack flex={1} sx={{ py: 1 }}>
                                        <ContentEditableField
+                                          id={tag.id}
                                           text={tag.label}
                                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                           onKeyDown={handleKeyPress}
@@ -155,7 +167,7 @@ export default function TagsPage(): React.JSX.Element {
                );
             }}
          />
-         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={handleCreateTag}>
+         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={() => addTag()}>
             <Add />
          </Fab>
       </>

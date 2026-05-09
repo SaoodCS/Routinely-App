@@ -134,7 +134,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    function handleKeyPress(event: KeyboardEvent<HTMLInputElement>): void {
       if (event.key === 'Enter') event.currentTarget.blur();
       if (event.ctrlKey) {
-         if (event.key === 'ArrowDown') addTaskBelow(true);
+         if (event.key === 'ArrowDown' || event.key === 'Enter') addTaskBelow(true);
          else if (event.key === 'ArrowRight' && indexes.length < 3) addSubTaskBelow(true);
          else if (event.key === 'ArrowLeft') addParentTaskBelow(true);
       }
