@@ -1,4 +1,4 @@
-import { Add, ChevronRight, DragIndicatorOutlined } from '@mui/icons-material';
+import { Add, ChevronRight, DragIndicatorOutlined, KeyboardDoubleArrowDown } from '@mui/icons-material';
 import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
 import { createNewTag } from '@repo/utils/app.utils';
@@ -68,13 +68,6 @@ export default function TagsPage(): React.JSX.Element {
       setTagsDb(updatedTags);
    }
 
-   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>): void {
-      if (event.key === 'Enter') event.currentTarget.blur();
-      if (event.ctrlKey) {
-         if (event.key === 'ArrowDown' || event.key === 'Enter') addTag(true);
-      }
-   }
-
    function isTagRendered(tagLabel: string): boolean {
       return tagLabel.toLowerCase().includes(normalizedSearchQuery);
    }
@@ -83,6 +76,21 @@ export default function TagsPage(): React.JSX.Element {
       const newTag = createNewTag();
       setTagsDb([...tags, newTag]);
       if (focusOnNewTag) focusTagIdRef.current = newTag.id;
+   }
+
+   function addTagBelow(tagIndex: number, focusOnNewTag?: boolean): void {
+      const newTag = createNewTag();
+      const updatedTags = [...tags];
+      updatedTags.splice(tagIndex + 1, 0, newTag);
+      setTagsDb(updatedTags);
+      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
+   }
+
+   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>, tagIndex: number): void {
+      if (event.key === 'Enter') event.currentTarget.blur();
+      if (event.ctrlKey) {
+         if (event.key === 'ArrowDown' || event.key === 'Enter') addTagBelow(tagIndex, true);
+      }
    }
 
    function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
@@ -130,16 +138,24 @@ export default function TagsPage(): React.JSX.Element {
                                     padding: '0 12px 0 12px',
                                  }}
                               >
-                                 <Stack direction="row" gap={2} alignItems={'center'} flex={1}>
-                                    <IconButton {...dragElProps} sx={{ borderRadius: '5px' }}>
+                                 <Stack
+                                    gap={0.75}
+                                    direction="row"
+                                    alignItems="center"
+                                    sx={{ '& button': { borderRadius: 2, color: 'grey.300', p: 0.3 } }}
+                                 >
+                                    <IconButton {...dragElProps}>
                                        <DragIndicatorOutlined />
                                     </IconButton>
-                                    <Stack flex={1} sx={{ py: 1 }}>
+                                    <IconButton onClick={() => addTagBelow(i)}>
+                                       <KeyboardDoubleArrowDown />
+                                    </IconButton>
+                                    <Stack flex={1} sx={{ py: 1, pl: 1 }}>
                                        <ContentEditableField
                                           id={tag.id}
                                           text={tag.label}
                                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                                          onKeyDown={handleKeyPress}
+                                          onKeyDown={(e) => handleKeyPress(e, i)}
                                           onInput={InputUtils.formatInputOnSpace}
                                           style={{ outline: 'none' }}
                                        >
@@ -150,13 +166,13 @@ export default function TagsPage(): React.JSX.Element {
                                        </Typography>
                                     </Stack>
                                  </Stack>
-                                 <Stack direction={'row'} alignItems={'center'} gap={1}>
-                                    <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} />
+                                 <Stack direction={'row'} alignItems={'center'} gap={0.75} sx={{ '& button': { color: 'grey.300', p: 0.3 } }}>
+                                    <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} size="small" />
                                     <IconButton
                                        onClick={() => handleOpenTagRoutine(tag.id)}
                                        disabled={numberOfShowWhenTasks === 0 && numberOfHideWhenTasks === 0}
                                     >
-                                       <ChevronRight sx={{ color: 'grey.400' }} />
+                                       <ChevronRight />
                                     </IconButton>
                                  </Stack>
                               </SwipeActionWrapper>
