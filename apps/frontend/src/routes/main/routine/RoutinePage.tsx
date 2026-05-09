@@ -65,13 +65,13 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
       return false;
    };
 
-   function handleTextOverlay(task: AppTypes.Task): string | undefined {
+   function getTextOverlay(task: AppTypes.Task): string | undefined {
       if (!isTaskRendered(task)) return;
       if (!visibleTasks.has(task) && showHidden) return 'HIDDEN';
       if (!task.label.toLowerCase().includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
    }
 
-   function handleCreateTask(): void {
+   function handleAddTask(): void {
       const newTask = AppUtils.createNewTask();
       setTasks([...tasks, newTask]);
    }
@@ -122,7 +122,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
             renderItem={(task, dragElProps, i) =>
                isTaskRendered(task) && (
                   <Box>
-                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={getTextOverlay(task)} />
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
@@ -135,7 +135,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
                                        dragElProps={dragElProps}
                                        indexes={[i, j]}
                                        section={section}
-                                       textOverlay={handleTextOverlay(subtask)}
+                                       textOverlay={getTextOverlay(subtask)}
                                     />
                                     {subtask.children && (
                                        <DragAndDropList
@@ -149,7 +149,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
                                                       dragElProps={dragElProps}
                                                       indexes={[i, j, k]}
                                                       section={section}
-                                                      textOverlay={handleTextOverlay(subsubtask)}
+                                                      textOverlay={getTextOverlay(subsubtask)}
                                                    />
                                                 </Box>
                                              )
@@ -175,7 +175,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
             </Grid>
             <Grid size={3} sx={{ placeItems: 'end' }}>
                <SpeedDial ariaLabel="quick actions" icon={<SpeedDialIcon />}>
-                  <SpeedDialAction onClick={handleCreateTask} icon={<Add />} slotProps={{ tooltip: { open: true, title: 'Add Task' } }} />
+                  <SpeedDialAction onClick={handleAddTask} icon={<Add />} slotProps={{ tooltip: { open: true, title: 'Add Task' } }} />
                </SpeedDial>
             </Grid>
          </Grid>

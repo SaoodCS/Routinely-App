@@ -48,6 +48,40 @@ export default function TagsPage(): React.JSX.Element {
       return updatedTasks;
    }
 
+   function isTagRendered(tagLabel: string): boolean {
+      return tagLabel.toLowerCase().includes(normalizedSearchQuery);
+   }
+
+   function getNumberOfTasks(tag: AppTypes.Tag, taskTagField: AppTypes.TaskTagFields): number {
+      let numberOfTasks = 0;
+      const tasksToCheck = [...morningTasks, ...eveningTasks];
+      for (let i = 0; i < tasksToCheck.length; i += 1) {
+         const task = tasksToCheck[i];
+         if (task[taskTagField].includes(tag.id)) numberOfTasks += 1;
+         if (!task.children) continue;
+         for (const child of task.children) tasksToCheck.push(child);
+      }
+      return numberOfTasks;
+   }
+
+   function handleAddTag(focusOnNewTag?: boolean): void {
+      const newTag = createNewTag();
+      setTagsDb([...tags, newTag]);
+      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
+   }
+
+   function handleAddTagBelow(tagIndex: number, focusOnNewTag?: boolean): void {
+      const newTag = createNewTag();
+      const updatedTags = [...tags];
+      updatedTags.splice(tagIndex + 1, 0, newTag);
+      setTagsDb(updatedTags);
+      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
+   }
+
+   function handleReorderOnDrop(newOrderedItems: AppTypes.Tag[]): void {
+      setTagsDb(newOrderedItems);
+   }
+
    function handleDelete(tagIndex: number): void {
       const tagId = tags[tagIndex]?.id;
       if (!tagId) return;
@@ -68,45 +102,15 @@ export default function TagsPage(): React.JSX.Element {
       setTagsDb(updatedTags);
    }
 
-   function isTagRendered(tagLabel: string): boolean {
-      return tagLabel.toLowerCase().includes(normalizedSearchQuery);
-   }
-
-   function addTag(focusOnNewTag?: boolean): void {
-      const newTag = createNewTag();
-      setTagsDb([...tags, newTag]);
-      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
-   }
-
-   function addTagBelow(tagIndex: number, focusOnNewTag?: boolean): void {
-      const newTag = createNewTag();
-      const updatedTags = [...tags];
-      updatedTags.splice(tagIndex + 1, 0, newTag);
-      setTagsDb(updatedTags);
-      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
-   }
-
-   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>, tagIndex: number): void {
+   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>, tagIndex: number): void {
       if (event.key === 'Enter') event.currentTarget.blur();
       if (event.ctrlKey) {
-         if (event.key === 'ArrowDown' || event.key === 'Enter') addTagBelow(tagIndex, true);
+         if (event.key === 'ArrowDown' || event.key === 'Enter') handleAddTagBelow(tagIndex, true);
       }
    }
 
    function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
       void navigate(`${ROUTE_PATHS.main_tags}/${encodeURIComponent(tagId)}`);
-   }
-
-   function getNumberOfTasks(tag: AppTypes.Tag, taskTagField: AppTypes.TaskTagFields): number {
-      let numberOfTasks = 0;
-      const tasksToCheck = [...morningTasks, ...eveningTasks];
-      for (let i = 0; i < tasksToCheck.length; i += 1) {
-         const task = tasksToCheck[i];
-         if (task[taskTagField].includes(tag.id)) numberOfTasks += 1;
-         if (!task.children) continue;
-         for (const child of task.children) tasksToCheck.push(child);
-      }
-      return numberOfTasks;
    }
 
    return (
@@ -116,7 +120,7 @@ export default function TagsPage(): React.JSX.Element {
             ref={ref}
             style={{ overflow: 'auto', height: '100%' }}
             items={tags}
-            onDrop={(newOrderedItems) => setTagsDb(newOrderedItems)}
+            onDrop={handleReorderOnDrop}
             renderItem={(tag, dragElProps, i) => {
                const numberOfShowWhenTasks = getNumberOfTasks(tag, 'showWhenTags');
                const numberOfHideWhenTasks = getNumberOfTasks(tag, 'hideWhenTags');
@@ -147,7 +151,7 @@ export default function TagsPage(): React.JSX.Element {
                                     <IconButton {...dragElProps}>
                                        <DragIndicatorOutlined />
                                     </IconButton>
-                                    <IconButton onClick={() => addTagBelow(i)}>
+                                    <IconButton onClick={() => handleAddTagBelow(i)}>
                                        <KeyboardDoubleArrowDown />
                                     </IconButton>
                                     <Stack flex={1} sx={{ py: 1, pl: 1 }}>
@@ -155,8 +159,8 @@ export default function TagsPage(): React.JSX.Element {
                                           id={tag.id}
                                           text={tag.label}
                                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
-                                          onKeyDown={(e) => handleKeyPress(e, i)}
-                                          onInput={InputUtils.formatInputOnSpace}
+                                          onKeyDown={(e) => handleKeyDown(e, i)}
+                                          onInput={InputUtils.handleFormatInputOnSpace}
                                           style={{ outline: 'none' }}
                                        >
                                           {tag.label}
@@ -183,7 +187,7 @@ export default function TagsPage(): React.JSX.Element {
                );
             }}
          />
-         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={() => addTag()}>
+         <Fab color="primary" sx={{ position: 'absolute', bottom: 16, right: 16 }} onClick={() => handleAddTag()}>
             <Add />
          </Fab>
       </>

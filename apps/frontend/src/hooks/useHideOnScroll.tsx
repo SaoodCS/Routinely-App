@@ -24,18 +24,8 @@ export default function useHideOnScroll(
       let isDragging = false;
       let shouldSnapAfterScroll = false;
       let snapTimeout: number | undefined;
-      const updateHeight = (): void => {
-         height = element.offsetHeight;
-         setHideOnScrollElHeight(height);
-      };
-      const resizeObserver = new ResizeObserver(updateHeight);
       const getScrollTop = (): number => Math.min(Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight), Math.max(0, scrollEl.scrollTop));
       let previousScrollTop = getScrollTop();
-      function handleDragStart(): void {
-         isDragging = true;
-         shouldSnapAfterScroll = false;
-         window.clearTimeout(snapTimeout);
-      }
 
       function setHiddenOffset(offset: number): void {
          const nextHiddenOffset = Math.min(height, Math.max(0, offset));
@@ -53,6 +43,17 @@ export default function useHideOnScroll(
          }, 100);
       }
 
+      function handleResize(): void {
+         height = element.offsetHeight;
+         setHideOnScrollElHeight(height);
+      }
+
+      function handleDragStart(): void {
+         isDragging = true;
+         shouldSnapAfterScroll = false;
+         window.clearTimeout(snapTimeout);
+      }
+
       function handleDragEnd(): void {
          if (!isDragging) return;
          isDragging = false;
@@ -65,7 +66,7 @@ export default function useHideOnScroll(
          if (event.button === 0 && scrollbarWidth > 0 && event.clientX >= scrollEl.getBoundingClientRect().right - scrollbarWidth) handleDragStart();
       }
 
-      function toggleVisibility(): void {
+      function handleScroll(): void {
          const currentScrollTop = getScrollTop();
          const scrollDelta = currentScrollTop - previousScrollTop;
          if (!scrollDelta) return;
@@ -74,16 +75,17 @@ export default function useHideOnScroll(
          previousScrollTop = currentScrollTop;
       }
 
-      scrollEl.addEventListener('scroll', toggleVisibility, { passive: true });
+      const resizeObserver = new ResizeObserver(handleResize);
+      scrollEl.addEventListener('scroll', handleScroll, { passive: true });
       scrollEl.addEventListener('mousedown', handleMouseDown);
       scrollEl.addEventListener('touchstart', handleDragStart, { passive: true });
       resizeObserver.observe(element);
-      updateHeight();
+      handleResize();
       window.addEventListener('mouseup', handleDragEnd);
       window.addEventListener('touchcancel', handleDragEnd);
       window.addEventListener('touchend', handleDragEnd);
       return () => {
-         scrollEl.removeEventListener('scroll', toggleVisibility);
+         scrollEl.removeEventListener('scroll', handleScroll);
          scrollEl.removeEventListener('mousedown', handleMouseDown);
          scrollEl.removeEventListener('touchstart', handleDragStart);
          window.clearTimeout(snapTimeout);

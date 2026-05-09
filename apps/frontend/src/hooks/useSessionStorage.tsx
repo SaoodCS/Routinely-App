@@ -29,7 +29,7 @@ export default function useSessionStorage<T>(key: string, initialValue: T): UseS
    );
 
    useEffect(() => {
-      function handleChange(event: StorageEvent): void {
+      function handleStorageChange(event: StorageEvent): void {
          if (event.storageArea === window.sessionStorage && event.key === key && event.newValue) {
             try {
                setStoredValue(JSON.parse(event.newValue) as T);
@@ -38,8 +38,8 @@ export default function useSessionStorage<T>(key: string, initialValue: T): UseS
             }
          }
       }
-      window.addEventListener('storage', handleChange);
-      return () => window.removeEventListener('storage', handleChange);
+      window.addEventListener('storage', handleStorageChange);
+      return () => window.removeEventListener('storage', handleStorageChange);
    }, [key]);
 
    return [storedValue, setValue];

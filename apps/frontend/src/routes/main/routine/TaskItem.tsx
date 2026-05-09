@@ -49,7 +49,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       focusTaskIdRef.current = null;
    }, [tasks]);
 
-   function addTaskBelow(focusOnNewTask?: boolean): void {
+   function handleAddTaskBelow(focusOnNewTask?: boolean): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
@@ -60,7 +60,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
    }
 
-   function addSubTaskBelow(focusOnNewTask?: boolean): void {
+   function handleAddSubTaskBelow(focusOnNewTask?: boolean): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
       const updatedTasks = [...tasks];
@@ -72,7 +72,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
    }
 
-   function addParentTaskBelow(focusOnNewTask?: boolean): void {
+   function handleAddParentTaskBelow(focusOnNewTask?: boolean): void {
       if (indexes.length === 1) return;
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
@@ -131,12 +131,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleKeyPress(event: KeyboardEvent<HTMLInputElement>): void {
+   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
       if (event.key === 'Enter') event.currentTarget.blur();
       if (event.ctrlKey) {
-         if (event.key === 'ArrowDown' || event.key === 'Enter') addTaskBelow(true);
-         else if (event.key === 'ArrowRight' && indexes.length < 3) addSubTaskBelow(true);
-         else if (event.key === 'ArrowLeft') addParentTaskBelow(true);
+         if (event.key === 'ArrowDown' || event.key === 'Enter') handleAddTaskBelow(true);
+         else if (event.key === 'ArrowRight' && indexes.length < 3) handleAddSubTaskBelow(true);
+         else if (event.key === 'ArrowLeft') handleAddParentTaskBelow(true);
       }
    }
 
@@ -165,12 +165,12 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   <IconButton {...dragElProps}>
                      <DragIndicatorOutlined />
                   </IconButton>
-                  <IconButton onClick={() => addTaskBelow()}>
+                  <IconButton onClick={() => handleAddTaskBelow()}>
                      <KeyboardDoubleArrowDown />
                   </IconButton>
                   {indexes.length !== 3 && (
                      <>
-                        <IconButton onClick={() => addSubTaskBelow()}>
+                        <IconButton onClick={() => handleAddSubTaskBelow()}>
                            <KeyboardDoubleArrowRight />
                         </IconButton>
                         <IconButton onClick={handleToggleCheckTaskAndSubtasks}>
@@ -186,8 +186,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      id={task.id}
                      text={task.label}
                      onBlur={handleSaveLabelOnBlur}
-                     onKeyDown={handleKeyPress}
-                     onInput={InputUtils.formatInputOnSpace}
+                     onKeyDown={handleKeyDown}
+                     onInput={InputUtils.handleFormatInputOnSpace}
                      style={{
                         fontSize: fontSize,
                         color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,

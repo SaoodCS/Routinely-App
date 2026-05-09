@@ -16,7 +16,7 @@ const prettierMap: Record<string, string> = {
    "i'm": "I'm",
 };
 
-export function formatInputOnSpace(event: FormEvent<HTMLElement>): void {
+export function handleFormatInputOnSpace(event: FormEvent<HTMLElement>): void {
    // Get the part of the label that comes before the cursor i.e. before where the user's typing
    const element = event.currentTarget;
    if (!(element instanceof HTMLInputElement)) return;

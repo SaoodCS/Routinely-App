@@ -23,18 +23,18 @@ export default function LoginPage(): React.JSX.Element {
    const { palette } = useTheme();
    const validForm = (): boolean => email.includes('@') && password.length >= 6;
 
-   function regViaEmailPwd(e: React.MouseEvent<HTMLButtonElement>): void {
+   function handleRegViaEmailPwd(e: React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
       setError(null);
       if (!validForm()) return setError('Enter a valid email and a password > 6 characters.');
       setIsLoading('reg');
       createUserWithEmailAndPassword(auth, email, password)
-         .then(() => loginViaEmailPwd(e))
+         .then(() => handleLoginViaEmailPwd(e))
          .catch((e) => setError(e instanceof FirebaseError ? e.message : 'Registration failed.'))
          .finally(() => setIsLoading(undefined));
    }
 
-   function loginViaEmailPwd(e: React.SubmitEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>): void {
+   function handleLoginViaEmailPwd(e: React.SubmitEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
       setError(null);
       if (!validForm()) return setError('Enter a valid email and a password > 6 characters.');
@@ -45,7 +45,7 @@ export default function LoginPage(): React.JSX.Element {
          .finally(() => setIsLoading(undefined));
    }
 
-   function loginViaGoogle(e: React.MouseEvent<HTMLButtonElement>): void {
+   function handleLoginViaGoogle(e: React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
       setIsLoading('google');
       setError(null);
@@ -55,7 +55,7 @@ export default function LoginPage(): React.JSX.Element {
          .finally(() => setIsLoading(undefined));
    }
 
-   function loginAnonymously(e: React.MouseEvent<HTMLButtonElement>): void {
+   function handleLoginAnonymously(e: React.MouseEvent<HTMLButtonElement>): void {
       e.preventDefault();
       setIsLoading('anonymous');
       setError(null);
@@ -98,24 +98,24 @@ export default function LoginPage(): React.JSX.Element {
                Get started
             </Typography>
             {error && <Alert severity="error">{error}</Alert>}
-            <Stack component={'form'} gap={2} onSubmit={loginViaEmailPwd}>
+            <Stack component={'form'} gap={2} onSubmit={handleLoginViaEmailPwd}>
                <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                <Stack direction="row" alignItems={'center'} justifyContent={'center'} gap={2}>
                   <Button startIcon={<LoginSharp />} variant="contained" type="submit" loading={isLoading === 'email-pwd'} fullWidth>
                      Login
                   </Button>
-                  <Button startIcon={<AppRegistration />} variant="contained" loading={isLoading === 'reg'} onClick={regViaEmailPwd} fullWidth>
+                  <Button startIcon={<AppRegistration />} variant="contained" loading={isLoading === 'reg'} onClick={handleRegViaEmailPwd} fullWidth>
                      Register
                   </Button>
                </Stack>
             </Stack>
             <Divider>or</Divider>
             <Stack gap={2}>
-               <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading === 'google'} onClick={loginViaGoogle}>
+               <Button fullWidth variant="outlined" startIcon={<GoogleIcon />} loading={isLoading === 'google'} onClick={handleLoginViaGoogle}>
                   Continue with Google
                </Button>
-               <Button fullWidth variant="outlined" startIcon={<Person />} loading={isLoading === 'anonymous'} onClick={loginAnonymously}>
+               <Button fullWidth variant="outlined" startIcon={<Person />} loading={isLoading === 'anonymous'} onClick={handleLoginAnonymously}>
                   Continue Anonymously
                </Button>
             </Stack>

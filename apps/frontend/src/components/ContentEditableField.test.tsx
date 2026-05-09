@@ -131,9 +131,9 @@ describe('ContentEditableField', () => {
    });
 
    it('prevents enter before forwarding keydown', () => {
-      const onKeyDown = vi.fn();
+      const handleKeyDown = vi.fn();
       const container = renderContentEditableField(
-         <ContentEditableField text="Task" onKeyDown={onKeyDown}>
+         <ContentEditableField text="Task" onKeyDown={handleKeyDown}>
             Task
          </ContentEditableField>,
       );
@@ -144,12 +144,12 @@ describe('ContentEditableField', () => {
       });
 
       expect(event.defaultPrevented).toBe(true);
-      expect(onKeyDown).toHaveBeenCalledOnce();
+      expect(handleKeyDown).toHaveBeenCalledOnce();
    });
 
    it('formats input text on space', () => {
       const container = renderContentEditableField(
-         <ContentEditableField text="" onInput={InputUtils.formatInputOnSpace}>
+         <ContentEditableField text="" onInput={InputUtils.handleFormatInputOnSpace}>
             {''}
          </ContentEditableField>,
       );
@@ -173,7 +173,7 @@ describe('ContentEditableField', () => {
 
    it('formats mapped words on space', () => {
       const container = renderContentEditableField(
-         <ContentEditableField text="" onInput={InputUtils.formatInputOnSpace}>
+         <ContentEditableField text="" onInput={InputUtils.handleFormatInputOnSpace}>
             {''}
          </ContentEditableField>,
       );

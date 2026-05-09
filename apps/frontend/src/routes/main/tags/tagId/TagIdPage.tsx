@@ -68,19 +68,19 @@ export default function TagIdPage(): JSX.Element {
       return false;
    };
 
-   function handleTextOverlay(task: AppTypes.Task): string | undefined {
+   function getTextOverlay(task: AppTypes.Task): string | undefined {
       if (task.hideWhenTags.includes(tagId)) return 'TASK IS HIDDEN WHEN TAG IS ENABLED';
       if (!task.showWhenTags.includes(tagId)) return 'PARENT OF SUBTASK RELATED TO TAG';
       if (!task.label.toLowerCase().includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
    }
 
-   function handleChangeSection(section: AppTypes.RoutineSection): void {
-      setSection(section);
-   }
-
-   function handleCreateTask(): void {
+   function handleAddTask(): void {
       const newTask: AppTypes.Task = AppUtils.createNewTask({ showWhenTags: [tagId] });
       setTasks([...tasks, newTask]);
+   }
+
+   function handleChangeSection(section: AppTypes.RoutineSection): void {
+      setSection(section);
    }
 
    function handleReorderOnDrop(newOrderedItems: AppTypes.Task[], indexes?: AppTypes.DepthIndexes): void {
@@ -118,7 +118,7 @@ export default function TagIdPage(): JSX.Element {
             renderItem={(task, dragElProps, i) =>
                isTaskVisible(task) && (
                   <Box>
-                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={handleTextOverlay(task)} />
+                     <TaskItem task={task} dragElProps={dragElProps} indexes={[i]} section={section} textOverlay={getTextOverlay(task)} />
                      {task.children && (
                         <DragAndDropList
                            items={task.children}
@@ -131,7 +131,7 @@ export default function TagIdPage(): JSX.Element {
                                        dragElProps={dragElProps}
                                        indexes={[i, j]}
                                        section={section}
-                                       textOverlay={handleTextOverlay(subtask)}
+                                       textOverlay={getTextOverlay(subtask)}
                                     />
                                     {subtask.children && (
                                        <DragAndDropList
@@ -145,7 +145,7 @@ export default function TagIdPage(): JSX.Element {
                                                       dragElProps={dragElProps}
                                                       indexes={[i, j, k]}
                                                       section={section}
-                                                      textOverlay={handleTextOverlay(subsubtask)}
+                                                      textOverlay={getTextOverlay(subsubtask)}
                                                    />
                                                 </Box>
                                              )
@@ -172,7 +172,7 @@ export default function TagIdPage(): JSX.Element {
                   }}
                />
             </Grid>
-            <Grid size={3} sx={{ textAlign: 'right' }} onClick={handleCreateTask}>
+            <Grid size={3} sx={{ textAlign: 'right' }} onClick={handleAddTask}>
                <Fab color="primary">
                   <Add />
                </Fab>

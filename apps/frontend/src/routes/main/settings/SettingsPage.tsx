@@ -35,7 +35,7 @@ export default function SettingsPage(): React.JSX.Element {
    const [snackbar, setSnackbar] = useState<{ msg: string; severity: AlertProps['severity'] }>();
    const [isLoading, setIsLoading] = useState(false);
 
-   function resetAllData(): void {
+   function handleResetAllData(): void {
       if (!user) return void navigate(ROUTE_PATHS.auth_login, { replace: true });
       const paths = Object.entries(AppUtils.FIRESTORE_PATHS_FIELDS).map(([key]) =>
          AppUtils.getFirestorePathAndField(key as AppTypes.FirestorePathField, user.uid),
@@ -50,7 +50,7 @@ export default function SettingsPage(): React.JSX.Element {
          .finally(() => setIsLoading(false));
    }
 
-   function deleteAccount(): void {
+   function handleDeleteAccount(): void {
       if (!user) return void navigate(ROUTE_PATHS.auth_login, { replace: true });
       setIsLoading(true);
       deleteUser(user)
@@ -58,11 +58,11 @@ export default function SettingsPage(): React.JSX.Element {
          .finally(() => setIsLoading(false));
    }
 
-   function logout(): void {
+   function handleLogout(): void {
       void navigate(ROUTE_PATHS.auth_logout, { replace: true });
    }
 
-   function toggleInheritTagsFromSource(): void {
+   function handleToggleInheritTagsFromSource(): void {
       setSettingsDb({ ...settings, inheritTagsFromSource: !settings.inheritTagsFromSource });
    }
 
@@ -89,7 +89,7 @@ export default function SettingsPage(): React.JSX.Element {
             <Typography variant="h6">App Settings</Typography>
             <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
                <MenuList>
-                  <MenuItem onClick={toggleInheritTagsFromSource}>
+                  <MenuItem onClick={handleToggleInheritTagsFromSource}>
                      <ListItemIcon>
                         <LocalOfferOutlined color="secondary" />
                      </ListItemIcon>
@@ -101,21 +101,21 @@ export default function SettingsPage(): React.JSX.Element {
             <Typography variant="h6">Account Settings</Typography>
             <Paper sx={{ width: '100%', borderRadius: '1rem' }}>
                <MenuList>
-                  <MenuItem onClick={resetAllData}>
+                  <MenuItem onClick={handleResetAllData}>
                      <ListItemIcon>
                         <RestartAltOutlined color="warning" />
                      </ListItemIcon>
                      <ListItemText>Reset All Data</ListItemText>
                   </MenuItem>
                   <Divider />
-                  <MenuItem onClick={logout}>
+                  <MenuItem onClick={handleLogout}>
                      <ListItemIcon>
                         <LogoutOutlined color="warning" />
                      </ListItemIcon>
                      <ListItemText>Logout</ListItemText>
                   </MenuItem>
                   <Divider />
-                  <MenuItem onClick={deleteAccount}>
+                  <MenuItem onClick={handleDeleteAccount}>
                      <ListItemIcon>
                         <DeleteOutlineOutlined color="error" />
                      </ListItemIcon>
