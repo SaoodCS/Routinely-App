@@ -9,8 +9,8 @@ import { AuthProvider } from './authentication/useAuthContext.tsx';
 import PWADialog from './components/PWADialog.tsx';
 import { FirestoreProvider } from './database/useFirestoreContext.tsx';
 import { LocalStorageProvider } from './database/useLocalStorageContext.tsx';
-import { router } from './routes/router.tsx';
 import theme from './theme/theme.ts';
+import { router } from './routes/index.tsx';
 
 registerSW({ immediate: true });
 

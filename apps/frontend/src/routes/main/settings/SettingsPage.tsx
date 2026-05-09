@@ -16,17 +16,17 @@ import {
    type AlertProps,
 } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
+import { AppUtils } from '@repo/utils/index';
 import { FirebaseError } from 'firebase/app';
 import { deleteUser } from 'firebase/auth';
 import { doc, writeBatch } from 'firebase/firestore';
 import type React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { AppUtils } from '@repo/utils/index';
 import { useAuthContext } from '../../../authentication/useAuthContext';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { db } from '../../../firebase/config';
-import { ROUTE_PATHS } from '../../../routes/router';
+import { ROUTE_PATHS } from '../../routes.constants';
 
 export default function SettingsPage(): React.JSX.Element {
    const { user } = useAuthContext();

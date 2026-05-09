@@ -1,7 +1,8 @@
 import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined } from '@mui/icons-material';
 import { AppBar, Avatar, BottomNavigation, BottomNavigationAction, Box, Container, IconButton, Stack, Toolbar, Typography } from '@mui/material';
 import { Outlet, useMatches, useNavigate } from 'react-router';
-import { ROUTE_PATHS, type T_Route_Path, type T_Route_UseMatches } from '../../routes/router';
+import { ROUTE_PATHS } from '../routes.constants';
+import { type T_Route_Path, type T_Route_UseMatches } from '../routes.types';
 
 export default function MainLayout(): React.JSX.Element {
    const navigate = useNavigate();
