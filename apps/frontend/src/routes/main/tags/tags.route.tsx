@@ -3,8 +3,7 @@ import SearchParamField from '../../../components/SearchParamField';
 import { ROUTE_PATHS, SafeRoute } from '../../index.route';
 import TagsActionsMenuButton from './TagsActionsMenuButton';
 import TagsPage from './TagsPage';
-import TagIdPage from './tagId/TagIdPage';
-import TagTasksHeaderTitle from './tagId/TagIdHeaderTitle';
+import { tagIdRoute } from './tagId/tagid.route';
 
 export const tagsRoute = (
    <SafeRoute path={ROUTE_PATHS.main_tags} handle={{ nav: { inBottomNav: true } }}>
@@ -24,16 +23,6 @@ export const tagsRoute = (
             },
          }}
       />
-      <SafeRoute
-         path={ROUTE_PATHS.main_tags_tagId}
-         element={<TagIdPage />}
-         handle={{
-            header: {
-               showBack: true,
-               title: () => <TagTasksHeaderTitle />,
-               RightElement: () => <SearchParamField className={'SearchParamField-appHeader'} />,
-            },
-         }}
-      />
+      {tagIdRoute}
    </SafeRoute>
 );
