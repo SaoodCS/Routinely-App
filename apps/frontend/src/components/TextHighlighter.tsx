@@ -1,10 +1,11 @@
+// component has 0 UI library dependencies so can copy to any react project
 interface T_TextHighlighterProps {
    highlightText: string;
    fullText: string;
    highlightColor?: string;
    style?: React.CSSProperties;
 }
-// RENAME TO TEXTHIGHLIGHTER (AS WELL AS INTERFACE ABOVE, FILE NAME, AND FILE PROPS)
+
 export default function TextHighlighter(props: T_TextHighlighterProps): React.JSX.Element {
    const { highlightText, fullText, highlightColor = '#f2ff00', style } = props;
    const matchIndex = highlightText ? fullText.toLowerCase().indexOf(highlightText.toLowerCase()) : -1;
