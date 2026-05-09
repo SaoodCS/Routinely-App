@@ -108,7 +108,7 @@ export const router = createBrowserRouter(
                               Icon: () => <WbTwilightOutlined sx={{ color: 'warning.main' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchParamField />
+                                    <SearchParamField className={'SearchParamField-appHeader'} />
                                     <RoutineActionsMenuButton section="morning" />
                                  </>
                               ),
@@ -125,7 +125,7 @@ export const router = createBrowserRouter(
                               Icon: () => <NightsStayOutlined sx={{ color: 'error.main' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchParamField />
+                                    <SearchParamField className={'SearchParamField-appHeader'} />
                                     <RoutineActionsMenuButton section="evening" />
                                  </>
                               ),
@@ -144,7 +144,7 @@ export const router = createBrowserRouter(
                               Icon: () => <LocalOfferOutlined sx={{ color: 'primary.light' }} />,
                               RightElement: () => (
                                  <>
-                                    <SearchParamField />
+                                    <SearchParamField className={'SearchParamField-appHeader'} />
                                     <TagsActionsMenuButton />
                                  </>
                               ),
@@ -154,7 +154,13 @@ export const router = createBrowserRouter(
                      <Route
                         path={ROUTE_PATHS.main_tags_tagId}
                         element={<TagIdPage />}
-                        handle={{ header: { showBack: true, title: () => <TagTasksHeaderTitle />, RightElement: () => <SearchParamField /> } }}
+                        handle={{
+                           header: {
+                              showBack: true,
+                              title: () => <TagTasksHeaderTitle />,
+                              RightElement: () => <SearchParamField className={'SearchParamField-appHeader'} />,
+                           },
+                        }}
                      />
                   </Route>
 

@@ -103,6 +103,25 @@ const components: ThemeOptions['components'] = {
       },
    },
    MuiSpeedDialAction: { styleOverrides: { staticTooltipLabel: { whiteSpace: 'nowrap', width: 'max-content' } } },
+   MuiTextField: {
+      styleOverrides: {
+         root: ({ theme }) => ({
+            '&.SearchParamField-appHeader': {
+               margin: 8,
+               backgroundColor: alpha(theme.palette.primary.main, 0.05),
+               width: 120,
+               '& .MuiOutlinedInput-root.Mui-focused fieldset': { border: '1px solid', borderColor: theme.palette.divider },
+               '& .MuiOutlinedInput-input': { paddingTop: 6.8, paddingBottom: 6.8, fontSize: '0.8rem' },
+               '& .MuiOutlinedInput-root.MuiInputBase-adornedEnd': { paddingRight: 5 },
+               '& .MuiInputAdornment-positionEnd': {
+                  marginLeft: 6.4,
+                  '& .MuiIconButton-root': { padding: 4, marginRight: -2.4 },
+                  '& .MuiSvgIcon-root': { fontSize: 16 },
+               },
+            },
+         }),
+      },
+   },
 };
 
 const theme = createTheme({ palette, typography, transitions, components: { ...components_layout, ...components } });
