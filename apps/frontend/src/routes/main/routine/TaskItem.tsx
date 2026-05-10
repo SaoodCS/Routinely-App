@@ -49,6 +49,17 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       focusTaskIdRef.current = null;
    }, [tasks]);
 
+   function handleAddTaskAbove(focusOnNewTask?: boolean): void {
+      const { inheritTagsFromSource } = settings;
+      const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
+      const updatedTasks = [...tasks];
+      const taskListToInsertInto = AppUtils.getTasksListToUpdate(updatedTasks, indexes);
+      const newTaskIndex = indexes.at(-1)!;
+      taskListToInsertInto.splice(newTaskIndex, 0, newTask);
+      setTasks(updatedTasks);
+      if (focusOnNewTask) focusTaskIdRef.current = newTask.id;
+   }
+
    function handleAddTaskBelow(focusOnNewTask?: boolean): void {
       const { inheritTagsFromSource } = settings;
       const newTask = AppUtils.createNewTask(inheritTagsFromSource ? { hideWhenTags: task.hideWhenTags, showWhenTags: task.showWhenTags } : {});
@@ -132,12 +143,14 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    }
 
    function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
-      if (event.key === 'Enter') event.currentTarget.blur();
-      if (event.ctrlKey) {
-         if (event.key === 'ArrowDown' || event.key === 'Enter') handleAddTaskBelow(true);
-         else if (event.key === 'ArrowRight' && indexes.length < 3) handleAddSubTaskBelow(true);
-         else if (event.key === 'ArrowLeft') handleAddParentTaskBelow(true);
+      if (!event.ctrlKey) {
+         if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur();
+         return;
       }
+      if (event.key === 'ArrowUp') return handleAddTaskAbove(true);
+      if (event.key === 'ArrowDown' || event.key === 'Enter') return handleAddTaskBelow(true);
+      if (event.key === 'ArrowRight' && indexes.length < 3) return handleAddSubTaskBelow(true);
+      if (event.key === 'ArrowLeft') return handleAddParentTaskBelow(true);
    }
 
    return (

@@ -70,6 +70,14 @@ export default function TagsPage(): React.JSX.Element {
       if (focusOnNewTag) focusTagIdRef.current = newTag.id;
    }
 
+   function handleAddTagAbove(tagIndex: number, focusOnNewTag?: boolean): void {
+      const newTag = createNewTag();
+      const updatedTags = [...tags];
+      updatedTags.splice(tagIndex, 0, newTag);
+      setTagsDb(updatedTags);
+      if (focusOnNewTag) focusTagIdRef.current = newTag.id;
+   }
+
    function handleAddTagBelow(tagIndex: number, focusOnNewTag?: boolean): void {
       const newTag = createNewTag();
       const updatedTags = [...tags];
@@ -103,10 +111,12 @@ export default function TagsPage(): React.JSX.Element {
    }
 
    function handleKeyDown(event: KeyboardEvent<HTMLInputElement>, tagIndex: number): void {
-      if (event.key === 'Enter') event.currentTarget.blur();
-      if (event.ctrlKey) {
-         if (event.key === 'ArrowDown' || event.key === 'Enter') handleAddTagBelow(tagIndex, true);
+      if (!event.ctrlKey) {
+         if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur();
+         return;
       }
+      if (event.key === 'ArrowUp') return handleAddTagAbove(tagIndex, true);
+      if (event.key === 'ArrowDown' || event.key === 'Enter') return handleAddTagBelow(tagIndex, true);
    }
 
    function handleOpenTagRoutine(tagId: AppTypes.Tag['id']): void {
