@@ -181,12 +181,7 @@ export default function TagsPage(): React.JSX.Element {
                                     </Stack>
                                  </Stack>
                                  <Stack direction={'row'} alignItems={'center'} gap={0.75} sx={{ '& button': { color: 'grey.300', p: 0.3 } }}>
-                                    <Switch
-                                       checked={tag.isEnabled}
-                                       onChange={() => handleToggle(i)}
-                                       size="small"
-                                       {...ElementUtils.skipTabFocusProps}
-                                    />
+                                    <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} {...ElementUtils.skipTabFocusProps} />
                                     <IconButton
                                        onClick={() => handleOpenTagRoutine(tag.id)}
                                        disabled={numberOfShowWhenTasks === 0 && numberOfHideWhenTasks === 0}

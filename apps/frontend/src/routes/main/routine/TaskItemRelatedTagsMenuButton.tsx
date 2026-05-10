@@ -51,14 +51,12 @@ export default function TaskItemRelatedTagsMenuButton({ indexes, section, task }
                         checked={task.showWhenTags.includes(tag.id) ?? false}
                         disabled={task.hideWhenTags.includes(tag.id)}
                         onChange={() => handleToggle(tag.id, 'showWhenTags')}
-                        size="small"
                      />
                      <Switch
                         color="error"
                         checked={task.hideWhenTags.includes(tag.id) ?? false}
                         disabled={task.showWhenTags.includes(tag.id)}
                         onChange={() => handleToggle(tag.id, 'hideWhenTags')}
-                        size="small"
                      />
                   </MenuItem>
                </span>

@@ -10,8 +10,8 @@ import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import TextHighlighter from '../../../components/TextHighlighter';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
-import type { PaletteOption, PaletteShade } from '../../../theme/theme';
 import { ElementUtils } from '../../../utils';
+import type { PaletteOption, PaletteShade } from '../../../theme/palette.theme';
 import TaskItemRelatedTagsMenuButton from './TaskItemRelatedTagsMenuButton';
 
 const DEPTH_STYLES: Record<
