@@ -1,9 +1,9 @@
 import { Navigate } from 'react-router';
-import { ProtectedRoute, ROUTE_PATHS, SafeRoute } from '../index.route';
+import { ProtectedRoute, ROUTE_PATHS, SafeRoute } from '../utils.route';
 import MainLayout from './MainLayout';
 import { routineRoute } from './routine/routine.route';
-import { tagsRoute } from './tags/tags.route';
 import { settingsRoute } from './settings/settings.route';
+import { tagsRoute } from './tags/tags.route';
 
 export const mainRoute = (
    <SafeRoute path={ROUTE_PATHS.main}>

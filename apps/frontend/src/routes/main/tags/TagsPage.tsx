@@ -10,7 +10,7 @@ import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ElementUtils } from '../../../utils';
-import { ROUTE_PATHS } from '../../index.route';
+import { ROUTE_PATHS } from '../../utils.route';
 import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 
 export default function TagsPage(): React.JSX.Element {

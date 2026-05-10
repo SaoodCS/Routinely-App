@@ -1,5 +1,5 @@
 import SearchParamField from '../../../../components/SearchParamField';
-import { SafeRoute, ROUTE_PATHS } from '../../../index.route';
+import { ROUTE_PATHS, SafeRoute } from '../../../utils.route';
 import TagTasksHeaderTitle from './TagIdHeaderTitle';
 import TagIdPage from './TagIdPage';
 

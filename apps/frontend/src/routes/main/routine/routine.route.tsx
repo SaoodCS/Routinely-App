@@ -1,7 +1,7 @@
-import { WbTwilightOutlined, NightsStayOutlined } from '@mui/icons-material';
+import { NightsStayOutlined, WbTwilightOutlined } from '@mui/icons-material';
 import { Navigate } from 'react-router';
 import SearchParamField from '../../../components/SearchParamField';
-import { ROUTE_PATHS, SafeRoute } from '../../index.route';
+import { ROUTE_PATHS, SafeRoute } from '../../utils.route';
 import RoutineActionsMenuButton from './RoutineActionsMenuButton';
 import RoutinePage from './RoutinePage';
 
