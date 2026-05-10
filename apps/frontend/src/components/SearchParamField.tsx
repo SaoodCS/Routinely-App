@@ -24,7 +24,6 @@ export default function SearchParamField(props?: TextFieldProps): React.JSX.Elem
 
    return (
       <TextField
-         autoFocus
          value={searchQuery}
          onChange={handleChange}
          placeholder="Search"
