@@ -156,7 +156,7 @@ export default function TagsPage(): React.JSX.Element {
                                     gap={0.75}
                                     direction="row"
                                     alignItems="center"
-                                    sx={{ '& button': { borderRadius: 2, color: 'grey.300', p: 0.3 } }}
+                                    sx={{ '& button': { borderRadius: 2, color: 'grey.300', p: 0.3 }, flex: 1 }}
                                  >
                                     <IconButton {...dragElProps} {...ElementUtils.skipTabFocusProps}>
                                        <DragIndicatorOutlined />
