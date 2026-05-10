@@ -19,12 +19,17 @@ export const components: ThemeOptions['components'] = {
       },
    },
    MuiBottomNavigation: {
-      defaultProps: { component: 'nav', showLabels: false },
+      defaultProps: { component: 'nav', showLabels: true },
       styleOverrides: {
          root: ({ theme: t }) => ({ borderTop: `1px solid ${t.palette.divider}`, flexShrink: 0, minHeight: FOOTER_HEIGHT, width: '100%' }),
       },
    },
-   MuiBottomNavigationAction: { styleOverrides: { label: { display: 'none' }, root: { padding: 'unset' } } },
+   MuiBottomNavigationAction: {
+      styleOverrides: {
+         label: { fontSize: '0.7rem', '&.Mui-selected': { fontSize: '0.8rem' } },
+         root: { padding: 'unset', fontSize: '0.5rem' },
+      },
+   },
 
    // POPUP-RELATED
    MuiAlert: { styleOverrides: { root: { width: '100%' } } },
