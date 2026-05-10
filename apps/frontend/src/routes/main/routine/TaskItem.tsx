@@ -11,7 +11,7 @@ import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import TextHighlighter from '../../../components/TextHighlighter';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import type { PaletteOption, PaletteShade } from '../../../theme/theme';
-import { InputUtils } from '../../../utils';
+import { ElementUtils } from '../../../utils';
 import TaskItemRelatedTagsMenuButton from './TaskItemRelatedTagsMenuButton';
 
 const DEPTH_STYLES: Record<
@@ -175,18 +175,18 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   gap={1}
                   sx={{ px: 1, pt: 0.75, pb: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: color } }}
                >
-                  <IconButton {...dragElProps}>
+                  <IconButton {...dragElProps} {...ElementUtils.skipTabFocusProps}>
                      <DragIndicatorOutlined />
                   </IconButton>
-                  <IconButton onClick={() => handleAddTaskBelow()}>
+                  <IconButton onClick={() => handleAddTaskBelow()} {...ElementUtils.skipTabFocusProps}>
                      <KeyboardDoubleArrowDown />
                   </IconButton>
                   {indexes.length !== 3 && (
                      <>
-                        <IconButton onClick={() => handleAddSubTaskBelow()}>
+                        <IconButton onClick={() => handleAddSubTaskBelow()} {...ElementUtils.skipTabFocusProps}>
                            <KeyboardDoubleArrowRight />
                         </IconButton>
-                        <IconButton onClick={handleToggleCheckTaskAndSubtasks}>
+                        <IconButton onClick={handleToggleCheckTaskAndSubtasks} {...ElementUtils.skipTabFocusProps}>
                            <DoneAllOutlined />
                         </IconButton>
                      </>
@@ -200,7 +200,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      text={task.label}
                      onBlur={handleSaveLabelOnBlur}
                      onKeyDown={handleKeyDown}
-                     onInput={InputUtils.handleFormatInputOnSpace}
+                     onInput={ElementUtils.handleFormatInputOnSpace}
                      style={{
                         fontSize: fontSize,
                         color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,

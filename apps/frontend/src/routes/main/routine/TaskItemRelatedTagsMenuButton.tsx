@@ -4,6 +4,7 @@ import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
 import { useState, type JSX } from 'react';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
+import { ElementUtils } from '../../../utils';
 
 interface T_TaskItemRelatedTagsMenuButtonProps {
    section: AppTypes.RoutineSection;
@@ -30,7 +31,7 @@ export default function TaskItemRelatedTagsMenuButton({ indexes, section, task }
 
    return (
       <>
-         <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
+         <IconButton onClick={(event) => setAnchorEl(event.currentTarget)} {...ElementUtils.skipTabFocusProps}>
             <MoreVertOutlined />
          </IconButton>
          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>

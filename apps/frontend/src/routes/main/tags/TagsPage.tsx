@@ -9,7 +9,7 @@ import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
-import { InputUtils } from '../../../utils';
+import { ElementUtils } from '../../../utils';
 import { ROUTE_PATHS } from '../../index.route';
 import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 
@@ -158,10 +158,10 @@ export default function TagsPage(): React.JSX.Element {
                                     alignItems="center"
                                     sx={{ '& button': { borderRadius: 2, color: 'grey.300', p: 0.3 } }}
                                  >
-                                    <IconButton {...dragElProps}>
+                                    <IconButton {...dragElProps} {...ElementUtils.skipTabFocusProps}>
                                        <DragIndicatorOutlined />
                                     </IconButton>
-                                    <IconButton onClick={() => handleAddTagBelow(i)}>
+                                    <IconButton onClick={() => handleAddTagBelow(i)} {...ElementUtils.skipTabFocusProps}>
                                        <KeyboardDoubleArrowDown />
                                     </IconButton>
                                     <Stack flex={1} sx={{ py: 1, pl: 1 }}>
@@ -170,7 +170,7 @@ export default function TagsPage(): React.JSX.Element {
                                           text={tag.label}
                                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                           onKeyDown={(e) => handleKeyDown(e, i)}
-                                          onInput={InputUtils.handleFormatInputOnSpace}
+                                          onInput={ElementUtils.handleFormatInputOnSpace}
                                           style={{ outline: 'none' }}
                                        >
                                           {tag.label}
@@ -181,10 +181,16 @@ export default function TagsPage(): React.JSX.Element {
                                     </Stack>
                                  </Stack>
                                  <Stack direction={'row'} alignItems={'center'} gap={0.75} sx={{ '& button': { color: 'grey.300', p: 0.3 } }}>
-                                    <Switch checked={tag.isEnabled} onChange={() => handleToggle(i)} size="small" />
+                                    <Switch
+                                       checked={tag.isEnabled}
+                                       onChange={() => handleToggle(i)}
+                                       size="small"
+                                       {...ElementUtils.skipTabFocusProps}
+                                    />
                                     <IconButton
                                        onClick={() => handleOpenTagRoutine(tag.id)}
                                        disabled={numberOfShowWhenTasks === 0 && numberOfHideWhenTasks === 0}
+                                       {...ElementUtils.skipTabFocusProps}
                                     >
                                        <ChevronRight />
                                     </IconButton>

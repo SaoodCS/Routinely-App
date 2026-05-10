@@ -42,3 +42,5 @@ export function handleFormatInputOnSpace(event: FormEvent<HTMLElement>): void {
    element.value = formattedBeforeCursor + label.slice(cursor); // concatenate the formatted text with the part of the label that comes after the cursor
    element.setSelectionRange(formattedBeforeCursor.length, formattedBeforeCursor.length); // move the cursor to the end of the formatted text (back to where the user was typing)
 }
+
+export const skipTabFocusProps = { tabIndex: -1 } as const;
