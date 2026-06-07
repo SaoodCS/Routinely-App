@@ -3,7 +3,7 @@ import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
-import { useEffect, useRef, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import ContentEditableField from '../../../components/ContentEditableField';
 import type DragAndDropList from '../../../components/DragAndDropList';
@@ -40,6 +40,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const searchQuery = searchParams.get('search') ?? '';
    const focusTaskIdRef = useRef<string | null>(null);
    const { palette } = useTheme();
+   const [isContentEditableFocused, setIsContentEditableFocused] = useState(false);
    const { indent, colorAndShade, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
    const color = palette[colorAndShade[0]][colorAndShade[1]];
 
@@ -161,6 +162,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                {textOverlay}
             </Typography>
             <SwipeActionWrapper
+               disabled={isContentEditableFocused}
                rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
                leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
                style={{
@@ -199,7 +201,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                   <ContentEditableField
                      id={task.id}
                      text={task.label}
-                     onBlur={handleSaveLabelOnBlur}
+                     onBlur={(event) => {
+                        setIsContentEditableFocused(false);
+                        handleSaveLabelOnBlur(event);
+                     }}
+                     onFocus={() => setIsContentEditableFocused(true)}
                      onKeyDown={handleKeyDown}
                      onInput={ElementUtils.handleFormatInputOnSpace}
                      style={{
