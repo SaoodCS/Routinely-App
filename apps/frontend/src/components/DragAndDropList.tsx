@@ -58,7 +58,7 @@ export default function DragAndDropList<TItem extends { id: number | string }>(p
       const contentElPos = { height: `${height}px`, left: `${left}px`, top: `${top}px`, width: `${width}px` };
       const contentElStyle = contentEl.style.cssText;
       const wrapperElStyle = wrapperEl.style.cssText;
-      Object.assign(contentEl.style, { ...contentElPos, position: 'fixed', cursor: 'grabbing', willChange: 'transform', zIndex: '1' });
+      Object.assign(contentEl.style, { ...contentElPos, position: 'fixed', cursor: 'grabbing', zIndex: '1' });
       wrapperEl.style.height = contentElPos.height;
       dragStateRef.current = {
          scrollEl,
