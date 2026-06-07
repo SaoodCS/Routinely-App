@@ -1,0 +1,61 @@
+// @vitest-environment jsdom
+
+import { act } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import SwipeActionWrapper from './SwipeActionWrapper';
+
+const mountedRoots: { container: HTMLDivElement; root: Root }[] = [];
+
+function renderWrapper(): HTMLDivElement {
+   const container = document.createElement('div');
+   const root = createRoot(container);
+   document.body.append(container);
+   mountedRoots.push({ container, root });
+   act(() =>
+      root.render(
+         <SwipeActionWrapper leftAction={{ label: 'Toggle', onAction: vi.fn() }}>
+            <div>Task</div>
+         </SwipeActionWrapper>,
+      ),
+   );
+   return container.firstElementChild!.lastElementChild as HTMLDivElement;
+}
+
+function dispatchPointer(element: Element, type: string, clientX: number): void {
+   const event = new MouseEvent(type, { bubbles: true, button: 0, cancelable: true, clientX });
+   Object.defineProperty(event, 'pointerId', { value: 1 });
+   void act(() => element.dispatchEvent(event));
+}
+
+beforeAll(() => {
+   (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+   Object.defineProperty(HTMLElement.prototype, 'setPointerCapture', { configurable: true, value: () => undefined });
+});
+
+afterEach(() => {
+   vi.restoreAllMocks();
+   for (const { container, root } of mountedRoots.splice(0)) {
+      act(() => root.unmount());
+      container.remove();
+   }
+});
+
+describe('SwipeActionWrapper', () => {
+   it('coalesces pointer move updates into one animation frame', () => {
+      let frame: FrameRequestCallback | undefined;
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+         frame = callback;
+         return 1;
+      });
+      const content = renderWrapper();
+
+      dispatchPointer(content, 'pointerdown', 0);
+      dispatchPointer(content, 'pointermove', 30);
+      dispatchPointer(content, 'pointermove', 50);
+
+      expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+      act(() => frame!(0));
+      expect(content.style.transform).toBe('translateX(40px)');
+   });
+});
