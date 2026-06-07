@@ -44,7 +44,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
    function handlePointerMove(event: PointerEvent<HTMLDivElement>): void {
       if (pointerStartXRef.current === null || pointerIdRef.current !== event.pointerId) return;
       const pointerOffsetX = event.clientX - pointerStartXRef.current;
-      const swipeDistance = Math.max(Math.abs(pointerOffsetX) - 18, 0);
+      const swipeDistance = Math.max(Math.abs(pointerOffsetX) - 10, 0);
       const rawOffsetX = Math.sign(pointerOffsetX) * swipeDistance;
       const min = hasRightAction ? -112 : 0;
       const max = hasLeftAction ? 112 : 0;
