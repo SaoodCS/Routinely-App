@@ -151,6 +151,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (event.key === 'ArrowDown' || event.key === 'Enter') return handleAddTaskBelow(true);
       if (event.key === 'ArrowRight' && indexes.length < 3) return handleAddSubTaskBelow(true);
       if (event.key === 'ArrowLeft') return handleAddParentTaskBelow(true);
+      if (event.key === 'Backspace' || event.key === 'Delete') return handleDelete();
    }
 
    return (
