@@ -131,7 +131,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleSaveLabelOnBlur(event: FocusEvent<HTMLInputElement, Element>): void {
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLTextAreaElement, Element>): void {
       const updatedLabel = event.currentTarget.value;
       if (updatedLabel === task.label) return;
       const updatedTasks = [...tasks];
@@ -142,7 +142,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       setTasks(updatedTasks);
    }
 
-   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
+   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>): void {
       if (!event.ctrlKey) {
          if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur();
          return;

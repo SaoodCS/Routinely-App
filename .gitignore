@@ -24,6 +24,7 @@ dist-ssr/
 .cert/
 env/
 .codex
+docs/
 
 # Firebase
 .firebase/

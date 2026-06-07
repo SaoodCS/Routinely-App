@@ -103,14 +103,14 @@ export default function TagsPage(): React.JSX.Element {
       setTagsDb(updatedTags);
    }
 
-   function handleSaveLabelOnBlur(event: FocusEvent<HTMLInputElement>, tagIndex: number): void {
+   function handleSaveLabelOnBlur(event: FocusEvent<HTMLTextAreaElement>, tagIndex: number): void {
       const updatedLabel = event.currentTarget.value;
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, label: updatedLabel } : tag));
       setTagsDb(updatedTags);
    }
 
-   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>, tagIndex: number): void {
+   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>, tagIndex: number): void {
       if (!event.ctrlKey) {
          if (event.key === 'Enter' || event.key === 'Escape') event.currentTarget.blur();
          return;

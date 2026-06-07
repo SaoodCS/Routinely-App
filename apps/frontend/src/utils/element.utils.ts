@@ -22,7 +22,7 @@ const prettierMap: Record<string, string> = {
 export function handleFormatInputOnSpace(event: FormEvent<HTMLElement>): void {
    // Get the part of the label that comes before the cursor i.e. before where the user's typing
    const element = event.currentTarget;
-   if (!(element instanceof HTMLInputElement)) return;
+   if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement)) return;
    const cursor = element.selectionStart;
    if (cursor === null || cursor !== element.selectionEnd) return;
    const label = element.value;
