@@ -16,11 +16,16 @@ export default function useScrollSaver(storageId: string, enabled: boolean = tru
       const scrollPos = sessionStorage.getItem(storageKey);
       const savedScrollTop = scrollPos ? Number.parseInt(scrollPos, 10) : 0;
       if (!Number.isNaN(savedScrollTop)) scrollElement.scrollTop = savedScrollTop;
-      function handleScroll(): void {
+
+      function saveScrollPosition(): void {
          sessionStorage.setItem(storageKey, scrollElement.scrollTop.toString());
       }
-      scrollElement.addEventListener('scroll', handleScroll);
-      return () => scrollElement.removeEventListener('scroll', handleScroll);
+
+      scrollElement.addEventListener('scrollend', saveScrollPosition);
+      return () => {
+         scrollElement.removeEventListener('scrollend', saveScrollPosition);
+         saveScrollPosition();
+      };
    }, [enabled, storageKey]);
 
    return { ref };
