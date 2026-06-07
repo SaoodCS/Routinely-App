@@ -24,7 +24,6 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
    const pointerStartXRef = useRef<number | null>(null);
    const pointerIdRef = useRef<number | null>(null);
    const offsetXRef = useRef(0);
-   const frameRef = useRef<number | null>(null);
    const [offsetX, setOffsetX] = useState(0);
    const [isDragging, setIsDragging] = useState(false);
    const [didSwipe, setDidSwipe] = useState(false);
@@ -53,12 +52,7 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
       offsetXRef.current = nextOffsetX;
       if (nextOffsetX !== 0 && !isDragging) setIsDragging(true);
       if (Math.abs(nextOffsetX) > 6 && !didSwipe) setDidSwipe(true);
-      if (frameRef.current === null) {
-         frameRef.current = window.requestAnimationFrame(() => {
-            frameRef.current = null;
-            setOffsetX(offsetXRef.current);
-         });
-      }
+      if (nextOffsetX !== offsetX) setOffsetX(nextOffsetX);
    }
 
    function handlePointerEnd(event: PointerEvent<HTMLDivElement>): void {
@@ -66,11 +60,9 @@ export default function SwipeActionWrapper(props: T_SwipeActionWrapperProps): Re
       const finalOffsetX = offsetXRef.current;
       if (finalOffsetX >= 72 && hasLeftAction) void leftAction?.onAction();
       if (finalOffsetX <= -72 && hasRightAction) void rightAction?.onAction();
-      if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
       pointerStartXRef.current = null;
       pointerIdRef.current = null;
       offsetXRef.current = 0;
-      frameRef.current = null;
       setIsDragging(false);
       setOffsetX(0);
    }
