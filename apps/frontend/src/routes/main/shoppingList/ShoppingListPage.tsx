@@ -10,7 +10,7 @@ import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
 import { ElementUtils } from '../../../utils';
 import ContentEditableField from '../../../components/ContentEditableField';
-import TextHighlighter from '../../../components/TextHighlighter';
+import TextFormatter from '../../../components/TextFormatter';
 import ShoppingListEmptyPlaceholder from './ShoppingListEmptyPlaceholder';
 
 export default function ShoppingListPage(): React.JSX.Element {
@@ -131,10 +131,9 @@ export default function ShoppingListPage(): React.JSX.Element {
                                        onInput={ElementUtils.handleFormatInputOnSpace}
                                        style={{ outline: 'none' }}
                                     >
-                                       <TextHighlighter
-                                          highlightText={normalizedSearchQuery}
+                                       <TextFormatter
                                           fullText={item.label}
-                                          highlightColor={palette.warning.main}
+                                          highlight={{ text: normalizedSearchQuery, color: palette.warning.main }}
                                        />
                                     </ContentEditableField>
                                  </Stack>

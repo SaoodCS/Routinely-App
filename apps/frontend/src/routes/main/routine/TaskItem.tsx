@@ -8,7 +8,7 @@ import { useSearchParams } from 'react-router';
 import ContentEditableField from '../../../components/ContentEditableField';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import TextHighlighter from '../../../components/TextHighlighter';
+import TextFormatter from '../../../components/TextFormatter';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { ElementUtils } from '../../../utils';
 import type { PaletteOption, PaletteShade } from '../../../theme/palette.theme';
@@ -216,7 +216,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         padding: '0 6px 1.2px 0',
                      }}
                   >
-                     <TextHighlighter highlightText={searchQuery} fullText={task.label} highlightColor={palette.warning.main} />
+                     <TextFormatter
+                        fullText={task.label}
+                        highlight={{ text: searchQuery, color: palette.warning.main }}
+                        replace={{ text: '//', replacement: '' }}
+                     />
                   </ContentEditableField>
                </Stack>
             </SwipeActionWrapper>

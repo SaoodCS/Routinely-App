@@ -11,7 +11,7 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ElementUtils } from '../../../utils';
 import { ROUTE_PATHS } from '../../utils.route';
-import TextHighlighter from '../../../components/TextHighlighter';
+import TextFormatter from '../../../components/TextFormatter';
 import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 
 export default function TagsPage(): React.JSX.Element {
@@ -174,10 +174,9 @@ export default function TagsPage(): React.JSX.Element {
                                           onInput={ElementUtils.handleFormatInputOnSpace}
                                           style={{ outline: 'none' }}
                                        >
-                                          <TextHighlighter
-                                             highlightText={normalizedSearchQuery}
+                                          <TextFormatter
                                              fullText={tag.label}
-                                             highlightColor={palette.warning.main}
+                                             highlight={{ text: normalizedSearchQuery, color: palette.warning.main }}
                                           />
                                        </ContentEditableField>
                                        <Typography variant={'caption'} color="textSecondary">
