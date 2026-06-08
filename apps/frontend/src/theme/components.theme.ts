@@ -21,13 +21,19 @@ export const components: ThemeOptions['components'] = {
    MuiBottomNavigation: {
       defaultProps: { component: 'nav', showLabels: true },
       styleOverrides: {
-         root: ({ theme: t }) => ({ borderTop: `1px solid ${t.palette.divider}`, flexShrink: 0, minHeight: FOOTER_HEIGHT, width: '100%' }),
+         root: ({ theme: t }) => ({
+            borderTop: `1px solid ${t.palette.divider}`,
+            flexShrink: 0,
+            minHeight: FOOTER_HEIGHT,
+            width: '100%',
+            padding: '0 10px 0 10px',
+         }),
       },
    },
    MuiBottomNavigationAction: {
       styleOverrides: {
          label: { fontSize: '0.7rem', '&.Mui-selected': { fontSize: '0.8rem' } },
-         root: { padding: 'unset', fontSize: '0.5rem' },
+         root: { padding: 'unset', fontSize: '0.5rem', minWidth: 'auto', flexGrow: 1 },
       },
    },
 
