@@ -206,8 +206,8 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                         handleSaveLabelOnBlur(event);
                      }}
                      onFocus={() => setIsContentEditableFocused(true)}
-                     onKeyDown={handleKeyDown}
                      onInput={ElementUtils.handleFormatInputOnSpace}
+                     onKeyDown={handleKeyDown}
                      style={{
                         fontSize: fontSize,
                         color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,
