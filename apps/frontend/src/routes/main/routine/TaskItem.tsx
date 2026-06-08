@@ -1,5 +1,5 @@
 import { DoneAllOutlined, DragIndicatorOutlined, KeyboardDoubleArrowDown, KeyboardDoubleArrowRight } from '@mui/icons-material';
-import { Grow, IconButton, ListItem, Stack, Typography } from '@mui/material';
+import { Alert, Grow, IconButton, ListItem, Snackbar, Stack, Typography, type AlertProps } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
@@ -8,7 +8,7 @@ import { useSearchParams } from 'react-router';
 import ContentEditableField from '../../../components/ContentEditableField';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import TextFormatter from '../../../components/TextFormatter';
+import TextFormatter, { type T_TextFormatterProps } from '../../../components/TextFormatter';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { ElementUtils } from '../../../utils';
 import type { PaletteOption, PaletteShade } from '../../../theme/palette.theme';
@@ -33,7 +33,7 @@ interface T_TaskItemProps {
 
 export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const { task, dragElProps, indexes, section, textOverlay } = props;
-   const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb, settings } = useFirestoreContext();
+   const { morningTasks, eveningTasks, setEveningTasksDb, setMorningTasksDb, settings, shoppingList, setShoppingListDb } = useFirestoreContext();
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
    const [searchParams] = useSearchParams();
@@ -41,6 +41,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    const focusTaskIdRef = useRef<string | null>(null);
    const { palette } = useTheme();
    const [isContentEditableFocused, setIsContentEditableFocused] = useState(false);
+   const [snackbar, setSnackbar] = useState<{ message: string; severity: AlertProps['severity'] }>();
    const { indent, colorAndShade, fontSize, paddingTop } = DEPTH_STYLES[indexes.length];
    const color = palette[colorAndShade[0]][colorAndShade[1]];
 
@@ -155,76 +156,101 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (event.key === 'Backspace' || event.key === 'Delete') return handleDelete();
    }
 
+   function formatAddToShoppingListWords(): NonNullable<T_TextFormatterProps['rules']> {
+      const phrases = new Set(Array.from(task.label.matchAll(/\*([^*]+)\*/g), (match) => match[1]));
+      return Array.from(phrases).flatMap((text) => [
+         { text: `*${text}*`, replacement: text },
+         {
+            text,
+            style: { textDecoration: 'underline', color: 'lightblue', cursor: 'pointer' },
+            action: (text) => {
+               if (shoppingList.some((item) => item.label === text)) {
+                  setSnackbar({ message: `"${text}" is already in the shopping list`, severity: 'warning' });
+                  return;
+               }
+               setShoppingListDb([...shoppingList, AppUtils.createNewShoppingItem({ label: text })]);
+               setSnackbar({ message: `'${text}' added to the shopping list`, severity: 'success' });
+            },
+         },
+      ]);
+   }
+
    return (
-      <Grow in timeout={500}>
-         <ListItem sx={{ py: 0.3, pt: paddingTop, px: 1, pl: indent, position: 'relative' }}>
-            <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700} color="grey.500">
-               {textOverlay}
-            </Typography>
-            <SwipeActionWrapper
-               disabled={isContentEditableFocused}
-               rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
-               leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
-               style={{
-                  borderRadius: '5px',
-                  borderLeft: `4px solid ${color}`,
-                  background: `linear-gradient(150deg, ${alpha(color, 0.2)}, ${alpha(color, 0.1)} 50%)`,
-                  opacity: textOverlay || task.isChecked ? 0.5 : 1,
-               }}
-            >
-               <Stack
-                  direction="row"
-                  alignItems="center"
-                  gap={1}
-                  sx={{ px: 1, pt: 0.75, pb: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: color } }}
+      <>
+         <Grow in timeout={500}>
+            <ListItem sx={{ py: 0.3, pt: paddingTop, px: 1, pl: indent, position: 'relative' }}>
+               <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700} color="grey.500">
+                  {textOverlay}
+               </Typography>
+               <SwipeActionWrapper
+                  disabled={isContentEditableFocused}
+                  rightAction={{ label: 'Delete', bgColor: 'red', onAction: handleDelete }}
+                  leftAction={{ label: 'Toggle', bgColor: 'green', onAction: handleToggleChecked }}
+                  style={{
+                     borderRadius: '5px',
+                     borderLeft: `4px solid ${color}`,
+                     background: `linear-gradient(150deg, ${alpha(color, 0.2)}, ${alpha(color, 0.1)} 50%)`,
+                     opacity: textOverlay || task.isChecked ? 0.5 : 1,
+                  }}
                >
-                  <IconButton {...dragElProps} {...ElementUtils.skipTabFocusProps}>
-                     <DragIndicatorOutlined />
-                  </IconButton>
-                  <IconButton onClick={() => handleAddTaskBelow()} {...ElementUtils.skipTabFocusProps}>
-                     <KeyboardDoubleArrowDown />
-                  </IconButton>
-                  {indexes.length !== 3 && (
-                     <>
-                        <IconButton onClick={() => handleAddSubTaskBelow()} {...ElementUtils.skipTabFocusProps}>
-                           <KeyboardDoubleArrowRight />
-                        </IconButton>
-                        <IconButton onClick={handleToggleCheckTaskAndSubtasks} {...ElementUtils.skipTabFocusProps}>
-                           <DoneAllOutlined />
-                        </IconButton>
-                     </>
-                  )}
-                  <TaskItemRelatedTagsMenuButton section={section} indexes={indexes} task={task} />
-               </Stack>
-               <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 1.25, pb: 0.75 }}>
-                  {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
-                  <ContentEditableField
-                     id={task.id}
-                     text={task.label}
-                     onBlur={(event) => {
-                        setIsContentEditableFocused(false);
-                        handleSaveLabelOnBlur(event);
-                     }}
-                     onFocus={() => setIsContentEditableFocused(true)}
-                     onInput={ElementUtils.handleFormatInputOnSpace}
-                     onKeyDown={handleKeyDown}
-                     style={{
-                        fontSize: fontSize,
-                        color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,
-                        textDecoration: task.isChecked ? 'line-through' : 'none',
-                        width: '100%',
-                        padding: '0 6px 1.2px 0',
-                     }}
+                  <Stack
+                     direction="row"
+                     alignItems="center"
+                     gap={1}
+                     sx={{ px: 1, pt: 0.75, pb: 0.5, '& > :last-child': { ml: 'auto' }, '& button': { p: 0, color: color } }}
                   >
-                     <TextFormatter
-                        fullText={task.label}
-                        highlight={{ text: searchQuery, color: palette.warning.main }}
-                        replace={{ text: '//', replacement: '' }}
-                     />
-                  </ContentEditableField>
-               </Stack>
-            </SwipeActionWrapper>
-         </ListItem>
-      </Grow>
+                     <IconButton {...dragElProps} {...ElementUtils.skipTabFocusProps}>
+                        <DragIndicatorOutlined />
+                     </IconButton>
+                     <IconButton onClick={() => handleAddTaskBelow()} {...ElementUtils.skipTabFocusProps}>
+                        <KeyboardDoubleArrowDown />
+                     </IconButton>
+                     {indexes.length !== 3 && (
+                        <>
+                           <IconButton onClick={() => handleAddSubTaskBelow()} {...ElementUtils.skipTabFocusProps}>
+                              <KeyboardDoubleArrowRight />
+                           </IconButton>
+                           <IconButton onClick={handleToggleCheckTaskAndSubtasks} {...ElementUtils.skipTabFocusProps}>
+                              <DoneAllOutlined />
+                           </IconButton>
+                        </>
+                     )}
+                     <TaskItemRelatedTagsMenuButton section={section} indexes={indexes} task={task} />
+                  </Stack>
+                  <Stack direction={'row'} alignItems={'center'} gap={0.5} sx={{ pl: 1.25, pb: 0.75 }}>
+                     {/* <Checkbox checked={task.isChecked} onChange={() => handleToggleChecked(indexes)} size="small" sx={{ p: 0 }} /> */}
+                     <ContentEditableField
+                        id={task.id}
+                        text={task.label}
+                        onBlur={(event) => {
+                           setIsContentEditableFocused(false);
+                           handleSaveLabelOnBlur(event);
+                        }}
+                        onFocus={() => setIsContentEditableFocused(true)}
+                        onInput={ElementUtils.handleFormatInputOnSpace}
+                        onKeyDown={handleKeyDown}
+                        style={{
+                           fontSize: fontSize,
+                           color: task.isChecked || textOverlay ? palette.text.disabled : palette.text.primary,
+                           textDecoration: task.isChecked ? 'line-through' : 'none',
+                           width: '100%',
+                           padding: '0 6px 1.2px 0',
+                        }}
+                     >
+                        <TextFormatter
+                           fullText={task.label}
+                           rules={[{ text: searchQuery, style: { backgroundColor: palette.warning.main } }, ...formatAddToShoppingListWords()]}
+                        />
+                     </ContentEditableField>
+                  </Stack>
+               </SwipeActionWrapper>
+            </ListItem>
+         </Grow>
+         <Snackbar key={snackbar?.message} open={Boolean(snackbar)} autoHideDuration={3000} onClose={() => setSnackbar(undefined)}>
+            <Alert severity={snackbar?.severity} onClose={() => setSnackbar(undefined)}>
+               {snackbar?.message}
+            </Alert>
+         </Snackbar>
+      </>
    );
 }
