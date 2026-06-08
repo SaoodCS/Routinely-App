@@ -1,9 +1,9 @@
 import { Add, ChevronRight, DragIndicatorOutlined, KeyboardDoubleArrowDown } from '@mui/icons-material';
 import { alpha, Box, Fab, Grow, IconButton, ListItem, Stack, Switch, Typography, useTheme } from '@mui/material';
 import type { AppTypes } from '@repo/types/index';
-import { createNewTag } from '@repo/utils/app.utils';
 import { useEffect, useRef, type FocusEvent, type KeyboardEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
+import { AppUtils } from '@repo/utils/index';
 import ContentEditableField from '../../../components/ContentEditableField';
 import DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
@@ -11,6 +11,7 @@ import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import useScrollSaver from '../../../hooks/useScrollSaver';
 import { ElementUtils } from '../../../utils';
 import { ROUTE_PATHS } from '../../utils.route';
+import TextHighlighter from '../../../components/TextHighlighter';
 import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 
 export default function TagsPage(): React.JSX.Element {
@@ -65,13 +66,13 @@ export default function TagsPage(): React.JSX.Element {
    }
 
    function handleAddTag(focusOnNewTag?: boolean): void {
-      const newTag = createNewTag();
+      const newTag = AppUtils.createNewTag();
       setTagsDb([...tags, newTag]);
       if (focusOnNewTag) focusTagIdRef.current = newTag.id;
    }
 
    function handleAddTagAbove(tagIndex: number, focusOnNewTag?: boolean): void {
-      const newTag = createNewTag();
+      const newTag = AppUtils.createNewTag();
       const updatedTags = [...tags];
       updatedTags.splice(tagIndex, 0, newTag);
       setTagsDb(updatedTags);
@@ -79,15 +80,11 @@ export default function TagsPage(): React.JSX.Element {
    }
 
    function handleAddTagBelow(tagIndex: number, focusOnNewTag?: boolean): void {
-      const newTag = createNewTag();
+      const newTag = AppUtils.createNewTag();
       const updatedTags = [...tags];
       updatedTags.splice(tagIndex + 1, 0, newTag);
       setTagsDb(updatedTags);
       if (focusOnNewTag) focusTagIdRef.current = newTag.id;
-   }
-
-   function handleReorderOnDrop(newOrderedItems: AppTypes.Tag[]): void {
-      setTagsDb(newOrderedItems);
    }
 
    function handleDelete(tagIndex: number): void {
@@ -108,6 +105,10 @@ export default function TagsPage(): React.JSX.Element {
       if (updatedLabel === tags[tagIndex].label) return;
       const updatedTags = tags.map((tag, i) => (i === tagIndex ? { ...tag, label: updatedLabel } : tag));
       setTagsDb(updatedTags);
+   }
+
+   function handleReorderOnDrop(newOrderedItems: AppTypes.Tag[]): void {
+      setTagsDb(newOrderedItems);
    }
 
    function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>, tagIndex: number): void {
@@ -173,7 +174,11 @@ export default function TagsPage(): React.JSX.Element {
                                           onInput={ElementUtils.handleFormatInputOnSpace}
                                           style={{ outline: 'none' }}
                                        >
-                                          {tag.label}
+                                          <TextHighlighter
+                                             highlightText={normalizedSearchQuery}
+                                             fullText={tag.label}
+                                             highlightColor={palette.warning.main}
+                                          />
                                        </ContentEditableField>
                                        <Typography variant={'caption'} color="textSecondary">
                                           {`${numberOfShowWhenTasks} shown, ${numberOfHideWhenTasks} hidden`}

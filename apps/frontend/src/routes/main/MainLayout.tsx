@@ -1,4 +1,4 @@
-import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined } from '@mui/icons-material';
+import { ArrowBack, BedtimeOutlined, LightModeOutlined, LocalOfferOutlined, SettingsOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 import { AppBar, Avatar, BottomNavigation, BottomNavigationAction, Box, Container, IconButton, Stack, Toolbar, Typography } from '@mui/material';
 import { Outlet, useMatches, useNavigate } from 'react-router';
 import { ROUTE_PATHS, type T_Route_Path, type T_Route_UseMatches } from '../utils.route';
@@ -48,6 +48,7 @@ export default function MainLayout(): React.JSX.Element {
                <BottomNavigationAction label={'Morning'} value={ROUTE_PATHS.main_routine_morning} icon={<LightModeOutlined />} />
                <BottomNavigationAction label={'Evening'} value={ROUTE_PATHS.main_routine_evening} icon={<BedtimeOutlined />} />
                <BottomNavigationAction label={'Tags'} value={ROUTE_PATHS.main_tags} icon={<LocalOfferOutlined />} />
+               <BottomNavigationAction label={'Shopping List'} value={ROUTE_PATHS.main_shoppingList} icon={<ShoppingCartOutlined />} />
                <BottomNavigationAction label={'Settings'} value={ROUTE_PATHS.main_settings} icon={<SettingsOutlined />} />
             </BottomNavigation>
          )}

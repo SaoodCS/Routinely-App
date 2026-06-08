@@ -4,6 +4,7 @@ import MainLayout from './MainLayout';
 import { routineRoute } from './routine/routine.route';
 import { settingsRoute } from './settings/settings.route';
 import { tagsRoute } from './tags/tags.route';
+import { shoppingListRoute } from './shoppingList/shoppingList.route';
 
 export const mainRoute = (
    <SafeRoute path={ROUTE_PATHS.main}>
@@ -12,6 +13,7 @@ export const mainRoute = (
          <SafeRoute element={<MainLayout />}>
             {routineRoute}
             {tagsRoute}
+            {shoppingListRoute}
             {settingsRoute}
          </SafeRoute>
       </SafeRoute>

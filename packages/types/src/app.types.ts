@@ -16,6 +16,12 @@ export interface Tag {
    isEnabled: boolean;
 }
 
+export interface ShoppingItem {
+   id: string;
+   label: string;
+   isChecked: boolean;
+}
+
 export interface Settings {
    inheritTagsFromSource?: boolean;
 }

@@ -12,10 +12,12 @@ type T_FirestoreContext = {
    morningTasks: AppTypes.Task[];
    eveningTasks: AppTypes.Task[];
    tags: AppTypes.Tag[];
+   shoppingList: AppTypes.ShoppingItem[];
    settings: AppTypes.Settings;
    setMorningTasksDb: (value: T_FirestoreContext['morningTasks']) => void;
    setEveningTasksDb: (value: T_FirestoreContext['eveningTasks']) => void;
    setTagsDb: (value: T_FirestoreContext['tags']) => void;
+   setShoppingListDb: (value: T_FirestoreContext['shoppingList']) => void;
    setSettingsDb: (value: T_FirestoreContext['settings']) => void;
 };
 
@@ -23,10 +25,12 @@ const FirestoreContext = createContext<T_FirestoreContext>({
    morningTasks: [],
    eveningTasks: [],
    tags: [],
+   shoppingList: [],
    settings: {},
    setMorningTasksDb: () => {},
    setEveningTasksDb: () => {},
    setTagsDb: () => {},
+   setShoppingListDb: () => {},
    setSettingsDb: () => {},
 });
 
@@ -35,12 +39,14 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const [morningTasks, setMorningTasksDbState] = useState<T_FirestoreContext['morningTasks']>([]);
    const [eveningTasks, setEveningTasksDbState] = useState<T_FirestoreContext['eveningTasks']>([]);
    const [tags, setTagsDbState] = useState<T_FirestoreContext['tags']>([]);
+   const [shoppingList, setShoppingListDbState] = useState<T_FirestoreContext['shoppingList']>([]);
    const [settings, setSettingsDbState] = useState<T_FirestoreContext['settings']>({});
    const [error, setError] = useState<string | undefined>(undefined);
    const [initialFetchDone, setInitialFetchDone] = useState<Record<AppTypes.FirestorePathField, boolean>>({
       routine_morning_tasks: false,
       routine_evening_tasks: false,
       tags_list_tags: false,
+      shoppingList_list_shopping: false,
       settings_app_settings: false,
    });
    const isInitialFetchLoading = useMemo(() => !!uid && !Object.values(initialFetchDone).every(Boolean), [initialFetchDone, uid]);
@@ -68,6 +74,7 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
          createOnSnapshot<typeof morningTasks>('routine_morning_tasks', setMorningTasksDbState, []),
          createOnSnapshot<typeof eveningTasks>('routine_evening_tasks', setEveningTasksDbState, []),
          createOnSnapshot<typeof tags>('tags_list_tags', setTagsDbState, []),
+         createOnSnapshot<typeof shoppingList>('shoppingList_list_shopping', setShoppingListDbState, []),
          createOnSnapshot<typeof settings>('settings_app_settings', setSettingsDbState, {}),
       ];
 
@@ -90,12 +97,24 @@ function FirestoreContextProvider({ children }: { children: ReactNode }): ReactN
    const setMorningTasksDb = useMemo(() => createDocSetter<typeof morningTasks>('routine_morning_tasks'), [createDocSetter]);
    const setEveningTasksDb = useMemo(() => createDocSetter<typeof eveningTasks>('routine_evening_tasks'), [createDocSetter]);
    const setTagsDb = useMemo(() => createDocSetter<typeof tags>('tags_list_tags'), [createDocSetter]);
+   const setShoppingListDb = useMemo(() => createDocSetter<typeof shoppingList>('shoppingList_list_shopping'), [createDocSetter]);
    const setSettingsDb = useMemo(() => createDocSetter<typeof settings>('settings_app_settings'), [createDocSetter]);
 
    // memoize context values to prevent unnecessary re-renders
    const value: T_FirestoreContext = useMemo(
-      () => ({ morningTasks, eveningTasks, tags, settings, setMorningTasksDb, setEveningTasksDb, setTagsDb, setSettingsDb }),
-      [morningTasks, eveningTasks, tags, settings, setMorningTasksDb, setEveningTasksDb, setTagsDb, setSettingsDb],
+      () => ({
+         morningTasks,
+         eveningTasks,
+         tags,
+         shoppingList,
+         settings,
+         setMorningTasksDb,
+         setEveningTasksDb,
+         setTagsDb,
+         setShoppingListDb,
+         setSettingsDb,
+      }),
+      [morningTasks, eveningTasks, tags, shoppingList, settings, setMorningTasksDb, setEveningTasksDb, setTagsDb, setShoppingListDb, setSettingsDb],
    );
 
    return (

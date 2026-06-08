@@ -11,8 +11,12 @@ export function createNewTask(taskPresets?: Partial<AppTypes.Task>): AppTypes.Ta
    };
 }
 
-export function createNewTag(): AppTypes.Tag {
-   return { id: `${Date.now()}-tag`, label: '', isEnabled: true };
+export function createNewTag(tagPresets?: Partial<AppTypes.Tag>): AppTypes.Tag {
+   return { id: tagPresets?.id ?? `${Date.now()}-tag`, label: tagPresets?.label ?? '', isEnabled: tagPresets?.isEnabled ?? true };
+}
+
+export function createNewShoppingItem(itemPresets?: Partial<AppTypes.ShoppingItem>): AppTypes.ShoppingItem {
+   return { id: itemPresets?.id ?? `${Date.now()}-shopping-item`, label: itemPresets?.label ?? '', isChecked: itemPresets?.isChecked ?? false };
 }
 
 export function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesToUpdate: number[]): AppTypes.Task[] {
@@ -32,6 +36,7 @@ export const FIRESTORE_PATHS_FIELDS = {
    routine_evening_tasks: 'users/{uid}/routines/evening[tasks]',
    tags_list_tags: 'users/{uid}/tags/list[tags]',
    settings_app_settings: 'users/{uid}/settings/app[settings]',
+   shoppingList_list_shopping: 'users/{uid}/shoppingList/list[shopping]',
 } as const; // NOTE: firestore documents have an even number of segments, collections have an odd number
 
 export function getFirestorePathAndField(path: AppTypes.FirestorePathField, uid: string): { path: string; field: string } {

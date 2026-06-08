@@ -25,6 +25,7 @@ export const ROUTE_PATHS = {
    main_routine_evening: '/main/routine/evening',
    main_tags: '/main/tags',
    main_tags_tagId: '/main/tags/:tagId',
+   main_shoppingList: '/main/shopping-list',
    main_settings: '/main/settings',
 } as const;
 
