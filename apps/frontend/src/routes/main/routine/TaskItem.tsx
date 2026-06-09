@@ -159,20 +159,23 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    function formatAddToShoppingListWords(): NonNullable<ComponentProps<typeof TextFormatter>['rules']> {
       const delimiter = AppUtils.TASK_LABEL_DELIMITER.shoppingList;
       const phrases = new Set(task.label.split(delimiter).filter((text, index) => index % 2 === 1 && text));
-      return Array.from(phrases).flatMap((text) => [
-         { textMatch: `${delimiter}${text}${delimiter}`, replaceWith: text },
-         {
-            textMatch: text,
-            style: { textDecoration: 'underline', color: 'lightblue', cursor: 'pointer' },
-            action: (text) => {
-               if (shoppingList.some((item) => item.label === text)) {
-                  return setSnackbar({ message: `"${text}" is already in the shopping list`, severity: 'warning' });
-               }
-               setShoppingListDb([...shoppingList, AppUtils.createNewShoppingItem({ label: text })]);
-               setSnackbar({ message: `'${text}' added to the shopping list`, severity: 'success' });
+      const rules: NonNullable<ComponentProps<typeof TextFormatter>['rules']> = [];
+      for (const text of phrases) {
+         rules.push(
+            { textMatch: `${delimiter}${text}${delimiter}`, replaceWith: text },
+            {
+               textMatch: text,
+               style: { textDecoration: 'underline', color: 'lightblue', cursor: 'pointer' },
+               action: (text) => {
+                  const alreadyHasItem = shoppingList.some((item) => item.label === text);
+                  if (alreadyHasItem) return setSnackbar({ message: `"${text}" is already in the shopping list`, severity: 'warning' });
+                  setShoppingListDb([...shoppingList, AppUtils.createNewShoppingItem({ label: text })]);
+                  setSnackbar({ message: `'${text}' added to the shopping list`, severity: 'success' });
+               },
             },
-         },
-      ]);
+         );
+      }
+      return rules;
    }
 
    return (
