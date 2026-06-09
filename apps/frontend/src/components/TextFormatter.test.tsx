@@ -97,6 +97,14 @@ describe('TextFormatter', () => {
       );
    });
 
+   it('formats only exact-case matches when matchCase is true', () => {
+      const html = renderToStaticMarkup(
+         <TextFormatter fullText="Milk, milk, MILK" rules={[{ textMatch: 'milk', style: { backgroundColor: 'yellow' } }]} matchCase />,
+      );
+
+      expect(html).toBe('Milk, <span style="background-color:yellow">milk</span>, MILK');
+   });
+
    it('does not expose separate formatting props', () => {
       // @ts-expect-error Formatting is configured through rules.
       const formatter = <TextFormatter fullText="Milk" styles={[{ textMatch: 'milk', style: {} }]} />;
