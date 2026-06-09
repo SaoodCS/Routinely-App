@@ -131,7 +131,11 @@ export default function ShoppingListPage(): React.JSX.Element {
                                        onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                        onKeyDown={(e) => handleKeyDown(e, i)}
                                        onInput={ElementUtils.handleFormatInputOnSpace}
-                                       style={{ outline: 'none' }}
+                                       style={{
+                                          outline: 'none',
+                                          color: item.isChecked ? palette.text.disabled : undefined,
+                                          textDecoration: item.isChecked ? 'line-through' : 'none',
+                                       }}
                                     >
                                        <TextFormatter
                                           fullText={item.label}
