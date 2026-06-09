@@ -176,6 +176,11 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
 
    return (
       <>
+         <Snackbar key={snackbar?.message} open={Boolean(snackbar)} autoHideDuration={3000} onClose={() => setSnackbar(undefined)}>
+            <Alert severity={snackbar?.severity} onClose={() => setSnackbar(undefined)}>
+               {snackbar?.message}
+            </Alert>
+         </Snackbar>
          <Grow in timeout={500}>
             <ListItem sx={{ py: 0.3, pt: paddingTop, px: 1, pl: indent, position: 'relative' }}>
                <Typography position={'absolute'} textAlign={'center'} right={0} left={0} variant={'body2'} fontWeight={700} color="grey.500">
@@ -245,11 +250,6 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                </SwipeActionWrapper>
             </ListItem>
          </Grow>
-         <Snackbar key={snackbar?.message} open={Boolean(snackbar)} autoHideDuration={3000} onClose={() => setSnackbar(undefined)}>
-            <Alert severity={snackbar?.severity} onClose={() => setSnackbar(undefined)}>
-               {snackbar?.message}
-            </Alert>
-         </Snackbar>
       </>
    );
 }
