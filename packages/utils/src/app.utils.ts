@@ -39,10 +39,18 @@ export function normalizeLabelForSearch(label: string): string {
    return label.toLowerCase();
 }
 
+export const TASK_LABEL_DELIMITER = {
+   shoppingList: '*',
+   //tags: '#',
+} as const;
+
 export function normalizeTaskLabelForSearch(label: string): string {
-   const normalizedLabel = normalizeLabelForSearch(label);
-   const removedShoppingListAsterisk = normalizedLabel.replaceAll('*', '');
-   return removedShoppingListAsterisk;
+   let normalizedLabel = normalizeLabelForSearch(label);
+   for (const name in TASK_LABEL_DELIMITER) {
+      const delimiter = TASK_LABEL_DELIMITER[name as keyof typeof TASK_LABEL_DELIMITER];
+      normalizedLabel = normalizedLabel.replaceAll(delimiter, '');
+   }
+   return normalizedLabel;
 }
 
 export const FIRESTORE_PATHS_FIELDS = {
