@@ -40,8 +40,8 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
       let segmentStyle: CSSProperties | undefined;
       let actions: { action: NonNullable<T_TextFormatterRules['action']>; textMatch: T_TextFormatterRules['textMatch'] }[] | undefined;
       let handleClick: (() => void) | undefined;
-      let role: 'button' | undefined;
-      let tabIndex: number | undefined;
+      let segmentRole: 'button' | undefined;
+      let segmentTabIndex: number | undefined;
 
       for (const rule of formatRules) {
          if (rule.next === cursor) {
@@ -59,8 +59,8 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
       const text = newText.slice(cursor, nextBoundary);
       if (actions) {
          segmentStyle = { ...segmentStyle, pointerEvents: 'auto', position: 'relative', zIndex: 1 };
-         role = 'button';
-         tabIndex = -1;
+         segmentRole = 'button';
+         segmentTabIndex = -1;
          handleClick = () => {
             for (const item of actions) item.action(item.textMatch);
          };
@@ -69,7 +69,7 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
       if (!segmentStyle && !actions) content.push(text);
       else {
          content.push(
-            <span key={cursor} role={role} tabIndex={tabIndex} style={segmentStyle} onClick={handleClick}>
+            <span key={cursor} role={segmentRole} tabIndex={segmentTabIndex} style={segmentStyle} onClick={handleClick}>
                {text}
             </span>,
          );
