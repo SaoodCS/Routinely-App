@@ -33,8 +33,8 @@ describe('TextFormatter', () => {
       const result = TextFormatter({
          fullText: '//Buy milk',
          rules: [
-            { text: '//', replacement: '' },
-            { text: '', style: { backgroundColor: 'yellow' } },
+            { textMatch: '//', replaceWith: '' },
+            { textMatch: '', style: { backgroundColor: 'yellow' } },
          ],
       });
 
@@ -44,7 +44,7 @@ describe('TextFormatter', () => {
    it('returns formatted text directly when no rule matches', () => {
       const result = TextFormatter({
          fullText: 'Buy milk',
-         rules: [{ text: 'bread', style: { backgroundColor: 'yellow' } }],
+         rules: [{ textMatch: 'bread', style: { backgroundColor: 'yellow' } }],
       });
 
       expect(result).toBe('Buy milk');
@@ -55,8 +55,8 @@ describe('TextFormatter', () => {
          <TextFormatter
             fullText="//Buy **milk** and //bread"
             rules={[
-               { text: '//', replacement: '' },
-               { text: '**', replacement: '' },
+               { textMatch: '//', replaceWith: '' },
+               { textMatch: '**', replaceWith: '' },
             ]}
          />,
       );
@@ -64,10 +64,10 @@ describe('TextFormatter', () => {
       expect(html).toBe('Buy milk and bread');
    });
 
-   it('applies replacements case-insensitively by default', () => {
-      const html = renderToStaticMarkup(<TextFormatter fullText="Milk, milk, MILK" rules={[{ text: 'milk', replacement: 'oat' }]} />);
+   it('applies replacements to exact-case matches', () => {
+      const html = renderToStaticMarkup(<TextFormatter fullText="Milk, milk, MILK" rules={[{ textMatch: 'milk', replaceWith: 'oat' }]} />);
 
-      expect(html).toBe('oat, oat, oat');
+      expect(html).toBe('Milk, oat, MILK');
    });
 
    it('applies highlight styles to every configured text after replacements', () => {
@@ -75,9 +75,9 @@ describe('TextFormatter', () => {
          <TextFormatter
             fullText="Buy //Milk and bread, then milk"
             rules={[
-               { text: '//', replacement: '' },
-               { text: 'milk', style: { backgroundColor: 'yellow' } },
-               { text: 'bread', style: { backgroundColor: 'orange' } },
+               { textMatch: '//', replaceWith: '' },
+               { textMatch: 'milk', style: { backgroundColor: 'yellow' } },
+               { textMatch: 'bread', style: { backgroundColor: 'orange' } },
             ]}
          />,
       );
@@ -87,20 +87,19 @@ describe('TextFormatter', () => {
       );
    });
 
-   it('only formats exact-case matches when case-sensitive', () => {
+   it('formats matches case-insensitively', () => {
       const html = renderToStaticMarkup(
-         <TextFormatter
-            fullText="Milk, milk, MILK"
-            rules={[{ text: 'milk', style: { backgroundColor: 'yellow' }, caseSensitive: true }]}
-         />,
+         <TextFormatter fullText="Milk, milk, MILK" rules={[{ textMatch: 'milk', style: { backgroundColor: 'yellow' } }]} />,
       );
 
-      expect(html).toBe('Milk, <span style="background-color:yellow">milk</span>, MILK');
+      expect(html).toBe(
+         '<span style="background-color:yellow">Milk</span>, <span style="background-color:yellow">milk</span>, <span style="background-color:yellow">MILK</span>',
+      );
    });
 
    it('does not expose separate formatting props', () => {
       // @ts-expect-error Formatting is configured through rules.
-      const formatter = <TextFormatter fullText="Milk" styles={[{ text: 'milk', style: {} }]} />;
+      const formatter = <TextFormatter fullText="Milk" styles={[{ textMatch: 'milk', style: {} }]} />;
 
       expect(formatter).toBeDefined();
    });
@@ -111,8 +110,8 @@ describe('TextFormatter', () => {
          <TextFormatter
             fullText="Buy milk and bread"
             rules={[
-               { text: 'milk', style: { cursor: 'pointer', textDecoration: 'underline' }, action: handleClick },
-               { text: 'bread', style: { fontWeight: 700 } },
+               { textMatch: 'milk', style: { cursor: 'pointer', textDecoration: 'underline' }, action: handleClick },
+               { textMatch: 'bread', style: { fontWeight: 700 } },
             ]}
          />,
       );
@@ -136,7 +135,7 @@ describe('TextFormatter', () => {
 
    it('keeps each repeated click match independent', () => {
       const handleClick = vi.fn();
-      const container = renderFormatter(<TextFormatter fullText="Milk then milk" rules={[{ text: 'milk', action: handleClick }]} />);
+      const container = renderFormatter(<TextFormatter fullText="Milk then milk" rules={[{ textMatch: 'milk', action: handleClick }]} />);
       const matches = container.querySelectorAll('span[role="button"]');
 
       void act(() => matches[0].dispatchEvent(new MouseEvent('click', { bubbles: true })));
@@ -151,8 +150,8 @@ describe('TextFormatter', () => {
          <TextFormatter
             fullText="abcde"
             rules={[
-               { text: 'abc', style: { color: 'red' } },
-               { text: 'bcd', style: { fontWeight: 700 } },
+               { textMatch: 'abc', style: { color: 'red' } },
+               { textMatch: 'bcd', style: { fontWeight: 700 } },
             ]}
          />,
       );

@@ -135,7 +135,7 @@ export default function ShoppingListPage(): React.JSX.Element {
                                     >
                                        <TextFormatter
                                           fullText={item.label}
-                                          rules={[{ text: searchQuery, style: { backgroundColor: palette.warning.main } }]}
+                                          rules={[{ textMatch: searchQuery, style: { backgroundColor: palette.warning.main } }]}
                                        />
                                     </ContentEditableField>
                                  </Stack>

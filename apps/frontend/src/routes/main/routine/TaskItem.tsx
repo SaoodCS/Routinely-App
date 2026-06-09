@@ -159,9 +159,9 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
    function formatAddToShoppingListWords(): NonNullable<T_TextFormatterProps['rules']> {
       const phrases = new Set(Array.from(task.label.matchAll(/\*([^*]+)\*/g), (match) => match[1]));
       return Array.from(phrases).flatMap((text) => [
-         { text: `*${text}*`, replacement: text },
+         { textMatch: `*${text}*`, replaceWith: text },
          {
-            text,
+            textMatch: text,
             style: { textDecoration: 'underline', color: 'lightblue', cursor: 'pointer' },
             action: (text) => {
                if (shoppingList.some((item) => item.label === text)) {
@@ -239,7 +239,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
                      >
                         <TextFormatter
                            fullText={task.label}
-                           rules={[{ text: searchQuery, style: { backgroundColor: palette.warning.main } }, ...formatAddToShoppingListWords()]}
+                           rules={[{ textMatch: searchQuery, style: { backgroundColor: palette.warning.main } }, ...formatAddToShoppingListWords()]}
                         />
                      </ContentEditableField>
                   </Stack>

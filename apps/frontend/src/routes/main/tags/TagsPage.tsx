@@ -178,7 +178,7 @@ export default function TagsPage(): React.JSX.Element {
                                        >
                                           <TextFormatter
                                              fullText={tag.label}
-                                             rules={[{ text: searchQuery, style: { backgroundColor: palette.warning.main } }]}
+                                             rules={[{ textMatch: searchQuery, style: { backgroundColor: palette.warning.main } }]}
                                           />
                                        </ContentEditableField>
                                        <Typography variant={'caption'} color="textSecondary">

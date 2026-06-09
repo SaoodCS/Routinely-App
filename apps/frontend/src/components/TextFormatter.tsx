@@ -1,9 +1,16 @@
 import type { CSSProperties, ReactNode } from 'react';
 // component has 0 UI library dependencies so can copy to any react project
 
+export interface T_TextFormatterRules {
+   textMatch: string;
+   replaceWith?: string;
+   style?: CSSProperties;
+   action?: (textMatch: string) => void;
+}
+
 export interface T_TextFormatterProps {
    fullText: string;
-   rules?: { text: string; style?: CSSProperties; action?: (text: string) => void; replacement?: string; caseSensitive?: boolean }[];
+   rules?: T_TextFormatterRules[];
 }
 
 export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
@@ -11,9 +18,9 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
    if (!rules?.length) return fullText;
    let newText = fullText;
    let formatRules: { text: string; next: number; start: number; end: number; style?: CSSProperties; action?: (text: string) => void }[] | undefined;
-   for (const rule of rules) if (rule.text && rule.replacement !== undefined) newText = newText.replaceAll(rule.text, rule.replacement);
-   for (const { action, style, text } of rules)
-      if (text && (style || action)) (formatRules ??= []).push({ text: text.toLowerCase(), next: -1, start: -1, end: -1, style, action });
+   for (const rule of rules) if (rule.textMatch && rule.replaceWith !== undefined) newText = newText.replaceAll(rule.textMatch, rule.replaceWith);
+   for (const { action, style, textMatch } of rules)
+      if (textMatch && (style || action)) (formatRules ??= []).push({ text: textMatch.toLowerCase(), next: -1, start: -1, end: -1, style, action });
    if (!formatRules) return newText;
 
    const normalizedText = newText.toLowerCase();
@@ -40,11 +47,11 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
       }
 
       let segmentStyle: CSSProperties | undefined;
-      let actions: { action: (text: string) => void; text: string }[] | undefined;
+      let actions: { action: (text: string) => void; textMatch: string }[] | undefined;
       for (const rule of formatRules) {
          if (rule.end <= cursor) continue;
          if (rule.style) segmentStyle = segmentStyle ? { ...segmentStyle, ...rule.style } : rule.style;
-         if (rule.action) (actions ??= []).push({ action: rule.action, text: newText.slice(rule.start, rule.end) });
+         if (rule.action) (actions ??= []).push({ action: rule.action, textMatch: newText.slice(rule.start, rule.end) });
       }
       if (actions) segmentStyle = { ...segmentStyle, pointerEvents: 'auto', position: 'relative', zIndex: 1 };
 
@@ -60,7 +67,7 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
                onClick={
                   actions
                      ? () => {
-                          for (const item of actions) item.action(item.text);
+                          for (const item of actions) item.action(item.textMatch);
                        }
                      : undefined
                }
