@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from 'react';
 
 export interface T_TextFormatterProps {
    fullText: string;
-   rules?: { text: string; style?: CSSProperties; action?: (text: string) => void; replacement?: string }[];
+   rules?: { text: string; style?: CSSProperties; action?: (text: string) => void; replacement?: string; caseSensitive?: boolean }[];
 }
 
 export default function TextFormatter(props: T_TextFormatterProps): ReactNode {

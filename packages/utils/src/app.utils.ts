@@ -31,6 +31,20 @@ export function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesT
    return taskListToUpdate; // this returns a copy of the task and it's siblings, so the original tasks array isn't mutated
 }
 
+export function normalizeSearchQuery(query: string): string {
+   return query.toLowerCase();
+}
+
+export function normalizeLabelForSearch(label: string): string {
+   return label.toLowerCase();
+}
+
+export function normalizeTaskLabelForSearch(label: string): string {
+   const lowerCase = label.toLowerCase();
+   const removedShoppingListAsterisk = lowerCase.replaceAll('*', '');
+   return removedShoppingListAsterisk;
+}
+
 export const FIRESTORE_PATHS_FIELDS = {
    routine_morning_tasks: 'users/{uid}/routines/morning[tasks]',
    routine_evening_tasks: 'users/{uid}/routines/evening[tasks]',

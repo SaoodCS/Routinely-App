@@ -25,7 +25,7 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
    const { ref: tagHeaderRef, hideOnScrollElHeight: tagHeaderHeight } = useHideOnScroll(dragDropListRef, 'up', tags.length > 0);
    const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
-   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
+   const searchQuery = searchParams.get('search') ?? '';
    const enabledTagIds = useMemo(() => new Set(tags.filter(({ isEnabled }) => isEnabled).map(({ id }) => id)), [tags]);
    const [showHidden] = useLocalStorage<boolean>('show-hidden', false);
    const { palette } = useTheme();
@@ -53,13 +53,16 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
 
    const isTaskRendered = (task: AppTypes.Task): boolean => {
       if (!(visibleTasks.has(task) || showHidden)) return false;
-      if (task.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+      const normalizedSearchQuery = AppUtils.normalizeSearchQuery(searchQuery);
+      const normalizedTaskLabel = AppUtils.normalizeTaskLabelForSearch(task.label);
+      if (normalizedTaskLabel.includes(normalizedSearchQuery)) return true;
       if (!task.children) return false;
       const tasksToCheck = [...task.children];
       for (let i = 0; i < tasksToCheck.length; i += 1) {
          const taskToCheck = tasksToCheck[i];
          if (!(visibleTasks.has(taskToCheck) || showHidden)) continue;
-         if (taskToCheck.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+         const normalizedTaskToCheckLabel = AppUtils.normalizeTaskLabelForSearch(taskToCheck.label);
+         if (normalizedTaskToCheckLabel.includes(normalizedSearchQuery)) return true;
          if (taskToCheck.children) for (const child of taskToCheck.children) tasksToCheck.push(child);
       }
       return false;
@@ -68,7 +71,9 @@ export default function RoutinePage({ section }: T_RoutineProps): JSX.Element {
    function getTextOverlay(task: AppTypes.Task): string | undefined {
       if (!isTaskRendered(task)) return;
       if (!visibleTasks.has(task) && showHidden) return 'HIDDEN';
-      if (!task.label.toLowerCase().includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
+      const normalizedSearchQuery = AppUtils.normalizeSearchQuery(searchQuery);
+      const normalizedTaskLabel = AppUtils.normalizeTaskLabelForSearch(task.label);
+      if (!normalizedTaskLabel.includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
    }
 
    function handleAddTask(): void {

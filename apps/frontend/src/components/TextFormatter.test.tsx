@@ -64,6 +64,12 @@ describe('TextFormatter', () => {
       expect(html).toBe('Buy milk and bread');
    });
 
+   it('applies replacements case-insensitively by default', () => {
+      const html = renderToStaticMarkup(<TextFormatter fullText="Milk, milk, MILK" rules={[{ text: 'milk', replacement: 'oat' }]} />);
+
+      expect(html).toBe('oat, oat, oat');
+   });
+
    it('applies highlight styles to every configured text after replacements', () => {
       const html = renderToStaticMarkup(
          <TextFormatter
@@ -79,6 +85,17 @@ describe('TextFormatter', () => {
       expect(html).toBe(
          'Buy <span style="background-color:yellow">Milk</span> and <span style="background-color:orange">bread</span>, then <span style="background-color:yellow">milk</span>',
       );
+   });
+
+   it('only formats exact-case matches when case-sensitive', () => {
+      const html = renderToStaticMarkup(
+         <TextFormatter
+            fullText="Milk, milk, MILK"
+            rules={[{ text: 'milk', style: { backgroundColor: 'yellow' }, caseSensitive: true }]}
+         />,
+      );
+
+      expect(html).toBe('Milk, <span style="background-color:yellow">milk</span>, MILK');
    });
 
    it('does not expose separate formatting props', () => {

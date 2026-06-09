@@ -15,7 +15,7 @@ import ShoppingListEmptyPlaceholder from './ShoppingListEmptyPlaceholder';
 
 export default function ShoppingListPage(): React.JSX.Element {
    const [searchParams] = useSearchParams();
-   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
+   const searchQuery = searchParams.get('search') ?? '';
    const { ref } = useScrollSaver('shoppingList-scroll');
    const { shoppingList, setShoppingListDb } = useFirestoreContext();
    const focusItemIdRef = useRef<string | null>(null);
@@ -28,7 +28,9 @@ export default function ShoppingListPage(): React.JSX.Element {
    }, [shoppingList]);
 
    function isItemRendered(itemLabel: string): boolean {
-      return itemLabel.toLowerCase().includes(normalizedSearchQuery);
+      const normalizedSearchQuery = AppUtils.normalizeSearchQuery(searchQuery);
+      const normalizedItemLabel = AppUtils.normalizeLabelForSearch(itemLabel);
+      return normalizedItemLabel.includes(normalizedSearchQuery);
    }
 
    function handleAddItem(focusOnNewItem?: boolean): void {
@@ -133,7 +135,7 @@ export default function ShoppingListPage(): React.JSX.Element {
                                     >
                                        <TextFormatter
                                           fullText={item.label}
-                                          rules={[{ text: normalizedSearchQuery, style: { backgroundColor: palette.warning.main } }]}
+                                          rules={[{ text: searchQuery, style: { backgroundColor: palette.warning.main } }]}
                                        />
                                     </ContentEditableField>
                                  </Stack>

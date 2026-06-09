@@ -17,7 +17,7 @@ import TagsEmptyPlaceholder from './TagsEmptyPlaceholder';
 export default function TagsPage(): React.JSX.Element {
    const [searchParams] = useSearchParams();
    const navigate = useNavigate();
-   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
+   const searchQuery = searchParams.get('search') ?? '';
    const { ref } = useScrollSaver('tags-scroll');
    const { tags, setTagsDb, setMorningTasksDb, setEveningTasksDb, morningTasks, eveningTasks } = useFirestoreContext();
    const focusTagIdRef = useRef<string | null>(null);
@@ -50,7 +50,9 @@ export default function TagsPage(): React.JSX.Element {
    }
 
    function isTagRendered(tagLabel: string): boolean {
-      return tagLabel.toLowerCase().includes(normalizedSearchQuery);
+      const normalizedSearchQuery = AppUtils.normalizeSearchQuery(searchQuery);
+      const normalizedTagLabel = AppUtils.normalizeLabelForSearch(tagLabel);
+      return normalizedTagLabel.includes(normalizedSearchQuery);
    }
 
    function getNumberOfTasks(tag: AppTypes.Tag, taskTagField: AppTypes.TaskTagFields): number {
@@ -176,7 +178,7 @@ export default function TagsPage(): React.JSX.Element {
                                        >
                                           <TextFormatter
                                              fullText={tag.label}
-                                             rules={[{ text: normalizedSearchQuery, style: { backgroundColor: palette.warning.main } }]}
+                                             rules={[{ text: searchQuery, style: { backgroundColor: palette.warning.main } }]}
                                           />
                                        </ContentEditableField>
                                        <Typography variant={'caption'} color="textSecondary">
