@@ -54,6 +54,8 @@ export default function TextFormatter(props: T_TextFormatterProps): ReactNode {
          content.push(
             <span
                key={cursor}
+               role={actions ? 'button' : undefined}
+               tabIndex={actions ? -1 : undefined}
                style={segmentStyle}
                onClick={
                   actions

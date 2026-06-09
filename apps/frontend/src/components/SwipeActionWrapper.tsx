@@ -1,7 +1,7 @@
 // component has 0 UI library dependencies so can copy to any react project
 import type { PointerEvent, ReactNode } from 'react';
 import { useRef, useState } from 'react';
-const CLICKABLE_ELEMENTS = 'button, a';
+const CLICKABLE_ELEMENTS = 'button, a, [role="button"]';
 const NONTEXT_INPUT_ELEMENTS = ['button', 'submit', 'reset', 'checkbox', 'radio', 'range'];
 
 interface T_SwipeActionWrapperProps {

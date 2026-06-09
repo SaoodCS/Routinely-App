@@ -99,9 +99,11 @@ describe('TextFormatter', () => {
             ]}
          />,
       );
-      const milk = Array.from(container.querySelectorAll('span')).find((element) => element.textContent === 'milk');
+      const milk = Array.from(container.querySelectorAll<HTMLSpanElement>('span[role="button"]')).find((element) => element.textContent === 'milk');
       const bread = Array.from(container.querySelectorAll('span')).find((element) => element.textContent === 'bread');
 
+      expect(milk?.getAttribute('role')).toBe('button');
+      expect(milk?.tabIndex).toBe(-1);
       expect(milk?.style.cursor).toBe('pointer');
       expect(milk?.style.textDecoration).toBe('underline');
       expect(milk?.style.pointerEvents).toBe('auto');
@@ -118,7 +120,7 @@ describe('TextFormatter', () => {
    it('keeps each repeated click match independent', () => {
       const handleClick = vi.fn();
       const container = renderFormatter(<TextFormatter fullText="Milk then milk" rules={[{ text: 'milk', action: handleClick }]} />);
-      const matches = container.querySelectorAll('span');
+      const matches = container.querySelectorAll('span[role="button"]');
 
       void act(() => matches[0].dispatchEvent(new MouseEvent('click', { bubbles: true })));
       void act(() => matches[1].dispatchEvent(new MouseEvent('click', { bubbles: true })));
