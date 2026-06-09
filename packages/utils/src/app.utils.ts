@@ -40,8 +40,8 @@ export function normalizeLabelForSearch(label: string): string {
 }
 
 export function normalizeTaskLabelForSearch(label: string): string {
-   const lowerCase = label.toLowerCase();
-   const removedShoppingListAsterisk = lowerCase.replaceAll('*', '');
+   const normalizedLabel = normalizeLabelForSearch(label);
+   const removedShoppingListAsterisk = normalizedLabel.replaceAll('*', '');
    return removedShoppingListAsterisk;
 }
 

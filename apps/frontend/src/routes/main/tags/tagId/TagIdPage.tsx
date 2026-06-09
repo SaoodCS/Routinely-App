@@ -19,7 +19,7 @@ export default function TagIdPage(): JSX.Element {
    const { ref: sectionHeaderRef, hideOnScrollElHeight: sectionHeaderHeight } = useHideOnScroll(dragDropListRef, 'up');
    const { ref: tasksDoneFooterRef } = useHideOnScroll(dragDropListRef, 'down');
    const [searchParams] = useSearchParams();
-   const normalizedSearchQuery = searchParams.get('search')?.toLowerCase() ?? '';
+   const searchQuery = searchParams.get('search') ?? '';
    const tasks = section === 'morning' ? morningTasks : eveningTasks;
    const setTasks = section === 'morning' ? setMorningTasksDb : setEveningTasksDb;
 
@@ -56,13 +56,16 @@ export default function TagIdPage(): JSX.Element {
 
    const isTaskVisible = (task: AppTypes.Task): boolean => {
       if (!relatedTasks.has(task)) return false;
-      if (task.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+      const normalizedSearchQuery = AppUtils.normalizeSearchQuery(searchQuery);
+      const normalizedTaskLabel = AppUtils.normalizeTaskLabelForSearch(task.label);
+      if (normalizedTaskLabel.includes(normalizedSearchQuery)) return true;
       if (!task.children) return false;
       const tasksToCheck = [...task.children];
       for (let i = 0; i < tasksToCheck.length; i += 1) {
          const taskToCheck = tasksToCheck[i];
          if (!relatedTasks.has(taskToCheck)) continue;
-         if (taskToCheck.label.toLowerCase().includes(normalizedSearchQuery)) return true;
+         const normalizedTaskToCheckLabel = AppUtils.normalizeTaskLabelForSearch(taskToCheck.label);
+         if (normalizedTaskToCheckLabel.includes(normalizedSearchQuery)) return true;
          if (taskToCheck.children) for (const child of taskToCheck.children) tasksToCheck.push(child);
       }
       return false;
@@ -71,7 +74,9 @@ export default function TagIdPage(): JSX.Element {
    function getTextOverlay(task: AppTypes.Task): string | undefined {
       if (task.hideWhenTags.includes(tagId)) return 'TASK IS HIDDEN WHEN TAG IS ENABLED';
       if (!task.showWhenTags.includes(tagId)) return 'PARENT OF SUBTASK RELATED TO TAG';
-      if (!task.label.toLowerCase().includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
+      const normalizedSearchQuery = AppUtils.normalizeSearchQuery(searchQuery);
+      const normalizedTaskLabel = AppUtils.normalizeTaskLabelForSearch(task.label);
+      if (!normalizedTaskLabel.includes(normalizedSearchQuery)) return 'PARENT OF SEARCH QUERY MATCH';
    }
 
    function handleAddTask(): void {
