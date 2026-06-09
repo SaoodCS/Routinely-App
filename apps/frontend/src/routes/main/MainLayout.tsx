@@ -48,7 +48,7 @@ export default function MainLayout(): React.JSX.Element {
                <BottomNavigationAction label={'Morning'} value={ROUTE_PATHS.main_routine_morning} icon={<LightModeOutlined />} />
                <BottomNavigationAction label={'Evening'} value={ROUTE_PATHS.main_routine_evening} icon={<BedtimeOutlined />} />
                <BottomNavigationAction label={'Tags'} value={ROUTE_PATHS.main_tags} icon={<LocalOfferOutlined />} />
-               <BottomNavigationAction label={'Shopping List'} value={ROUTE_PATHS.main_shoppingList} icon={<ShoppingCartOutlined />} />
+               <BottomNavigationAction label={'Shopping'} value={ROUTE_PATHS.main_shoppingList} icon={<ShoppingCartOutlined />} />
                <BottomNavigationAction label={'Settings'} value={ROUTE_PATHS.main_settings} icon={<SettingsOutlined />} />
             </BottomNavigation>
          )}

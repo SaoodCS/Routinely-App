@@ -51,7 +51,6 @@ describe('ContentEditableField', () => {
       expect(textarea.style.position).toBe('static');
       expect(textarea.rows).toBe(1);
       expect(container.querySelector('[contenteditable]')).toBeNull();
-      expect(container.querySelector('[aria-hidden="true"]')).toBeNull();
       expect(container.querySelector('mark')).toBeNull();
    });
 
@@ -79,7 +78,6 @@ describe('ContentEditableField', () => {
       expect(enterEvent.defaultPrevented).toBe(true);
       expect(handleKeyDown).toHaveBeenCalledOnce();
       expect(getTextarea(container).value).toBe('Updated task');
-      expect(container.querySelector('[aria-hidden="true"]')?.textContent).toBe('Updated task');
    });
 
    it('retains caller styles and formats text on input', () => {

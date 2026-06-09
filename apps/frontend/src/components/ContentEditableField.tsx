@@ -24,11 +24,7 @@ export default function ContentEditableField(props: T_ContentEditableFieldProps)
 
    return (
       <span style={{ display: 'inline-block', minHeight: '1em', minWidth: '1ch', ...style, position: 'relative' }}>
-         {!isEditing && (
-            <span aria-hidden style={{ pointerEvents: 'none' }}>
-               {draft?.base === text ? draft.value : children}
-            </span>
-         )}
+         {!isEditing && <span style={{ pointerEvents: 'none' }}>{draft?.base === text ? draft.value : children}</span>}
          <textarea
             {...rest}
             rows={1}
