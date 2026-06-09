@@ -1,9 +1,9 @@
 // component has 0 UI library dependencies so can copy to any react project
 import type { CSSProperties, ReactNode } from 'react';
 
-export type T_TextFormatterRules = { textMatch: string; replaceWith?: string; style?: CSSProperties; action?: (textMatch: string) => void };
+type T_TextFormatterRules = { textMatch: string; replaceWith?: string; style?: CSSProperties; action?: (textMatch: string) => void };
 
-export interface T_TextFormatterProps {
+interface T_TextFormatterProps {
    fullText: string;
    rules?: T_TextFormatterRules[];
    matchCase?: boolean;

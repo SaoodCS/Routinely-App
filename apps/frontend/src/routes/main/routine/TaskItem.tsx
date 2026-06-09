@@ -3,12 +3,12 @@ import { Alert, Grow, IconButton, ListItem, Snackbar, Stack, Typography, type Al
 import { alpha, useTheme } from '@mui/material/styles';
 import type { AppTypes } from '@repo/types/index';
 import { AppUtils } from '@repo/utils/index';
-import { useEffect, useRef, useState, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type ComponentProps, type FocusEvent, type JSX, type KeyboardEvent } from 'react';
 import { useSearchParams } from 'react-router';
 import ContentEditableField from '../../../components/ContentEditableField';
 import type DragAndDropList from '../../../components/DragAndDropList';
 import SwipeActionWrapper from '../../../components/SwipeActionWrapper';
-import TextFormatter, { type T_TextFormatterProps } from '../../../components/TextFormatter';
+import TextFormatter from '../../../components/TextFormatter';
 import { useFirestoreContext } from '../../../database/useFirestoreContext';
 import { ElementUtils } from '../../../utils';
 import type { PaletteOption, PaletteShade } from '../../../theme/palette.theme';
@@ -156,7 +156,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
       if (event.key === 'Backspace' || event.key === 'Delete') return handleDelete();
    }
 
-   function formatAddToShoppingListWords(): NonNullable<T_TextFormatterProps['rules']> {
+   function formatAddToShoppingListWords(): NonNullable<ComponentProps<typeof TextFormatter>['rules']> {
       const phrases = new Set(Array.from(task.label.matchAll(/\*([^*]+)\*/g), (match) => match[1]));
       return Array.from(phrases).flatMap((text) => [
          { textMatch: `*${text}*`, replaceWith: text },
