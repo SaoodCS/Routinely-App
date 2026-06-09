@@ -31,6 +31,10 @@ export function getTasksListToUpdate(tasksShallowCopy: AppTypes.Task[], indexesT
    return taskListToUpdate; // this returns a copy of the task and it's siblings, so the original tasks array isn't mutated
 }
 
+export const TASK_LABEL_DELIMITER = {
+   shoppingList: '*',
+} as const;
+
 export function normalizeSearchQuery(query: string): string {
    return query.toLowerCase();
 }
@@ -38,11 +42,6 @@ export function normalizeSearchQuery(query: string): string {
 export function normalizeLabelForSearch(label: string): string {
    return label.toLowerCase();
 }
-
-export const TASK_LABEL_DELIMITER = {
-   shoppingList: '*',
-   //tags: '#',
-} as const;
 
 export function normalizeTaskLabelForSearch(label: string): string {
    let normalizedLabel = normalizeLabelForSearch(label);
