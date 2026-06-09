@@ -165,8 +165,7 @@ export default function TaskItem(props: T_TaskItemProps): JSX.Element | null {
             style: { textDecoration: 'underline', color: 'lightblue', cursor: 'pointer' },
             action: (text) => {
                if (shoppingList.some((item) => item.label === text)) {
-                  setSnackbar({ message: `"${text}" is already in the shopping list`, severity: 'warning' });
-                  return;
+                  return setSnackbar({ message: `"${text}" is already in the shopping list`, severity: 'warning' });
                }
                setShoppingListDb([...shoppingList, AppUtils.createNewShoppingItem({ label: text })]);
                setSnackbar({ message: `'${text}' added to the shopping list`, severity: 'success' });
