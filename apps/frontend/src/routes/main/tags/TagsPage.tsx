@@ -174,7 +174,6 @@ export default function TagsPage(): React.JSX.Element {
                                           onBlur={(event) => handleSaveLabelOnBlur(event, i)}
                                           onKeyDown={(e) => handleKeyDown(e, i)}
                                           onInput={ElementUtils.handleFormatInputOnSpace}
-                                          style={{ outline: 'none' }}
                                        >
                                           <TextFormatter
                                              fullText={tag.label}

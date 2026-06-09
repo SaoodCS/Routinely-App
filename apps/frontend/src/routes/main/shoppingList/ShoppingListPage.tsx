@@ -132,7 +132,6 @@ export default function ShoppingListPage(): React.JSX.Element {
                                        onKeyDown={(e) => handleKeyDown(e, i)}
                                        onInput={ElementUtils.handleFormatInputOnSpace}
                                        style={{
-                                          outline: 'none',
                                           color: item.isChecked ? palette.text.disabled : undefined,
                                           textDecoration: item.isChecked ? 'line-through' : 'none',
                                        }}
