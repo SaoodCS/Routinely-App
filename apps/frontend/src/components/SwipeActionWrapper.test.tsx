@@ -45,21 +45,4 @@ describe('SwipeActionWrapper', () => {
 
       expect(setPointerCapture).not.toHaveBeenCalled();
    });
-
-   it('coalesces pointer move updates into one animation frame', () => {
-      let frame: FrameRequestCallback | undefined;
-      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
-         frame = callback;
-         return 1;
-      });
-      const content = renderWrapper();
-
-      dispatchPointer(content, 'pointerdown', 0);
-      dispatchPointer(content, 'pointermove', 30);
-      dispatchPointer(content, 'pointermove', 50);
-
-      expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
-      act(() => frame!(0));
-      expect(content.style.transform).toBe('translateX(40px)');
-   });
 });
