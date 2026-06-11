@@ -58,7 +58,7 @@ npm run dev:frontend
 
 Vite serves the app on `http://localhost:5173` by default.
 
-No `.env` file is currently required. The frontend uses the Firebase web configuration committed in [`apps/frontend/src/firebase/config.ts`](apps/frontend/src/firebase/config.ts), so local sessions connect to the configured Firebase project.
+The frontend uses the Firebase web configuration committed in [`apps/frontend/src/firebase/config.ts`](apps/frontend/src/firebase/config.ts), so local sessions connect to the configured Firebase project.
 
 ### Verify a change
 
