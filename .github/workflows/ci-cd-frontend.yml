@@ -1,0 +1,35 @@
+name: Front-End CI/CD
+on:
+   push:
+      branches:
+         - main
+jobs:
+   front-end-ci-cd:
+      runs-on: ubuntu-latest
+      steps:
+         - name: Setup Phase - Checkout repository
+           uses: actions/checkout@v4
+
+         - name: Setup Phase - Set up Node.js
+           uses: actions/setup-node@v3
+           with:
+              node-version: '25.9.0'
+
+         - name: Setup Phase - Install dependencies
+           run: npm ci
+
+         - name: CI Phase - Run ESLint & End Workflow if Any Linting Errors
+           run: npm run lint-typecheck || exit 1
+
+         - name: CI Phase - Run Tests & End Workflow if Any Test Failures
+           run: npm run test:frontend
+
+         - name: CD Phase - Build Project
+           run: npm run build:frontend
+
+         - name: CD Phase - Deploy to Firebase Hosting
+           uses: FirebaseExtended/action-hosting-deploy@v0
+           with:
+              firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ROUTINELY_APP_D7D9C }}
+              channelId: live
+              projectId: routinely-app-d7d9c
