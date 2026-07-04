@@ -19,6 +19,10 @@ const prettierMap: Record<string, string> = {
    Dont: "Don't",
    havent: "haven't",
    Havent: "Haven't",
+   doesnt: "doesn't",
+   Doesnt: "Doesn't",
+   "you're": "you're",
+   "you've": "you've",
 };
 
 export function handleFormatInputOnSpace(event: FormEvent<HTMLElement>): void {
